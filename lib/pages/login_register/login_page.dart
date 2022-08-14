@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fungimobil/pages/login_register/components/big_title.dart';
+import 'package:fungimobil/pages/login_register/components/button_login.dart';
+import 'package:fungimobil/pages/login_register/components/desc_title.dart';
+import 'package:fungimobil/pages/login_register/components/login_text_fiedl.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -12,6 +16,7 @@ class LoginPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xffF9F9F9),
         elevation: 0,
+        automaticallyImplyLeading: false,
       ),
       body: buildLoginPageBody(),
     );
@@ -25,7 +30,7 @@ class LoginPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              bigTitle(),
+              BigTitle(title: "Fungi Turkey", size: 98.sp),
               Padding(
                 padding: EdgeInsets.only(
                   left: 60.w,
@@ -33,15 +38,18 @@ class LoginPage extends StatelessWidget {
                   top: 48.h,
                   bottom: 120.h,
                 ),
-                child: descTitle(),
+                child: DescTitle(
+                  title: "Fungi Turkey Mobil Uygulamasına Hoşgeldiniz.",
+                  size: 72.sp,
+                ),
               ),
-              buildTextField("Mail Adresi"),
-              buildTextField("Şifre"),
+              const LoginTextField(hintText: "Mail Adresi"),
+              const LoginTextField(hintText: "Şifre"),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 40.h),
                 child: forgetPassTitle(),
               ),
-              buttonSignIn(),
+              const ButtonForLogin(title: "Giriş Yap"),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 64.h),
                 child: orContinue(),
@@ -138,30 +146,6 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget buttonSignIn() {
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 64.h),
-        padding: EdgeInsets.symmetric(vertical: 36.h),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: const Color(0xffF4A261),
-          borderRadius: BorderRadius.circular(24.r),
-        ),
-        child: Center(
-          child: Text(
-            "Giriş Yap",
-            style: TextStyle(
-              fontSize: 64.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget forgetPassTitle() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -175,86 +159,6 @@ class LoginPage extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Widget descTitle() {
-    return Text(
-      "Fungi Turkey Mobil Uygulamasına Hoşgeldiniz.",
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        fontSize: 72.sp,
-        fontWeight: FontWeight.w300,
-      ),
-    );
-  }
-
-  Widget bigTitle() {
-    return Text(
-      "Fungi Turkey",
-      style: TextStyle(
-        fontSize: 98.sp,
-        fontWeight: FontWeight.bold,
-        color: const Color(0xffF4A261),
-      ),
-    );
-  }
-
-  Widget buildTextField(String hintText) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      height: 160.h,
-      child: TextFormField(
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(color: Colors.black.withOpacity(0.3)),
-          contentPadding: EdgeInsets.symmetric(horizontal: 48.w),
-          fillColor: Colors.white,
-          filled: true,
-          border: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.black.withOpacity(0.05),
-              width: 1,
-            ),
-            borderRadius: BorderRadius.circular(24.r),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.black.withOpacity(0.05),
-              width: 1,
-            ),
-            borderRadius: BorderRadius.circular(24.r),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.black.withOpacity(0.05),
-              width: 1,
-            ),
-            borderRadius: BorderRadius.circular(24.r),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.black.withOpacity(0.05),
-              width: 1,
-            ),
-            borderRadius: BorderRadius.circular(24.r),
-          ),
-          disabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.black.withOpacity(0.05),
-              width: 1,
-            ),
-            borderRadius: BorderRadius.circular(24.r),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.black.withOpacity(0.05),
-              width: 1,
-            ),
-            borderRadius: BorderRadius.circular(24.r),
-          ),
-        ),
-      ),
     );
   }
 }

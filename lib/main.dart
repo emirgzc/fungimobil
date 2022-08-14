@@ -48,6 +48,18 @@ class DemoPage extends StatelessWidget {
                 Navigator.pushNamed(context, Routes.loginPage);
               },
             ),
+            buildButton(
+              'Register Page',
+              () {
+                Navigator.pushNamed(context, Routes.registerPage);
+              },
+            ),
+            buildButton(
+              'Forget Password Page',
+              () {
+                Navigator.pushNamed(context, Routes.forgetPassPage);
+              },
+            ),
           ],
         ),
       ),
