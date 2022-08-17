@@ -60,6 +60,42 @@ class DemoPage extends StatelessWidget {
                 Navigator.pushNamed(context, Routes.forgetPassPage);
               },
             ),
+            buildButton(
+              'Activity Detail Page',
+              () {
+                Navigator.pushNamed(context, Routes.activityDetailPage);
+              },
+            ),
+            buildButton(
+              'Blog Page',
+              () {
+                Navigator.pushNamed(context, Routes.blogPage);
+              },
+            ),
+            buildButton(
+              'Blog Detail Page',
+              () {
+                Navigator.pushNamed(context, Routes.blogDetailPage);
+              },
+            ),
+            buildButton(
+              'Misyon Page',
+              () {
+                Navigator.pushNamed(context, Routes.misyonPage);
+              },
+            ),
+            buildButton(
+              'Vizyon Page',
+              () {
+                Navigator.pushNamed(context, Routes.vizyonPage);
+              },
+            ),
+            buildButton(
+              'Team Page',
+              () {
+                Navigator.pushNamed(context, Routes.teamPage);
+              },
+            ),
           ],
         ),
       ),
@@ -71,8 +107,8 @@ class DemoPage extends StatelessWidget {
     Function() onPressed,
   ) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8, top: 8),
-      height: 45,
+      margin: const EdgeInsets.only(bottom: 8, top: 4),
+      height: 36,
       child: ElevatedButton(
         child: Text(title),
         onPressed: () {

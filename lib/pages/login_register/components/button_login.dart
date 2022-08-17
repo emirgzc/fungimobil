@@ -12,7 +12,7 @@ class ButtonForLogin extends StatelessWidget {
     return GestureDetector(
       onTap: () {},
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 64.h),
+        margin: EdgeInsets.symmetric(vertical: 48.h),
         padding: EdgeInsets.symmetric(vertical: 36.h),
         width: double.infinity,
         decoration: BoxDecoration(
