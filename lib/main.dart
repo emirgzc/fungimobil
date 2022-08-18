@@ -120,6 +120,12 @@ class DemoPage extends StatelessWidget {
                 Navigator.pushNamed(context, Routes.contactPage);
               },
             ),
+            buildButton(
+              'Home Page',
+              () {
+                Navigator.pushNamed(context, Routes.homePage);
+              },
+            ),
           ],
         ),
       ),

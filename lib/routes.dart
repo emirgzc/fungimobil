@@ -7,6 +7,7 @@ import 'package:fungimobil/pages/blog/blog_page.dart';
 import 'package:fungimobil/pages/blog_detail/blog_detail_page.dart';
 import 'package:fungimobil/pages/contact/contact_page.dart';
 import 'package:fungimobil/pages/galery/galery_page.dart';
+import 'package:fungimobil/pages/home/home_page.dart';
 import 'package:fungimobil/pages/login_register/forget_password_page.dart';
 import 'package:fungimobil/pages/login_register/login_page.dart';
 import 'package:fungimobil/main.dart';
@@ -29,6 +30,7 @@ class Routes {
   static const String galeryPage = '/galeryPage';
   static const String sponsorPage = '/sponsorPage';
   static const String contactPage = '/contactPage';
+  static const String homePage = '/homePage';
 
   static Route? onGenerateRoute(RouteSettings settings) {
     late Widget page;
@@ -74,6 +76,9 @@ class Routes {
         break;
       case contactPage:
         page = const ContactPage();
+        break;
+      case homePage:
+        page = HomePage();
         break;
     }
 
