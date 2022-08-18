@@ -223,7 +223,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
               children: [
                 Icon(
                   Icons.location_on,
-                  color: Colors.amber,
+                  color: Color(0xffF4A261),
                   size: 60.r,
                 ),
                 Padding(
@@ -271,7 +271,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                   style: TextStyle(
                     fontSize: 96.sp,
                     fontWeight: FontWeight.w500,
-                    color: Colors.amber,
+                    color: Color(0xffF4A261),
                   ),
                 ),
                 Text(
@@ -279,7 +279,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                   style: TextStyle(
                     fontSize: 60.sp,
                     fontWeight: FontWeight.w500,
-                    color: Colors.amber,
+                    color: Color(0xffF4A261),
                   ),
                 ),
               ],
@@ -328,14 +328,14 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
             vertical: 8.h,
           ),
           decoration: BoxDecoration(
-            color: Colors.amber.shade100,
+            color: Color(0xffF4A261).withOpacity(0.3),
             borderRadius: BorderRadius.circular(24.r),
           ),
           child: Row(
             children: [
               Icon(
                 Icons.star,
-                color: Colors.amber,
+                color: Color(0xffF4A261),
                 size: 60.r,
               ),
               Padding(
@@ -419,7 +419,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
           child: Container(
             padding: EdgeInsets.all(24.r),
             decoration: const BoxDecoration(
-              color: Colors.amber,
+              color: Color(0xffF4A261),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.keyboard_arrow_right),

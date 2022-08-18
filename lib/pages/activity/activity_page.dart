@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class BlogPage extends StatelessWidget {
-  const BlogPage({Key? key}) : super(key: key);
+class ActivityPage extends StatelessWidget {
+  const ActivityPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,20 +29,36 @@ class BlogPage extends StatelessWidget {
                     children: [
                       Stack(
                         children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.asset(
-                              "assets/images/abc.jpg",
-                              fit: BoxFit.cover,
+                          SizedBox(
+                            height: 550.h,
+                            width: double.infinity,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.asset(
+                                "assets/images/fungi1.jpeg",
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                           Positioned(
-                            top: 8,
+                            bottom: 8,
                             right: 8,
-                            child: Icon(
-                              Icons.favorite_border,
-                              color: Colors.white.withOpacity(0.9),
-                              size: 30,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 4,
+                                horizontal: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xffF4A261).withOpacity(0.9),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Text(
+                                "Devamını Oku...",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -69,7 +85,6 @@ class BlogPage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(right: 4),
@@ -85,14 +100,11 @@ class BlogPage extends StatelessWidget {
                                 color: Colors.black.withOpacity(0.4),
                               ),
                             ),
-                            const Text(
-                              " . ",
-                              style: TextStyle(),
-                            ),
+                            const Spacer(),
                             Text(
-                              "12 Ağustos 2022",
+                              "Son Kayıt : 12 Ağustos 2022",
                               style: TextStyle(
-                                color: Colors.black.withOpacity(0.4),
+                                color: Colors.red.withOpacity(0.4),
                               ),
                             ),
                           ],

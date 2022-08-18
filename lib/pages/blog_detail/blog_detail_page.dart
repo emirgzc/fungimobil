@@ -203,7 +203,7 @@ class BlogDetailPage extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.all(24.r),
             decoration: const BoxDecoration(
-              color: Colors.amber,
+              color: Color(0xffF4A261),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.keyboard_arrow_right),

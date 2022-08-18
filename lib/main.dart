@@ -79,21 +79,45 @@ class DemoPage extends StatelessWidget {
               },
             ),
             buildButton(
-              'Misyon Page',
+              'About Page',
               () {
-                Navigator.pushNamed(context, Routes.misyonPage);
-              },
-            ),
-            buildButton(
-              'Vizyon Page',
-              () {
-                Navigator.pushNamed(context, Routes.vizyonPage);
+                Navigator.pushNamed(context, Routes.aboutPage);
               },
             ),
             buildButton(
               'Team Page',
               () {
                 Navigator.pushNamed(context, Routes.teamPage);
+              },
+            ),
+            buildButton(
+              'Service Page',
+              () {
+                Navigator.pushNamed(context, Routes.servicePage);
+              },
+            ),
+            buildButton(
+              'Activity Page',
+              () {
+                Navigator.pushNamed(context, Routes.activityPage);
+              },
+            ),
+            buildButton(
+              'Galery Page',
+              () {
+                Navigator.pushNamed(context, Routes.galeryPage);
+              },
+            ),
+            buildButton(
+              'Sponsor Page',
+              () {
+                Navigator.pushNamed(context, Routes.sponsorPage);
+              },
+            ),
+            buildButton(
+              'Contact Page',
+              () {
+                Navigator.pushNamed(context, Routes.contactPage);
               },
             ),
           ],
