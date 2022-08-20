@@ -37,90 +37,98 @@ class DemoPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Demo Page'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            buildButton(
-              'Login Page',
-              () {
-                Navigator.pushNamed(context, Routes.loginPage);
-              },
-            ),
-            buildButton(
-              'Register Page',
-              () {
-                Navigator.pushNamed(context, Routes.registerPage);
-              },
-            ),
-            buildButton(
-              'Forget Password Page',
-              () {
-                Navigator.pushNamed(context, Routes.forgetPassPage);
-              },
-            ),
-            buildButton(
-              'Activity Detail Page',
-              () {
-                Navigator.pushNamed(context, Routes.activityDetailPage);
-              },
-            ),
-            buildButton(
-              'Blog Page',
-              () {
-                Navigator.pushNamed(context, Routes.blogPage);
-              },
-            ),
-            buildButton(
-              'Blog Detail Page',
-              () {
-                Navigator.pushNamed(context, Routes.blogDetailPage);
-              },
-            ),
-            buildButton(
-              'About Page',
-              () {
-                Navigator.pushNamed(context, Routes.aboutPage);
-              },
-            ),
-            buildButton(
-              'Team Page',
-              () {
-                Navigator.pushNamed(context, Routes.teamPage);
-              },
-            ),
-            buildButton(
-              'Service Page',
-              () {
-                Navigator.pushNamed(context, Routes.servicePage);
-              },
-            ),
-            buildButton(
-              'Activity Page',
-              () {
-                Navigator.pushNamed(context, Routes.activityPage);
-              },
-            ),
-            buildButton(
-              'Galery Page',
-              () {
-                Navigator.pushNamed(context, Routes.galeryPage);
-              },
-            ),
-            buildButton(
-              'Sponsor Page',
-              () {
-                Navigator.pushNamed(context, Routes.sponsorPage);
-              },
-            ),
-            buildButton(
-              'Contact Page',
-              () {
-                Navigator.pushNamed(context, Routes.contactPage);
-              },
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              buildButton(
+                'Login Page',
+                () {
+                  Navigator.pushNamed(context, Routes.loginPage);
+                },
+              ),
+              buildButton(
+                'Register Page',
+                () {
+                  Navigator.pushNamed(context, Routes.registerPage);
+                },
+              ),
+              buildButton(
+                'Forget Password Page',
+                () {
+                  Navigator.pushNamed(context, Routes.forgetPassPage);
+                },
+              ),
+              buildButton(
+                'Activity Detail Page',
+                () {
+                  Navigator.pushNamed(context, Routes.activityDetailPage);
+                },
+              ),
+              buildButton(
+                'Blog Page',
+                () {
+                  Navigator.pushNamed(context, Routes.blogPage);
+                },
+              ),
+              buildButton(
+                'Blog Detail Page',
+                () {
+                  Navigator.pushNamed(context, Routes.blogDetailPage);
+                },
+              ),
+              buildButton(
+                'About Page',
+                () {
+                  Navigator.pushNamed(context, Routes.aboutPage);
+                },
+              ),
+              buildButton(
+                'Team Page',
+                () {
+                  Navigator.pushNamed(context, Routes.teamPage);
+                },
+              ),
+              buildButton(
+                'Service Page',
+                () {
+                  Navigator.pushNamed(context, Routes.servicePage);
+                },
+              ),
+              buildButton(
+                'Activity Page',
+                () {
+                  Navigator.pushNamed(context, Routes.activityPage);
+                },
+              ),
+              buildButton(
+                'Galery Page',
+                () {
+                  Navigator.pushNamed(context, Routes.galeryPage);
+                },
+              ),
+              buildButton(
+                'Sponsor Page',
+                () {
+                  Navigator.pushNamed(context, Routes.sponsorPage);
+                },
+              ),
+              buildButton(
+                'Contact Page',
+                () {
+                  Navigator.pushNamed(context, Routes.contactPage);
+                },
+              ),
+              buildButton(
+                'Profile Page',
+                () {
+                  Navigator.pushNamed(context, Routes.profilePage);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
