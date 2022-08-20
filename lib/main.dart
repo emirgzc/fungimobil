@@ -122,6 +122,12 @@ class DemoPage extends StatelessWidget {
                 },
               ),
               buildButton(
+                'Home Page',
+                () {
+                  Navigator.pushNamed(context, Routes.homePage);
+                },
+              ),
+              buildButton(
                 'Profile Page',
                 () {
                   Navigator.pushNamed(context, Routes.profilePage);
