@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fungimobil/pages/login_register/components/big_title.dart';
 import 'package:fungimobil/pages/login_register/components/button_login.dart';
 import 'package:fungimobil/pages/login_register/components/desc_title.dart';
-import 'package:fungimobil/pages/login_register/components/login_text_fiedl.dart';
+import 'package:fungimobil/widgets/text_field.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -36,13 +36,13 @@ class RegisterPage extends StatelessWidget {
                   size: 56.sp,
                 ),
               ),
-              const LoginTextField(hintText: "İsim Soyisim"),
-              const LoginTextField(hintText: "Mail Adresi"),
-              const LoginTextField(hintText: "Telefon Numarası"),
-              const LoginTextField(hintText: "Şehir"),
-              const LoginTextField(hintText: "Meslek"),
-              const LoginTextField(hintText: "Şifre"),
-              const LoginTextField(hintText: "Şifre Tekrar"),
+              const CustomTextField(hintText: "İsim Soyisim"),
+              const CustomTextField(hintText: "Mail Adresi"),
+              const CustomTextField(hintText: "Telefon Numarası"),
+              const CustomTextField(hintText: "Şehir"),
+              const CustomTextField(hintText: "Meslek"),
+              const CustomTextField(hintText: "Şifre"),
+              const CustomTextField(hintText: "Şifre Tekrar"),
               const ButtonForLogin(title: "Kayıt Ol"),
             ],
           ),

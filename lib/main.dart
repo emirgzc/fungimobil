@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fungimobil/routes.dart';
+import 'package:fungimobil/constants/routes.dart';
+import 'package:fungimobil/constants/style.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,10 +18,12 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return const MaterialApp(
-          title: 'Flutter Demo',
+        return MaterialApp(
+          theme: ThemeData(
+            scaffoldBackgroundColor: Style.primaryColor,
+          ),
           debugShowCheckedModeBanner: false,
-          home: DemoPage(),
+          home: const DemoPage(),
           onGenerateRoute: Routes.onGenerateRoute,
         );
       },
@@ -140,13 +143,15 @@ class DemoPage extends StatelessWidget {
     );
   }
 
-  Container buildButton(
+  Widget buildButton(
     String title,
     Function() onPressed,
   ) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8, top: 4),
-      height: 36,
+      margin: EdgeInsets.only(
+          bottom: Style.defautlVerticalPadding / 2,
+          top: Style.defautlVerticalPadding / 4),
+      height: Style.defautlVerticalPadding * 2,
       child: ElevatedButton(
         child: Text(title),
         onPressed: () {

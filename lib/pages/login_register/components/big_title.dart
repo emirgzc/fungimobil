@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fungimobil/constants/style.dart';
 
 class BigTitle extends StatelessWidget {
   const BigTitle({Key? key, required this.title, required this.size})
@@ -13,7 +14,7 @@ class BigTitle extends StatelessWidget {
       style: TextStyle(
         fontSize: size,
         fontWeight: FontWeight.bold,
-        color: const Color(0xffF4A261),
+        color: Style.secondaryColor,
       ),
     );
   }

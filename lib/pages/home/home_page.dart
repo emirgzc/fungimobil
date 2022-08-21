@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
   late List<OrganizationModel> organizationItemList;
   late List<BlogModel> blogItemList;
 
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -57,13 +57,15 @@ class HomePage extends StatelessWidget {
                   child: _buildCategories(context),
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: Style.defaultPadding, horizontal: Style.defaultPadding / 2),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: Style.defaultPadding,
+                      horizontal: Style.defaultPadding / 2),
                   child: _buildActivityList(context),
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: Style.defaultPadding, horizontal: Style.defaultPadding / 2),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: Style.defaultPadding,
+                      horizontal: Style.defaultPadding / 2),
                   child: _buildBlogList(context),
                 ),
               ],
@@ -76,21 +78,43 @@ class HomePage extends StatelessWidget {
 
   _setDatas() {
     activityItemList = [
-      ActivityModel('https://picsum.photos/$activityItemWidth/$activityItemImageHeight', 'Kütahya Mantar Kampı',
-          'Kütahya, Dumlupınar', 100, 20, 12),
-      ActivityModel('https://picsum.photos/$activityItemWidth/$activityItemImageHeight', 'Tavşanlı Mantar Kampı',
-          'Kütahya, Tavşanlı', 175, 25, 10),
-      ActivityModel('https://picsum.photos/$activityItemWidth/$activityItemImageHeight',
-          'Türkiye Mantarcılar Buluşması', 'İstanbul, Fatih', 320, 75, 46),
-      ActivityModel('https://picsum.photos/$activityItemWidth/$activityItemImageHeight', 'Yalova Mantar Kampı',
-          'Yalova, Merkez', 110, 28, 3),
+      ActivityModel(
+          'https://picsum.photos/$activityItemWidth/$activityItemImageHeight',
+          'Kütahya Mantar Kampı',
+          'Kütahya, Dumlupınar',
+          100,
+          20,
+          12),
+      ActivityModel(
+          'https://picsum.photos/$activityItemWidth/$activityItemImageHeight',
+          'Tavşanlı Mantar Kampı',
+          'Kütahya, Tavşanlı',
+          175,
+          25,
+          10),
+      ActivityModel(
+          'https://picsum.photos/$activityItemWidth/$activityItemImageHeight',
+          'Türkiye Mantarcılar Buluşması',
+          'İstanbul, Fatih',
+          320,
+          75,
+          46),
+      ActivityModel(
+          'https://picsum.photos/$activityItemWidth/$activityItemImageHeight',
+          'Yalova Mantar Kampı',
+          'Yalova, Merkez',
+          110,
+          28,
+          3),
     ];
     organizationItemList = [
       OrganizationModel(
           'https://www.fungiturkey.org/Image/Services/6.09.2021-5988771.jpg',
           'Mantar Avcılığı Eğitimleri',
           'Etkinliklerle gerçekleştirdiğimiz bu eğitimlerde sahada uzmanlar eşliğinde mantar toplayacak, yenebilir ve zehirli türleri birebir tecrübe ederek öğreneceksiniz.'),
-      OrganizationModel('https://www.fungiturkey.org/Image/Services/6.09.2021-3471444.jpg', 'Kişiye Özel Eğitimler',
+      OrganizationModel(
+          'https://www.fungiturkey.org/Image/Services/6.09.2021-3471444.jpg',
+          'Kişiye Özel Eğitimler',
           'Birebir detaylı anlatımlarla ilerleyeceğimiz bu eğitimlerde programı siz belirleyebiliyorsunuz. Detaylı bilgi için bizimle iletişime geçiniz. '),
       OrganizationModel(
           'https://www.fungiturkey.org/Image/Services/6.09.2021-2252062.jpg',
@@ -262,7 +286,9 @@ Lağım, çöp ve çöplere yakın olan mantarlardan da kaçınmak lazım, bunla
       actions: const [
         Padding(
           padding: EdgeInsets.only(
-              top: Style.defaultPadding / 4, bottom: Style.defaultPadding / 4, right: Style.defaultPadding),
+              top: Style.defaultPadding / 4,
+              bottom: Style.defaultPadding / 4,
+              right: Style.defaultPadding),
           child: CircleAvatar(
             child: Icon(
               Icons.person_outline,
@@ -284,7 +310,8 @@ Lağım, çöp ve çöplere yakın olan mantarlardan da kaçınmak lazım, bunla
           color: Style.textColor.withOpacity(0.4),
         ),
         border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(Style.defaultRadiusSize), borderSide: BorderSide.none),
+            borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
+            borderSide: BorderSide.none),
         filled: true,
         fillColor: Colors.white,
         hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -381,7 +408,8 @@ Lağım, çöp ve çöplere yakın olan mantarlardan da kaçınmak lazım, bunla
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              for (int i = 0; i < activityItemList.length; i++) _buildActivityCard(activityItemList[i], context),
+              for (int i = 0; i < activityItemList.length; i++)
+                _buildActivityCard(activityItemList[i], context),
               // ListView.builder(
               //     scrollDirection: Axis.horizontal,
               //     itemCount: activityItemList.length,
@@ -435,7 +463,10 @@ Lağım, çöp ve çöplere yakın olan mantarlardan da kaçınmak lazım, bunla
                                 model.title,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 2,
-                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall
+                                    ?.copyWith(
                                       color: Style.textColor,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -460,7 +491,10 @@ Lağım, çöp ve çöplere yakın olan mantarlardan da kaçınmak lazım, bunla
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodySmall
-                                        ?.copyWith(color: Style.textColor.withOpacity(0.7), wordSpacing: 20),
+                                        ?.copyWith(
+                                            color: Style.textColor
+                                                .withOpacity(0.7),
+                                            wordSpacing: 20),
                                   ),
                                 ),
                               ],
@@ -477,7 +511,10 @@ Lağım, çöp ve çöplere yakın olan mantarlardan da kaçınmak lazım, bunla
                           Flexible(
                             child: Text(
                               '${model.price.toStringAsFixed(2)}₺',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
                                     color: Colors.blue.shade800,
                                   ),
                             ),
@@ -486,7 +523,10 @@ Lağım, çöp ve çöplere yakın olan mantarlardan da kaçınmak lazım, bunla
                           Flexible(
                             child: Text(
                               '${model.currentSavedPerson}/${model.quota}',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
                                     color: Style.textColor.withOpacity(0.7),
                                   ),
                             ),
@@ -530,7 +570,10 @@ Lağım, çöp ve çöplere yakın olan mantarlardan da kaçınmak lazım, bunla
                 padding: const EdgeInsets.all(Style.defaultPadding / 2),
                 child: Text(
                   'Tümünü gör',
-                  style: Theme.of(context).textTheme.button?.copyWith(color: Style.secondaryColor),
+                  style: Theme.of(context)
+                      .textTheme
+                      .button
+                      ?.copyWith(color: Style.secondaryColor),
                 ),
               ),
             )
@@ -571,7 +614,8 @@ Lağım, çöp ve çöplere yakın olan mantarlardan da kaçınmak lazım, bunla
                 SizedBox.square(
                   dimension: 150 - Style.defaultPadding,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
+                    borderRadius:
+                        BorderRadius.circular(Style.defaultRadiusSize),
                     child: CachedNetworkImage(
                       imageUrl: model.imageUrl,
                       imageBuilder: (context, imageProvider) => Container(
@@ -579,11 +623,14 @@ Lağım, çöp ve çöplere yakın olan mantarlardan da kaçınmak lazım, bunla
                           image: DecorationImage(
                               image: imageProvider,
                               fit: BoxFit.cover,
-                              colorFilter: const ColorFilter.mode(Colors.red, BlendMode.colorBurn)),
+                              colorFilter: const ColorFilter.mode(
+                                  Colors.red, BlendMode.colorBurn)),
                         ),
                       ),
-                      placeholder: (context, url) => const CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => const Icon(Icons.error),
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
                     ),
                     /*CachedNetworkImage(
                   imageUrl: */ /*model.imageUrl*/ /* 'https://picsum.photos/200/300',
@@ -614,7 +661,9 @@ Lağım, çöp ve çöplere yakın olan mantarlardan da kaçınmak lazım, bunla
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold, color: Style.textColor),
+                            ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Style.textColor),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
                       ),

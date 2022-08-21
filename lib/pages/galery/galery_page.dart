@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:fungimobil/constants/style.dart';
+import 'package:fungimobil/widgets/appbar.dart';
 
 class GaleryPage extends StatelessWidget {
   const GaleryPage({Key? key}) : super(key: key);
@@ -8,45 +10,35 @@ class GaleryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Galeri"),
-        centerTitle: true,
-        backgroundColor: const Color(0xffF9F9F9),
-        elevation: 0,
-        foregroundColor: Colors.black,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(48.r),
-          child: Column(
-            children: [
-              MasonryGridView.count(
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                itemCount: 8,
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 16,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () => detailPop(context),
-                    child: Container(
-                      height: 170,
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
-                        image: DecorationImage(
-                          image: AssetImage(
-                            "assets/images/fungi1.jpeg",
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
+      appBar: getAppBar("Galeri"),
+      body: galeryBody(),
+    );
+  }
+
+  Widget galeryBody() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: Style.defaultPagePadding,
+        child: Column(
+          children: [
+            MasonryGridView.count(
+              shrinkWrap: true,
+              physics: const BouncingScrollPhysics(),
+              itemCount: 8,
+              crossAxisCount: 2,
+              mainAxisSpacing: Style.defautlVerticalPadding,
+              crossAxisSpacing: Style.defautlHorizontalPadding,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () => detailPop(context),
+                  child: Image.asset(
+                    "assets/images/fungi2.jpeg",
+                    fit: BoxFit.cover,
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -59,13 +51,15 @@ class GaleryPage extends StatelessWidget {
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(48.r),
-          topRight: Radius.circular(48.r),
+          topLeft: Radius.circular(Style.defaultRadiusSize),
+          topRight: Radius.circular(Style.defaultRadiusSize),
         ),
       ),
       builder: (context) {
         return Padding(
-          padding: EdgeInsets.symmetric(vertical: 48.h, horizontal: 48.w),
+          padding: EdgeInsets.symmetric(
+              vertical: Style.defautlVerticalPadding,
+              horizontal: Style.defautlHorizontalPadding),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -80,17 +74,19 @@ class GaleryPage extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 48.h),
+                padding: EdgeInsets.symmetric(
+                  vertical: Style.defautlVerticalPadding,
+                ),
                 child: Text(
                   "Organizasyon",
                   style: TextStyle(
-                    fontSize: 62.sp,
+                    fontSize: Style.bigTitleTextSize,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               Image.asset(
-                "assets/images/fungi1.jpeg",
+                "assets/images/fungi2.jpeg",
                 fit: BoxFit.cover,
               ),
             ],

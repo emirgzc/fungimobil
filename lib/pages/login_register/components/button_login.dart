@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fungimobil/constants/style.dart';
 
 class ButtonForLogin extends StatelessWidget {
   const ButtonForLogin({Key? key, required this.title, this.onTap})
@@ -12,18 +12,20 @@ class ButtonForLogin extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 48.h),
-        padding: EdgeInsets.symmetric(vertical: 36.h),
+        margin: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
+        padding: EdgeInsets.symmetric(
+          vertical: Style.defautlVerticalPadding * (2 / 3),
+        ),
         width: double.infinity,
         decoration: BoxDecoration(
-          color: const Color(0xffF4A261),
-          borderRadius: BorderRadius.circular(24.r),
+          color: Style.secondaryColor,
+          borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
         ),
         child: Center(
           child: Text(
             title,
             style: TextStyle(
-              fontSize: 64.sp,
+              fontSize: Style.bigTitleTextSize,
               fontWeight: FontWeight.bold,
             ),
           ),

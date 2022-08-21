@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fungimobil/constants/style.dart';
+import 'package:fungimobil/widgets/card_for_social_media.dart';
 
 class BlogDetailPage extends StatelessWidget {
   const BlogDetailPage({Key? key}) : super(key: key);
@@ -29,39 +30,41 @@ class BlogDetailPage extends StatelessWidget {
           headerDateandUser(context),
           // buttonForRecord(),
           Container(
-            padding: EdgeInsets.all(48.r),
+            padding: Style.defaultPagePadding,
             margin: EdgeInsets.only(top: 900.h),
-            color: const Color(0xffF9F9F9),
+            color: Style.primaryColor,
             // color: Colors.red,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 bigTitle(),
                 Padding(
-                  padding: EdgeInsets.only(top: 40.h),
+                  padding: EdgeInsets.only(top: Style.defautlVerticalPadding),
                   child: Row(
-                    children: [
-                      cardForSocialMedia(
-                        "assets/icons/twitter.svg",
+                    children: const [
+                      CardForSocialMedia(
+                        iconSvg: "assets/icons/twitter.svg",
                       ),
-                      cardForSocialMedia(
-                        "assets/icons/instagram.svg",
+                      CardForSocialMedia(
+                        iconSvg: "assets/icons/instagram.svg",
                       ),
-                      cardForSocialMedia(
-                        "assets/icons/facebook.svg",
+                      CardForSocialMedia(
+                        iconSvg: "assets/icons/facebook.svg",
                       ),
-                      cardForSocialMedia(
-                        "assets/icons/whatsapp.svg",
+                      CardForSocialMedia(
+                        iconSvg: "assets/icons/whatsapp.svg",
                       ),
                     ],
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 48.h),
+                  padding: EdgeInsets.only(top: Style.defautlVerticalPadding),
                   child: desc(),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 40.h),
+                  padding: EdgeInsets.symmetric(
+                    vertical: Style.defautlVerticalPadding,
+                  ),
                   child: commentTitle(context),
                 ),
                 commentForActivity(),
@@ -82,7 +85,7 @@ class BlogDetailPage extends StatelessWidget {
       children: [
         titleForActivity("Yorumlar :"),
         Padding(
-          padding: EdgeInsets.only(left: 24.w),
+          padding: EdgeInsets.only(left: Style.defautlHorizontalPadding / 2),
           child: Text(
             "Toplam 12 Yorum",
             style: TextStyle(
@@ -96,11 +99,11 @@ class BlogDetailPage extends StatelessWidget {
           onTap: () async {
             commentMenu(context);
           },
-          child: const Text(
+          child: Text(
             "Tüm Yorumlar",
             style: TextStyle(
               decoration: TextDecoration.underline,
-              fontSize: 12,
+              fontSize: 40.sp,
             ),
           ),
         ),
@@ -112,7 +115,7 @@ class BlogDetailPage extends StatelessWidget {
     return Text(
       title,
       style: TextStyle(
-        fontSize: 64.sp,
+        fontSize: Style.bigTitleTextSize,
         fontWeight: FontWeight.w500,
       ),
     );
@@ -123,8 +126,8 @@ class BlogDetailPage extends StatelessWidget {
       "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s" *
           20,
       style: TextStyle(
-        fontSize: 48.sp,
-        color: Colors.black.withOpacity(0.6),
+        fontSize: Style.defaultTextSize,
+        color: Style.textGreyColor,
       ),
     );
   }
@@ -133,7 +136,7 @@ class BlogDetailPage extends StatelessWidget {
     return Text(
       "Mantar Avcılığı İçin Gerekli Ekipmanlar",
       style: TextStyle(
-        fontSize: 64.sp,
+        fontSize: Style.bigTitleTextSize,
         fontWeight: FontWeight.w500,
       ),
     );
@@ -143,58 +146,61 @@ class BlogDetailPage extends StatelessWidget {
     return Row(
       children: [
         Container(
-          margin: EdgeInsets.symmetric(vertical: 24.h),
+          margin:
+              EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding / 2),
           width: 800.w,
           child: TextFormField(
             decoration: InputDecoration(
               hintText: "Yorum Yap",
               hintStyle: TextStyle(
-                color: Colors.black.withOpacity(0.3),
+                color: Style.textColor.withOpacity(0.3),
               ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 48.w),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: Style.defautlHorizontalPadding,
+              ),
               fillColor: Colors.white,
               filled: true,
               border: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Style.textColor.withOpacity(0.05),
                   width: 1,
                 ),
-                borderRadius: BorderRadius.circular(24.r),
+                borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
               ),
               errorBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Colors.black.withOpacity(0.05),
                   width: 1,
                 ),
-                borderRadius: BorderRadius.circular(24.r),
+                borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
               ),
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Colors.black.withOpacity(0.05),
                   width: 1,
                 ),
-                borderRadius: BorderRadius.circular(24.r),
+                borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
               ),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Colors.black.withOpacity(0.05),
                   width: 1,
                 ),
-                borderRadius: BorderRadius.circular(24.r),
+                borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
               ),
               disabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Colors.black.withOpacity(0.05),
                   width: 1,
                 ),
-                borderRadius: BorderRadius.circular(24.r),
+                borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Colors.black.withOpacity(0.05),
                   width: 1,
                 ),
-                borderRadius: BorderRadius.circular(24.r),
+                borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
               ),
             ),
           ),
@@ -203,7 +209,7 @@ class BlogDetailPage extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.all(24.r),
             decoration: const BoxDecoration(
-              color: Color(0xffF4A261),
+              color: Style.secondaryColor,
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.keyboard_arrow_right),
@@ -218,28 +224,31 @@ class BlogDetailPage extends StatelessWidget {
       top: 130.h,
       right: 48.w,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+        padding: EdgeInsets.symmetric(
+          vertical: Style.defautlVerticalPadding / 2,
+          horizontal: Style.defautlHorizontalPadding / 2,
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24.r),
+          borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
-          children: const [
+          children: [
             Text(
               "15 Ağustos 2022",
               style: TextStyle(
-                color: Color(0xffF4A261),
-                fontSize: 13,
+                color: const Color(0xffF4A261),
+                fontSize: 40.sp,
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 2),
+              padding: EdgeInsets.only(top: 8.h),
               child: Text(
                 "Ömer Üngör",
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 14,
+                  fontSize: 40.sp,
                 ),
               ),
             ),
@@ -274,8 +283,8 @@ class BlogDetailPage extends StatelessWidget {
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(48.r),
-          topRight: Radius.circular(48.r),
+          topLeft: Radius.circular(Style.defaultRadiusSize),
+          topRight: Radius.circular(Style.defaultRadiusSize),
         ),
       ),
       builder: (context) {
@@ -288,7 +297,9 @@ class BlogDetailPage extends StatelessWidget {
             return SingleChildScrollView(
               controller: scrollController,
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 24.w),
+                padding: EdgeInsets.symmetric(
+                    vertical: Style.defautlVerticalPadding / 2,
+                    horizontal: Style.defautlHorizontalPadding / 2),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -303,13 +314,15 @@ class BlogDetailPage extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 48.w, top: 72.h),
+                      padding: EdgeInsets.only(
+                          left: Style.defautlHorizontalPadding,
+                          top: Style.defautlVerticalPadding * 2),
                       child: Row(
                         children: [
                           Text(
                             "12 Yorum",
                             style: TextStyle(
-                              fontSize: 64.sp,
+                              fontSize: Style.bigTitleTextSize,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -329,11 +342,12 @@ class BlogDetailPage extends StatelessWidget {
                           title: Row(
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(right: 24.w),
+                                padding: EdgeInsets.only(
+                                    right: Style.defautlHorizontalPadding / 2),
                                 child: Text(
                                   "Emir Gözcü",
                                   style: TextStyle(
-                                    fontSize: 48.sp,
+                                    fontSize: Style.defaultTextSize,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -369,25 +383,6 @@ class BlogDetailPage extends StatelessWidget {
           },
         );
       },
-    );
-  }
-
-  Widget cardForSocialMedia(String iconSvg) {
-    return Container(
-      margin: EdgeInsets.only(right: 24.w),
-      padding: EdgeInsets.symmetric(horizontal: 36.w, vertical: 36.h),
-      decoration: BoxDecoration(
-        border: Border.all(
-          width: 1,
-          color: const Color(0xffF4A261).withOpacity(0.3),
-        ),
-        borderRadius: BorderRadius.circular(24.r),
-      ),
-      child: SvgPicture.asset(
-        iconSvg,
-        color: Colors.black.withOpacity(0.8),
-        height: 64.h,
-      ),
     );
   }
 }

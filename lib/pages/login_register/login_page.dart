@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/pages/login_register/components/big_title.dart';
 import 'package:fungimobil/pages/login_register/components/button_login.dart';
 import 'package:fungimobil/pages/login_register/components/desc_title.dart';
-import 'package:fungimobil/pages/login_register/components/login_text_fiedl.dart';
+import 'package:fungimobil/widgets/appbar.dart';
+import 'package:fungimobil/widgets/text_field.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -12,12 +14,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF9F9F9),
-      appBar: AppBar(
-        backgroundColor: const Color(0xffF9F9F9),
-        elevation: 0,
-        automaticallyImplyLeading: false,
-      ),
+      appBar: getAppBar("Giriş Yap"),
       body: buildLoginPageBody(),
     );
   }
@@ -25,7 +22,7 @@ class LoginPage extends StatelessWidget {
   Widget buildLoginPageBody() {
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 80.w, vertical: 16),
+        padding: Style.defaultPagePadding,
         child: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -43,8 +40,8 @@ class LoginPage extends StatelessWidget {
                   size: 72.sp,
                 ),
               ),
-              const LoginTextField(hintText: "Mail Adresi"),
-              const LoginTextField(hintText: "Şifre"),
+              const CustomTextField(hintText: "Mail Adresi"),
+              const CustomTextField(hintText: "Şifre"),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 40.h),
                 child: forgetPassTitle(),
@@ -106,13 +103,13 @@ class LoginPage extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(
           width: 1,
-          color: const Color(0xffF4A261).withOpacity(0.3),
+          color: Style.secondaryColor.withOpacity(0.3),
         ),
-        borderRadius: BorderRadius.circular(24.r),
+        borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
       ),
       child: SvgPicture.asset(
         iconSvg,
-        color: Colors.black.withOpacity(0.8),
+        color: Style.textColor.withOpacity(0.8),
       ),
     );
   }
@@ -124,11 +121,12 @@ class LoginPage extends StatelessWidget {
         Expanded(
           child: Container(
             height: 6.h,
-            color: Colors.black.withOpacity(0.15),
+            color: Style.textColor.withOpacity(0.15),
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 48.w),
+          padding:
+              EdgeInsets.symmetric(horizontal: Style.defautlHorizontalPadding),
           child: Text(
             "ya da devam et",
             style: TextStyle(
@@ -139,7 +137,7 @@ class LoginPage extends StatelessWidget {
         Expanded(
           child: Container(
             height: 6.h,
-            color: Colors.black.withOpacity(0.15),
+            color: Style.textColor.withOpacity(0.15),
           ),
         ),
       ],
