@@ -19,4 +19,10 @@ class Style {
   static EdgeInsets defaultPagePadding = EdgeInsets.all(48.r);
   static double defaultTextSize = 48.sp;
   static double bigTitleTextSize = 64.sp;
+
+  static BoxShadow defaultShadow = BoxShadow(
+    blurRadius: 10,
+    spreadRadius: 6,
+    color: Colors.black.withOpacity(0.03),
+  );
 }

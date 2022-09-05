@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/pages/login_register/components/button_login.dart';
 import 'package:fungimobil/widgets/card_for_social_media.dart';
-import 'package:fungimobil/widgets/text_field.dart';
+import 'package:fungimobil/widgets/custom_text_field.dart';
 
 class ActivityDetailPage extends StatefulWidget {
   const ActivityDetailPage({Key? key}) : super(key: key);
@@ -378,7 +377,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
               vertical: Style.defautlVerticalPadding / 2,
             ),
             width: 800.w,
-            child: const CustomTextField(hintText: "Yorum Yap")),
+            child: CustomTextField(hintText: "Yorum Yap")),
         Expanded(
           child: Container(
             padding: EdgeInsets.all(24.r),
@@ -592,10 +591,10 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                       TextStyle(fontSize: 62.sp, fontWeight: FontWeight.bold),
                 ),
               ),
-              const CustomTextField(hintText: "İsim Soyisim"),
-              const CustomTextField(hintText: "Mail Adresi"),
-              const CustomTextField(hintText: "Telefon Numarası"),
-              const CustomTextField(hintText: "Kişi Sayısı"),
+              CustomTextField(hintText: "İsim Soyisim"),
+              CustomTextField(hintText: "Mail Adresi"),
+              CustomTextField(hintText: "Telefon Numarası"),
+              CustomTextField(hintText: "Kişi Sayısı"),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [

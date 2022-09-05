@@ -4,7 +4,7 @@ import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/pages/login_register/components/button_login.dart';
 import 'package:fungimobil/widgets/appbar.dart';
-import 'package:fungimobil/widgets/text_field.dart';
+import 'package:fungimobil/widgets/custom_text_field.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -31,10 +31,12 @@ class ProfilePage extends StatelessWidget {
                       EdgeInsets.only(bottom: Style.defautlVerticalPadding / 2),
                   padding: EdgeInsets.all(100.r),
                   decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 1,
-                      color: Style.secondaryColor.withOpacity(0.4),
-                    ),
+                    boxShadow: [Style.defaultShadow],
+                    color: Colors.white,
+                    // border: Border.all(
+                    //   width: 1,
+                    //   color: Style.secondaryColor.withOpacity(0.4),
+                    // ),
                     shape: BoxShape.circle,
                   ),
                   child: Text(
@@ -132,6 +134,7 @@ class ProfilePage extends StatelessWidget {
           horizontal: Style.defautlHorizontalPadding / 2,
         ),
         decoration: BoxDecoration(
+          boxShadow: [Style.defaultShadow],
           color: Colors.white,
           borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
         ),
@@ -171,10 +174,12 @@ class ProfilePage extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.all(32.r),
             decoration: BoxDecoration(
-              border: Border.all(
-                width: 1,
-                color: Style.secondaryColor.withOpacity(0.4),
-              ),
+              boxShadow: [Style.defaultShadow],
+              color: Colors.white,
+              // border: Border.all(
+              //   width: 1,
+              //   color: Style.secondaryColor.withOpacity(0.4),
+              // ),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.edit),
@@ -225,14 +230,14 @@ class ProfilePage extends StatelessWidget {
                     ],
                   ),
                 ),
-                const CustomTextField(hintText: "İsim Soyisim"),
-                const CustomTextField(hintText: "Mail Adresi"),
-                const CustomTextField(hintText: "Telefon Numarası"),
-                const CustomTextField(hintText: "Şehir"),
-                const CustomTextField(hintText: "Meslek"),
-                const CustomTextField(hintText: "Hakkımda"),
-                const CustomTextField(hintText: "Şifre"),
-                const CustomTextField(hintText: "Şifre Tekrar"),
+                CustomTextField(hintText: "İsim Soyisim"),
+                CustomTextField(hintText: "Mail Adresi"),
+                CustomTextField(hintText: "Telefon Numarası"),
+                CustomTextField(hintText: "Şehir"),
+                CustomTextField(hintText: "Meslek"),
+                CustomTextField(hintText: "Hakkımda"),
+                CustomTextField(hintText: "Şifre"),
+                CustomTextField(hintText: "Şifre Tekrar"),
                 const ButtonForLogin(title: "Güncelle"),
               ],
             ),

@@ -5,7 +5,7 @@ import 'package:fungimobil/pages/login_register/components/big_title.dart';
 import 'package:fungimobil/pages/login_register/components/button_login.dart';
 import 'package:fungimobil/pages/login_register/components/desc_title.dart';
 import 'package:fungimobil/widgets/appbar.dart';
-import 'package:fungimobil/widgets/text_field.dart';
+import 'package:fungimobil/widgets/custom_text_field.dart';
 
 class ForgetPasswordPage extends StatelessWidget {
   const ForgetPasswordPage({Key? key}) : super(key: key);
@@ -45,7 +45,7 @@ class ForgetPasswordPage extends StatelessWidget {
                 size: 56.sp,
               ),
             ),
-            const CustomTextField(hintText: "Mail Adresi"),
+            CustomTextField(hintText: "Mail Adresi"),
             const ButtonForLogin(title: "Gönder"),
           ],
         ),

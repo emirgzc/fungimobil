@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/pages/login_register/components/button_login.dart';
 import 'package:fungimobil/widgets/appbar.dart';
-import 'package:fungimobil/widgets/text_field.dart';
+import 'package:fungimobil/widgets/custom_text_field.dart';
 
 class ActivityCommentList extends StatelessWidget {
   const ActivityCommentList({Key? key}) : super(key: key);
@@ -36,19 +36,21 @@ class ActivityCommentList extends StatelessWidget {
 
   Widget commentCard(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.only(
-        bottom: 12,
-        top: 8,
-        left: 8,
-        right: 8,
+      margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding / 2),
+      padding: EdgeInsets.only(
+        bottom: Style.defautlVerticalPadding / 2,
+        top: Style.defautlVerticalPadding / 2,
+        left: Style.defautlHorizontalPadding / 2,
+        right: Style.defautlHorizontalPadding / 2,
       ),
       decoration: BoxDecoration(
+        boxShadow: [Style.defaultShadow],
+        color: Colors.white,
         border: Border.all(
           width: 1,
-          color: Colors.black.withOpacity(0.1),
+          color: Style.textColor.withOpacity(0.1),
         ),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,18 +58,19 @@ class ActivityCommentList extends StatelessWidget {
           itemComment("Yorum : ",
               "Çok başarılı bir etkinlikti ellerinize sağlık, kolay gelsin teşekkürler."),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: EdgeInsets.symmetric(
+                vertical: Style.defautlVerticalPadding / 2),
             child: itemComment("Yorum Tarihi : ", "21.08.2022"),
           ),
           itemComment(
               "Etkinlik : ", "Mantar Avı ve Gastronomisi Etkinliği (Kamplı)"),
           Padding(
-            padding: const EdgeInsets.only(top: 10),
+            padding: EdgeInsets.only(top: Style.defautlVerticalPadding / 2),
             child: Row(
               children: [
-                ontapForItem("Onay Bekliyor", Colors.red, () {}),
+                ontapForItem("Onay Bekliyor", Style.dangerColor, () {}),
                 ontapForItem("Güncelle", Colors.blue, () => editPop(context)),
-                ontapForItem("Sil", Colors.amber, () {}),
+                ontapForItem("Sil", Style.secondaryColor, () {}),
               ],
             ),
           ),
@@ -117,9 +120,9 @@ class ActivityCommentList extends StatelessWidget {
                     ],
                   ),
                 ),
-                const CustomTextField(hintText: "İsim Soyisim"),
-                const CustomTextField(hintText: "Mail Adresi"),
-                const CustomTextField(hintText: "Yorum"),
+                CustomTextField(hintText: "İsim Soyisim"),
+                CustomTextField(hintText: "Mail Adresi"),
+                CustomTextField(hintText: "Yorum"),
                 const ButtonForLogin(title: "Güncelle"),
               ],
             ),
@@ -133,14 +136,14 @@ class ActivityCommentList extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(right: 8),
-        padding: const EdgeInsets.symmetric(
-          vertical: 4,
-          horizontal: 8,
+        margin: EdgeInsets.only(right: Style.defautlHorizontalPadding / 2),
+        padding: EdgeInsets.symmetric(
+          vertical: Style.defautlVerticalPadding / 4,
+          horizontal: Style.defautlHorizontalPadding / 2,
         ),
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(Style.defaultRadiusSize / 2),
         ),
         child: Text(
           title,

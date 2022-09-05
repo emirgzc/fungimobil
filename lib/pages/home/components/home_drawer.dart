@@ -1,155 +1,96 @@
 import 'package:flutter/material.dart';
+import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
 
-class DrawerItemModel {
-  String title;
-  String route;
-  IconData icon;
-
-  DrawerItemModel(this.title, this.route, this.icon);
-}
-
 class HomeDrawer extends StatelessWidget {
-  HomeDrawer({Key? key}) : super(key: key);
-
-  bool userExists = true;
-
-  late final List<DrawerItemModel> menuItemList;
+  const HomeDrawer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    menuItemList = [
-      DrawerItemModel('Ana Sayfa', '/home', Icons.home_outlined),
-      DrawerItemModel('Hakkımızda', '/about', Icons.info_outline),
-      DrawerItemModel('Organizasyonumuz', '/organization', Icons.ac_unit_outlined),
-      DrawerItemModel('Galeri', '/gallery', Icons.photo_outlined),
-      DrawerItemModel('Etkinlikler', '/activities', Icons.local_activity_outlined),
-      DrawerItemModel('Blog', '/blog', Icons.newspaper),
-      DrawerItemModel('Sponsorlar', '/sponsor', Icons.handshake_outlined),
-      DrawerItemModel('Alışveriş', '/shop', Icons.shopping_cart_outlined),
-      DrawerItemModel('İletişim', '/contact', Icons.contact_support_outlined),
-      if(userExists) DrawerItemModel('Profil', '/profile', Icons.person_outline),
-      if(!userExists) DrawerItemModel('Çıkış Yap', '/sigOut', Icons.exit_to_app_outlined),
-    ];
     return Container(
-      height: double.infinity,
-      color: Colors.white,
+      color: Style.primaryColor,
       width: 300,
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          _buildProfile(context),
-          // SizedBox(height: Style.defaultPadding*2,),
-          Expanded(
-            child: Scrollbar(
-              thickness: 4,
-              trackVisibility: true,
-              child: ListView.separated(
-                 padding: EdgeInsets.symmetric(vertical: Style.defaultPadding*3),
-                  scrollDirection: Axis.vertical,
-                  physics: PageScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    var model = menuItemList[index];
-
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: Style.defaultPadding, vertical: Style.defaultPadding / 2),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Icon(
-                            model.icon,
-                            color: Colors.deepOrange.shade800,
-                          ),
-                          SizedBox(
-                            width: Style.defaultPadding,
-                          ),
-                          Expanded(
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                  child: Text(
-                            model.title,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ))),
-                        ],
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              width: double.infinity,
+              color: Style.secondaryColor,
+              child: DrawerHeader(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: const BoxDecoration(
+                        color: Style.primaryColor,
+                        shape: BoxShape.circle,
                       ),
-                    );
-                    // return ListTile(
-                    //   minVerticalPadding: 0,
-                    //   leading: Icon(model.icon, color: Colors.deepOrange.shade800,),
-                    //   title: Text(model.title, style: Theme.of(context).textTheme.titleMedium,),
-                    // );
-                  },
-                  separatorBuilder: (context, index) {
-                    return Divider();
-                  },
-                  itemCount: menuItemList.length),
+                      child: Image.asset(
+                        'assets/images/logo_white_notbg.png',
+                        height: 50,
+                        color: Style.textColor,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        'Furkan Yağmur',
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                      ),
+                    ),
+                    Text(
+                      '0 555 636 54 65',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    Text(
+                      'deneme@gmail.com',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
             ),
-          )
-        ],
+            drawerItem(context, "Ana Sayfa", Routes.homePage, Icons.home),
+            drawerItem(context, "Hakkımızda", Routes.aboutPage, Icons.info),
+            drawerItem(context, "Organizasyonumuz", Routes.servicePage,
+                Icons.room_service_rounded),
+            drawerItem(
+                context, "Galeri", Routes.galeryPage, Icons.photo_camera),
+            drawerItem(context, "Etkinlikler", Routes.activityPage,
+                Icons.local_activity),
+            drawerItem(context, "Blog", Routes.blogPage,
+                Icons.pending_actions_outlined),
+            drawerItem(context, "Sponsorlarımız", Routes.sponsorPage,
+                Icons.sports_handball_rounded),
+            drawerItem(
+                context, "İletişim", Routes.contactPage, Icons.contact_mail),
+            drawerItem(
+                context, "Çıkış Yap", Routes.aboutPage, Icons.logout_outlined),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildProfile(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        //  TODO: Navigate ProfilePage
-      },
-      child: Material(
-        color: Colors.deepOrange,
-        child: Card(
-          margin: EdgeInsets.all(Style.defaultPadding),
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(Style.defaultPadding),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(1000),
-                  child: Material(
-                      color: Colors.deepOrange.shade500,
-                      child: Image.asset(
-                        'assets/images/logo_white_notbg.png',
-                        height: 50,
-                      )),
-                ),
-                SizedBox(
-                  width: Style.defaultPadding,
-                ),
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Furkan Yağmur',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w500,
-                            ),
-                      ),
-                      SizedBox(
-                        height: Style.defaultPadding / 5,
-                      ),
-                      Text(
-                        'Öğrenci',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+  Column drawerItem(
+      BuildContext context, String title, String routes, IconData icon) {
+    return Column(
+      children: [
+        ListTile(
+          leading: Icon(icon),
+          dense: true,
+          title: Text(title),
+          onTap: () {
+            Navigator.pushNamed(context, routes);
+          },
         ),
-      ),
+        const Divider(),
+      ],
     );
   }
 }

@@ -34,7 +34,7 @@ class SponsorPage extends StatelessWidget {
 
   Widget sponsorCard() {
     return Container(
-      margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding * (3 / 2)),
+      margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding),
       child: Column(
         children: [
           SizedBox(
@@ -65,6 +65,12 @@ class SponsorPage extends StatelessWidget {
             style: TextStyle(
               color: Colors.blue.withOpacity(0.7),
             ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: Style.defaultPadding),
+            height: 1,
+            width: double.infinity,
+            color: Style.secondaryColor.withOpacity(0.2),
           ),
         ],
       ),

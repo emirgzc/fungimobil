@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/widgets/appbar.dart';
 
@@ -19,7 +20,7 @@ class ActivityPage extends StatelessWidget {
               ...List.generate(
                 4,
                 (index) {
-                  return activityCard();
+                  return activityCard(context);
                 },
               ),
             ],
@@ -29,18 +30,30 @@ class ActivityPage extends StatelessWidget {
     );
   }
 
-  Widget activityCard() {
-    return Container(
-      margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding),
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          imageForActivity(),
-          title(),
-          desc(),
-          detailDateandDirector(),
-        ],
+  Widget activityCard(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, Routes.activityDetailPage);
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding),
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            imageForActivity(),
+            title(),
+            desc(),
+            detailDateandDirector(),
+            Container(
+              margin: const EdgeInsets.symmetric(
+                  vertical: Style.defaultPadding / 3),
+              height: 1,
+              width: double.infinity,
+              color: Style.secondaryColor.withOpacity(0.2),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -118,26 +131,33 @@ class ActivityPage extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding / 2),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
-            padding: EdgeInsets.only(right: Style.defautlHorizontalPadding / 4),
-            child: Icon(
-              Icons.person_outline_sharp,
-              color: Style.textGreyColor,
-              size: Style.defaultTextSize,
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Icon(
+                Icons.people_alt_outlined,
+                size: Style.defautlVerticalPadding,
+                color: Style.textGreyColor,
+              ),
+              Padding(
+                padding:
+                    EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
+                child: Text(
+                  "Ömer Üngör",
+                  style: TextStyle(
+                    overflow: TextOverflow.ellipsis,
+                    color: Style.textGreyColor,
+                  ),
+                ),
+              ),
+            ],
           ),
-          Text(
-            "Ömer Üngör",
-            style: TextStyle(
-              color: Style.textGreyColor,
-            ),
-          ),
-          const Spacer(),
           const Text(
             "Son Kayıt : 12 Ağustos 2022",
             style: TextStyle(
+              overflow: TextOverflow.ellipsis,
               color: Style.dangerColor,
             ),
           ),

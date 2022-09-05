@@ -3,16 +3,25 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fungimobil/constants/style.dart';
 
 class CustomTextField extends StatelessWidget {
-  const CustomTextField({Key? key, required this.hintText}) : super(key: key);
+  CustomTextField(
+      {Key? key, required this.hintText, this.suffixIcon, this.prefixIcon})
+      : super(key: key);
   final String hintText;
+  Icon? prefixIcon;
+  Icon? suffixIcon;
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+        boxShadow: [Style.defaultShadow],
+      ),
       margin: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding / 2),
       height: 160.h,
       child: TextFormField(
         decoration: InputDecoration(
+          prefixIcon: prefixIcon,
+          suffixIcon: suffixIcon,
           hintText: hintText,
           hintStyle: TextStyle(
             color: Style.textColor.withOpacity(0.3),

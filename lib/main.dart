@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
@@ -20,6 +21,12 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           theme: ThemeData(
+            appBarTheme: const AppBarTheme(
+              centerTitle: true,
+              backgroundColor: Style.primaryColor,
+              elevation: 0,
+              foregroundColor: Style.textColor,
+            ),
             scaffoldBackgroundColor: Style.primaryColor,
           ),
           debugShowCheckedModeBanner: false,

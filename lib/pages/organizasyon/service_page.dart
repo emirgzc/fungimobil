@@ -94,6 +94,13 @@ class ServicePage extends StatelessWidget {
               ),
             ),
           ),
+          Container(
+            margin:
+                const EdgeInsets.symmetric(vertical: Style.defaultPadding / 3),
+            height: 1,
+            width: double.infinity,
+            color: Style.secondaryColor.withOpacity(0.2),
+          ),
         ],
       ),
     );
