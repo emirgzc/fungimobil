@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fungimobil/main.dart';
 import 'package:fungimobil/pages/about/about_page.dart';
 import 'package:fungimobil/pages/about/team_page.dart';
 import 'package:fungimobil/pages/activity/activity_page.dart';
@@ -10,7 +11,6 @@ import 'package:fungimobil/pages/galery/galery_page.dart';
 import 'package:fungimobil/pages/home/home_page.dart';
 import 'package:fungimobil/pages/login_register/forget_password_page.dart';
 import 'package:fungimobil/pages/login_register/login_page.dart';
-import 'package:fungimobil/main.dart';
 import 'package:fungimobil/pages/login_register/register_page.dart';
 import 'package:fungimobil/pages/organizasyon/service_page.dart';
 import 'package:fungimobil/pages/profile/activity_comment_list.dart';
@@ -18,6 +18,9 @@ import 'package:fungimobil/pages/profile/blog_comment_list.dart';
 import 'package:fungimobil/pages/profile/profile_page.dart';
 import 'package:fungimobil/pages/profile/record_list.dart';
 import 'package:fungimobil/pages/sponsor/sponsor_page.dart';
+import 'package:provider/provider.dart';
+
+import '../viewmodel/table_view_model.dart';
 
 class Routes {
   static const String root = '/';
@@ -47,10 +50,10 @@ class Routes {
         page = const DemoPage();
         break;
       case loginPage:
-        page = const LoginPage();
+        page = LoginPage();
         break;
       case registerPage:
-        page = const RegisterPage();
+        page = ChangeNotifierProvider(create: (_) => TableViewModel(), child: RegisterPage());
         break;
       case forgetPassPage:
         page = const ForgetPasswordPage();

@@ -1,21 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fungimobil/constants/handle_exceptions.dart';
+import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/pages/login_register/components/big_title.dart';
 import 'package:fungimobil/pages/login_register/components/button_login.dart';
 import 'package:fungimobil/pages/login_register/components/desc_title.dart';
+import 'package:fungimobil/viewmodel/auth_viewmodel.dart';
 import 'package:fungimobil/widgets/appbar.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
+import 'package:fungimobil/widgets/loading_widget.dart';
+import 'package:provider/provider.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class LoginPage extends StatefulWidget {
+  LoginPage({Key? key}) : super(key: key);
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  String email = '', password = '';
+
+  AuthViewModel? _authProvider;
+
+  // @override
+  // void dispose() {
+  //   _authProvider?.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
+    _authProvider = context.watch<AuthViewModel>();
     return Scaffold(
       appBar: getAppBar("Giriş Yap"),
-      body: buildLoginPageBody(),
+      body: Stack(
+        children: [
+          buildLoginPageBody(),
+          if (_authProvider!.status == AuthVMStatus.busy) const LoadingWidget(),
+        ],
+      ),
     );
   }
 
@@ -40,13 +66,26 @@ class LoginPage extends StatelessWidget {
                   size: 72.sp,
                 ),
               ),
-              CustomTextField(hintText: "Mail Adresi"),
-              CustomTextField(hintText: "Şifre"),
+              CustomTextField(
+                hintText: "Mail Adresi",
+                onChanged: (value) {
+                  if (value != null) email = value;
+                },
+              ),
+              CustomTextField(
+                hintText: "Şifre",
+                onChanged: (value) {
+                  if (value != null) password = value;
+                },
+              ),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 40.h),
                 child: forgetPassTitle(),
               ),
-              const ButtonForLogin(title: "Giriş Yap"),
+              ButtonForLogin(
+                title: "Giriş Yap",
+                onTap: _login,
+              ),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 64.h),
                 child: orContinue(),
@@ -125,8 +164,7 @@ class LoginPage extends StatelessWidget {
           ),
         ),
         Padding(
-          padding:
-              EdgeInsets.symmetric(horizontal: Style.defautlHorizontalPadding),
+          padding: EdgeInsets.symmetric(horizontal: Style.defautlHorizontalPadding),
           child: Text(
             "ya da devam et",
             style: TextStyle(
@@ -158,5 +196,17 @@ class LoginPage extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  _login() {
+    try {
+      _authProvider!.login(email, password).then((value) => _navigateHome());
+    } catch (e) {
+      HandleExceptions.handle(exception: e, context: context, onDismiss: (context) {});
+    }
+  }
+
+  _navigateHome(){
+    Navigator.pushNamed(context, Routes.homePage);
   }
 }
