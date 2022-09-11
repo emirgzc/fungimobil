@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:fungimobil/model/single_record_model.dart';
 import 'package:http/http.dart' as http;
 
 import '../constants/exceptions.dart';
@@ -9,8 +10,9 @@ import '../model/table_model.dart' as table;
 
 class ApiClient {
   final String _baseUrl = 'https://api.fungiturkey.org/api';
-  // final String _dbName = '/fungitu2_fungiturkey';
-  final String _baseUrlWithDb = 'https://api.fungiturkey.org/api/fungitu2_Simple';
+  final String _dbName = '/fungitu2_fungiturkey';
+  final String _userDbName = '/fungitu2_Simple';
+  final String _baseUrlWithDb = 'https://api.fungiturkey.org/api/fungitu2_fungiturkey';
 
   Future<String> login(String email, String password) async {
     try {
@@ -85,15 +87,17 @@ class ApiClient {
     required String token,
     required int page,
     required int limit,
-    Map filter = const {},
+    required Map filter,
   }) async {
     try {
+      filter = Map.of(filter);
+      filter['status'] = 1;
       final Map<String, dynamic> requestBody = {
         'page': page,
         'limit': limit,
         'filter': filter,
       };
-      String url = '$_baseUrlWithDb/$tableName';
+      String url = '$_baseUrl/fungitu2_fungiturkey/$tableName';
       debugPrint('apiUrl ::: $url');
       debugPrint('params : $requestBody');
       final response = await http.post(
@@ -104,6 +108,8 @@ class ApiClient {
         },
         body: jsonEncode(requestBody),
       );
+
+      debugPrint('Response ::: ${response.body}');
 
       Map<String, dynamic> json = jsonDecode(response.body);
       if (_isRequestHaveMessage(json)) {
@@ -127,9 +133,10 @@ class ApiClient {
   Future<Map<String, table.Column>> tableCreate({
     required String tableName,
     required String token,
+    bool isUserDb = false,
   }) async {
     try {
-      String url = '$_baseUrlWithDb/$tableName/create';
+      String url = '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/create';
       debugPrint('apiUrl ::: $url');
       final response = await http.post(
         Uri.parse(url),
@@ -153,6 +160,44 @@ class ApiClient {
         return columns;
       } else {
         debugPrint('ApiClient tableCreate ERROR ::: ${response.body}');
+        throw ApiException();
+      }
+    } catch (e) {
+      if (e is SocketException) throw ApiException();
+      rethrow;
+    }
+  }
+
+  Future<SingleRecordModel> fetchRecord({
+    required String tableName,
+    required int id,
+    required String token,
+    bool isUserDb = false,
+  }) async {
+    try {
+      String url = '$_baseUrlWithDb/$tableName/$id/get';
+      debugPrint('apiUrl ::: $url');
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'token': token,
+        },
+      );
+
+      debugPrint('Response ::: ${response.body}');
+
+      Map<String, dynamic> json = jsonDecode(response.body);
+      if (_isRequestHaveMessage(json)) {
+        _throwError(json);
+      }
+
+      if (response.statusCode == 200) {
+        SingleRecordModel record = SingleRecordModel.fromJson(json);
+        debugPrint('ApiClient fetchRecord SUCCESS');
+        return record;
+      } else {
+        debugPrint('ApiClient fetchRecord ERROR ::: ${response.body}');
         throw ApiException();
       }
     } catch (e) {

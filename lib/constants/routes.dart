@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fungimobil/main.dart';
 import 'package:fungimobil/pages/about/about_page.dart';
 import 'package:fungimobil/pages/about/team_page.dart';
 import 'package:fungimobil/pages/activity/activity_page.dart';
@@ -9,6 +8,7 @@ import 'package:fungimobil/pages/blog_detail/blog_detail_page.dart';
 import 'package:fungimobil/pages/contact/contact_page.dart';
 import 'package:fungimobil/pages/galery/galery_page.dart';
 import 'package:fungimobil/pages/home/home_page.dart';
+import 'package:fungimobil/pages/landing_page.dart';
 import 'package:fungimobil/pages/login_register/forget_password_page.dart';
 import 'package:fungimobil/pages/login_register/login_page.dart';
 import 'package:fungimobil/pages/login_register/register_page.dart';
@@ -47,7 +47,7 @@ class Routes {
     late Widget page;
     switch (settings.name) {
       case '/':
-        page = const DemoPage();
+        page = const LandingPage();
         break;
       case loginPage:
         page = LoginPage();
@@ -89,7 +89,7 @@ class Routes {
         page = const ContactPage();
         break;
       case homePage:
-        page = HomePage();
+        page = ChangeNotifierProvider(create: (_) => TableViewModel(), child: HomePage());
         break;
       case profilePage:
         page = const ProfilePage();

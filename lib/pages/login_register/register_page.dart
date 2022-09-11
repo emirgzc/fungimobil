@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/routes.dart';
+import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/model/table_model.dart' as table;
 import 'package:fungimobil/pages/login_register/components/big_title.dart';
 import 'package:fungimobil/pages/login_register/components/button_login.dart';
@@ -31,7 +32,7 @@ class _RegisterPageState extends State<RegisterPage> {
     data = {};
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) async {
       try {
-        createData = await Provider.of<TableViewModel>(context, listen: false).tableCreate('users');
+        createData = await Provider.of<TableViewModel>(context, listen: false).tableCreate(TableName.users.name, isUserDb: true);
         setState(() {});
       } catch (e) {
         HandleExceptions.handle(exception: e, context: context);

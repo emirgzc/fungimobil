@@ -70,7 +70,7 @@ class TableModel {
     required this.status,
   });
 
-  final List<Map<String, String>>? data;
+  final List<Map<String, dynamic>>? data;
   final Map<String, Column>? columns;
   final int? page;
   final int? count;
@@ -83,7 +83,7 @@ class TableModel {
   factory TableModel.fromJson(Map<String, dynamic> json) => TableModel(
         data: json["data"] == null
             ? null
-            : List<Map<String, String>>.from(json["data"].map((x) => x as Map<String, String>)),
+            : List<Map<String, dynamic>>.from(json["data"].map((x) => x as Map<String, dynamic>)),
         columns: json["columns"] == null
             ? null
             : Map.from(json["columns"]).map((k, v) => MapEntry<String, Column>(k, Column.fromJson(v))),

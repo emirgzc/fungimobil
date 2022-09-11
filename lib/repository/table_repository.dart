@@ -1,4 +1,3 @@
-import 'package:fungimobil/constants/exceptions.dart';
 import 'package:fungimobil/constants/locator.dart';
 import 'package:fungimobil/data/api_client.dart';
 import 'package:fungimobil/data/preferences_helper.dart';
@@ -8,13 +7,32 @@ class TableRepository {
   final ApiClient _apiClient = locator<ApiClient>();
   final PreferencesHelper _preferencesHelper = locator<PreferencesHelper>();
 
-  Future<Map<String, Column>> tableCreate(String tableName, {bool? tokenless}) async {
+  Future<TableModel> fetchTable({
+    required String tableName,
+    required int page,
+    required int limit,
+    Map filter = const {},
+  }) async {
     try {
-      String? token = (tokenless ?? false) ? '' : await _preferencesHelper.getUserToken();
-      if (token == null) {
-        throw CustomException.fromApiMessage('Kullanıcı verileri alınamadı!');
-      }
-      var result = await _apiClient.tableCreate(tableName: tableName, token: token);
+      String token = await _preferencesHelper.getUserToken() ?? '';
+
+      TableModel? tableModel = await _apiClient.fetchTable(
+        tableName: tableName,
+        token: token,
+        page: page,
+        limit: limit,
+        filter: filter,
+      );
+      return tableModel;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, Column>> tableCreate(String tableName, {bool isUserDb = false}) async {
+    try {
+      String token = await _preferencesHelper.getUserToken() ?? '';
+      var result = await _apiClient.tableCreate(tableName: tableName, token: token, isUserDb: isUserDb);
       return result;
     } catch (e) {
       rethrow;
