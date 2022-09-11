@@ -342,7 +342,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> with TickerProv
                 Text(
                   priceIntegerSection,
                   style: TextStyle(
-                    fontSize: price.length > 3 ? 80.sp : 96.sp,
+                    fontSize: priceIntegerSection.length > 3 ? 80.sp : 96.sp,
                     fontWeight: FontWeight.w500,
                     color: Style.secondaryColor,
                   ),
