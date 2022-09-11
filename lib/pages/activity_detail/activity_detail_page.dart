@@ -30,7 +30,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
             height: 900.h,
             width: double.infinity,
             child: Image.asset(
-              'assets/images/abc.jpg',
+              'assets/images/fungi1.jpeg',
               fit: BoxFit.cover,
             ),
           ),
@@ -80,7 +80,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                       vertical: Style.defautlVerticalPadding),
                   child: commentTitle(context),
                 ),
-                commentForActivity(),
+                // commentForActivity(),
                 SizedBox(
                   height: 300.h,
                 ),
@@ -129,12 +129,16 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
   }
 
   Widget infoActivity() {
-    return Row(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
+          width: double.infinity,
           height: 136.h,
-          margin: EdgeInsets.only(right: Style.defautlHorizontalPadding / 2),
+          margin: EdgeInsets.only(
+            // right: Style.defautlHorizontalPadding / 2,
+            bottom: Style.defautlVerticalPadding / 2,
+          ),
           padding: EdgeInsets.symmetric(
             horizontal: Style.defautlHorizontalPadding / 2,
             vertical: Style.defautlVerticalPadding / 4,
@@ -146,23 +150,23 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
             ),
             borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
           ),
-          child: Column(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Bitiş Tarihi",
+                "Bitiş Tarihi : ",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: Style.defaultTextSize,
                 ),
               ),
-              const Expanded(
-                child: Text("17 Ağustos 2022 - 16:50"),
-              ),
+              const Text("17 Ağustos 2022 - 16:50"),
             ],
           ),
         ),
         Container(
           height: 136.h,
+          width: double.infinity,
           padding: EdgeInsets.symmetric(
             horizontal: Style.defautlHorizontalPadding / 2,
             vertical: Style.defautlVerticalPadding / 4,
@@ -174,18 +178,17 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
             ),
             borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
           ),
-          child: Column(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Yapımcı",
+                "Yapımcı : ",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: Style.defaultTextSize,
                 ),
               ),
-              const Expanded(
-                child: Text("Ömer Üngör, Selçuk Ekşi"),
-              ),
+              const Text("Ömer Üngör, Selçuk Ekşi"),
             ],
           ),
         ),
@@ -225,7 +228,9 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
   }
 
   Widget socialCardandPrice() {
+    String price = "850";
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Column(
@@ -272,7 +277,6 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
             ),
           ],
         ),
-        const Spacer(),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -280,9 +284,9 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
               // crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  "750",
+                  price,
                   style: TextStyle(
-                    fontSize: 96.sp,
+                    fontSize: price.length > 3 ? 80.sp : 96.sp,
                     fontWeight: FontWeight.w500,
                     color: Style.secondaryColor,
                   ),
@@ -324,30 +328,39 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
   }
 
   Widget titleAndDate() {
+    String titleAct = "Fungi Turkey Mantar Avcılığı Kampı Bolu";
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          "Mykonos",
-          style: TextStyle(
-            fontSize: 100.sp,
-            fontWeight: FontWeight.w500,
+        Expanded(
+          child: Text(
+            titleAct,
+            style: TextStyle(
+              fontSize: titleAct.length > 30 ? 60.sp : 80.sp,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
-        const Spacer(),
         Container(
           padding: EdgeInsets.symmetric(
             horizontal: Style.defautlHorizontalPadding / 2,
             vertical: Style.defautlVerticalPadding / 4,
           ),
           decoration: BoxDecoration(
-            color: Style.secondaryColor.withOpacity(0.3),
+            // color: Style.secondaryColor.withOpacity(0.3),
+            boxShadow: [Style.defaultShadow],
+            color: Colors.white,
+            // border: Border.all(
+            //   width: 1,
+            //   color: Style.secondaryColor.withOpacity(0.5),
+            // ),
             borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
           ),
           child: Row(
             children: [
               Icon(
-                Icons.star,
+                Icons.timer_sharp,
                 color: Style.secondaryColor,
                 size: 60.r,
               ),
@@ -369,28 +382,28 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
     );
   }
 
-  Widget commentForActivity() {
-    return Row(
-      children: [
-        Container(
-            margin: EdgeInsets.symmetric(
-              vertical: Style.defautlVerticalPadding / 2,
-            ),
-            width: 800.w,
-            child: CustomTextField(hintText: "Yorum Yap")),
-        Expanded(
-          child: Container(
-            padding: EdgeInsets.all(24.r),
-            decoration: const BoxDecoration(
-              color: Style.secondaryColor,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.keyboard_arrow_right),
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget commentForActivity() {
+  //   return Row(
+  //     children: [
+  //       Container(
+  //           margin: EdgeInsets.symmetric(
+  //             vertical: Style.defautlVerticalPadding / 2,
+  //           ),
+  //           width: 800.w,
+  //           child: CustomTextField(hintText: "Yorum Yap"),),
+  //       Expanded(
+  //         child: Container(
+  //           padding: EdgeInsets.all(24.r),
+  //           decoration: const BoxDecoration(
+  //             color: Style.secondaryColor,
+  //             shape: BoxShape.circle,
+  //           ),
+  //           child: const Icon(Icons.keyboard_arrow_right),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget buttonForRecord() {
     return Positioned(
@@ -478,6 +491,51 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                           width: 300.w,
                           color: Colors.grey,
                         ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            actions: [
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Style.secondaryColor,
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text(
+                                  "İptal",
+                                  style: TextStyle(color: Style.primaryColor),
+                                ),
+                              ),
+                            ],
+                            title: const Text("Etkinlik Yorum"),
+                            contentPadding: EdgeInsets.all(60.r),
+                            content: CustomTextField(
+                              hintText: "Etkinlik Yorumunuzu Giriniz",
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          top: Style.defautlVerticalPadding / 2,
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          vertical: Style.defautlVerticalPadding / 2,
+                          horizontal: Style.defautlHorizontalPadding,
+                        ),
+                        decoration: BoxDecoration(
+                          boxShadow: [Style.defaultShadow],
+                          borderRadius: BorderRadius.circular(
+                            Style.defaultRadiusSize,
+                          ),
+                          color: Style.secondaryColor,
+                        ),
+                        child: const Text("Yorum Yap"),
                       ),
                     ),
                     Padding(
@@ -603,9 +661,32 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                     groupValue: 1,
                     onChanged: (value) {},
                   ),
-                  const Text(
-                    "Açık Rıza Metnini ",
-                    style: TextStyle(color: Colors.blue),
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text("Anladım"),
+                            ),
+                          ],
+                          title: const Text("Açık Rıza Metni"),
+                          contentPadding: EdgeInsets.all(60.r),
+                          content: Text(
+                            "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s," *
+                                5,
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      "Açık Rıza Metnini ",
+                      style: TextStyle(color: Colors.blue),
+                    ),
                   ),
                   const Text("Okudum ve Kabul Ediyorum."),
                 ],

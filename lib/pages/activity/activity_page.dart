@@ -61,7 +61,7 @@ class ActivityPage extends StatelessWidget {
   Widget desc() {
     return Text(
       "Mantar avcılığı yapabilmemiz için ekipmanlara ihtiyacımız vardır. Bu ekipmanların olmazsa olmazı sepet, çakı ve fırçadır. Diğer ekleyeceğimiz ekipmanlar ise bizim konforumuz ve güvenliğimiz açısından önem taşımaktadır.",
-      maxLines: 2,
+      maxLines: 3,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(
         color: Style.textGreyColor,
