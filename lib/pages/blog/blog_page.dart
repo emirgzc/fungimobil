@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fungimobil/constants/extension.dart';
+import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
+import 'package:fungimobil/constants/table_util.dart';
+import 'package:fungimobil/constants/util.dart';
+import 'package:fungimobil/data/api_client.dart';
+import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/widgets/appbar.dart';
 
 class BlogPage extends StatelessWidget {
@@ -13,22 +20,48 @@ class BlogPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: Style.defaultPagePadding,
-          child: Column(
-            children: [
-              ...List.generate(
-                4,
-                (index) {
-                  return blogCard(context);
-                },
-              ),
-            ],
+          child: FutureBuilder(
+            future: ApiClient().fetchTable(
+              tableName: TableName.Blog.name,
+              token: "",
+              page: 1,
+              limit: 10,
+              filter: {},
+            ),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done &&
+                  snapshot.hasData &&
+                  snapshot.data != null) {
+                var datas = (snapshot.data as tableModel.TableModel).data;
+                debugPrint(datas?.length.toString());
+                return Column(
+                  children: [
+                    ...List.generate(
+                      datas?.length ?? 0,
+                      (index) {
+                        return blogCard(context, datas, index);
+                      },
+                    ),
+                  ],
+                );
+              } else if (snapshot.hasError && snapshot.error != null) {
+                HandleExceptions.handle(
+                  exception: snapshot.error,
+                  context: context,
+                );
+                return Container();
+              } else {
+                return Container();
+              }
+            },
           ),
         ),
       ),
     );
   }
 
-  Widget blogCard(BuildContext context) {
+  Widget blogCard(
+      BuildContext context, List<Map<String, dynamic>>? datas, int index) {
     return Container(
       margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding),
       width: double.infinity,
@@ -37,17 +70,22 @@ class BlogPage extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, Routes.blogDetailPage);
+              Navigator.pushNamed(context, Routes.blogDetailPage,
+                  arguments: datas![index]["id"]);
             },
             child: Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(
-                    Style.defaultRadiusSize,
-                  ),
-                  child: Image.asset(
-                    "assets/images/abc.jpg",
-                    fit: BoxFit.cover,
+                SizedBox(
+                  height: 700.h,
+                  width: double.infinity,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      Style.defaultRadiusSize,
+                    ),
+                    child: Image.network(
+                      Util.imageConvertUrl(imageName: datas![index]["image"]),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 Positioned(
@@ -80,7 +118,7 @@ class BlogPage extends StatelessWidget {
             padding: EdgeInsets.symmetric(
                 vertical: Style.defautlVerticalPadding / 2),
             child: Text(
-              "Mantar Avcılığı İçin Gerekli Ekipmanlar",
+              datas[index]["title"],
               style: TextStyle(
                 fontSize: Style.bigTitleTextSize,
                 fontWeight: FontWeight.w600,
@@ -88,7 +126,7 @@ class BlogPage extends StatelessWidget {
             ),
           ),
           Text(
-            "Mantar avcılığı yapabilmemiz için ekipmanlara ihtiyacımız vardır. Bu ekipmanların olmazsa olmazı sepet, çakı ve fırçadır. Diğer ekleyeceğimiz ekipmanlar ise bizim konforumuz ve güvenliğimiz açısından önem taşımaktadır.",
+            datas[index]["content"],
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(color: Style.textGreyColor),
@@ -110,16 +148,19 @@ class BlogPage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "Ömer Üngör",
+                  datas[index]["own_id"],
                   style: TextStyle(color: Style.textGreyColor),
                 ),
                 const Text(
                   " . ",
                   style: TextStyle(),
                 ),
-                const Text(
-                  "12 Ağustos 2022",
-                  style: TextStyle(
+                Text(
+                  datas[index]["added_date"]
+                      .toString()
+                      .toDateTime()
+                      .toFormattedString(),
+                  style: const TextStyle(
                     color: Style.succesColor,
                   ),
                 ),

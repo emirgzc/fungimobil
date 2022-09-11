@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/style.dart';
+import 'package:fungimobil/constants/table_util.dart';
+import 'package:fungimobil/constants/util.dart';
+import 'package:fungimobil/data/api_client.dart';
+import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/widgets/appbar.dart';
 
 class GaleryPage extends StatelessWidget {
@@ -19,32 +24,63 @@ class GaleryPage extends StatelessWidget {
     return SingleChildScrollView(
       child: Padding(
         padding: Style.defaultPagePadding,
-        child: Column(
-          children: [
-            MasonryGridView.count(
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              itemCount: 8,
-              crossAxisCount: 2,
-              mainAxisSpacing: Style.defautlVerticalPadding,
-              crossAxisSpacing: Style.defautlHorizontalPadding,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () => detailPop(context),
-                  child: Image.asset(
-                    "assets/images/fungi2.jpeg",
-                    fit: BoxFit.cover,
-                  ),
-                );
-              },
-            ),
-          ],
+        child: FutureBuilder(
+          future: ApiClient().fetchTable(
+            tableName: TableName.Galery.name,
+            token: "",
+            page: 1,
+            limit: 20,
+            filter: {},
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData &&
+                snapshot.data != null) {
+              var datas = (snapshot.data as tableModel.TableModel).data;
+              debugPrint(datas?.length.toString());
+              return MasonryGridView.count(
+                shrinkWrap: true,
+                physics: const BouncingScrollPhysics(),
+                itemCount: datas?.length ?? 0,
+                crossAxisCount: 2,
+                mainAxisSpacing: Style.defautlVerticalPadding,
+                crossAxisSpacing: Style.defautlHorizontalPadding,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () => detailPop(context, datas, index),
+                    child: Tooltip(
+                      message: datas?[index]["title"] ?? "null",
+                      child: ClipRRect(
+                        borderRadius:
+                            BorderRadius.circular(Style.defaultRadiusSize),
+                        child: Image.network(
+                          Util.imageConvertUrl(
+                            imageName: datas![index]["image"],
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            } else if (snapshot.hasError && snapshot.error != null) {
+              HandleExceptions.handle(
+                exception: snapshot.error,
+                context: context,
+              );
+              return Container();
+            } else {
+              return Container();
+            }
+          },
         ),
       ),
     );
   }
 
-  Future detailPop(BuildContext context) {
+  Future detailPop(
+      BuildContext context, List<Map<String, dynamic>>? datas, int index) {
     return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -78,16 +114,21 @@ class GaleryPage extends StatelessWidget {
                   vertical: Style.defautlVerticalPadding,
                 ),
                 child: Text(
-                  "Organizasyon",
+                  datas?[index]["title"] ?? "null",
                   style: TextStyle(
                     fontSize: Style.bigTitleTextSize,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              Image.asset(
-                "assets/images/fungi2.jpeg",
-                fit: BoxFit.cover,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
+                child: Image.network(
+                  Util.imageConvertUrl(
+                    imageName: datas![index]["image"],
+                  ),
+                  fit: BoxFit.cover,
+                ),
               ),
             ],
           ),

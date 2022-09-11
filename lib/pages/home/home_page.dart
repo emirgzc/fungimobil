@@ -26,12 +26,11 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: appBarHomePage(context),
       drawer: const HomeDrawer(),
-      body: Shimmer(linearGradient: Style.shimmerGradient,
-      child: Builder(
-        builder: (context) {
-          return homePageBody(context);
-        }
-      )),
+      body: Shimmer(
+          linearGradient: Style.shimmerGradient,
+          child: Builder(builder: (context) {
+            return homePageBody(context);
+          })),
     );
   }
 
@@ -79,6 +78,7 @@ class HomePage extends StatelessWidget {
             FutureBuilder(
               future: activityDataList == null ? _fetchActivity(context) : null,
               builder: (context, snapshot) {
+                debugPrint(activityDataList?.length.toString());
                 // if (activityDataList == null) {
                 //   return const SizedBox();
                 // }
@@ -86,8 +86,14 @@ class HomePage extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      for (int i = 0; i < min(5, activityDataList?.length ?? 5); i++)
-                        actHomeCard(activityDataList == null ? null : activityDataList![i], context),
+                      for (int i = 0;
+                          i < min(5, activityDataList?.length ?? 5);
+                          i++)
+                        actHomeCard(
+                            activityDataList == null
+                                ? null
+                                : activityDataList![i],
+                            context),
                     ],
                   ),
                 );
@@ -98,20 +104,23 @@ class HomePage extends StatelessWidget {
               "Tümünü Göster",
               () => Navigator.pushNamed(context, Routes.blogPage),
             ),
-            SizedBox(height: 48.h,),
-            FutureBuilder(
-              future: blogDataList == null ? _fetchBlog(context) : null,
-              builder: (context, snapshot) {
-                return ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: min(4, blogDataList?.length ?? 4),
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return blogCard(blogDataList == null ? null : blogDataList![index],context);
-                  },
-                );
-              }
+            SizedBox(
+              height: 48.h,
             ),
+            FutureBuilder(
+                future: blogDataList == null ? _fetchBlog(context) : null,
+                builder: (context, snapshot) {
+                  return ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: min(4, blogDataList?.length ?? 4),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return blogCard(
+                          blogDataList == null ? null : blogDataList![index],
+                          context);
+                    },
+                  );
+                }),
           ],
         ),
       ),
@@ -142,11 +151,14 @@ class HomePage extends StatelessWidget {
                 child: SizedBox(
                   width: 420.w,
                   height: 300.h,
-                  child: data == null ? Container(
-                    color: Colors.white.withOpacity(0.8),) : Image.network(
-                    Util.imageConvertUrl(imageName: data['image']),
-                    fit: BoxFit.cover,
-                  ),
+                  child: data == null
+                      ? Container(
+                          color: Colors.white.withOpacity(0.8),
+                        )
+                      : Image.network(
+                          Util.imageConvertUrl(imageName: data['image']),
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
             ),
@@ -173,7 +185,9 @@ class HomePage extends StatelessWidget {
                     child: Container(
                       color: Colors.white.withOpacity(0.8),
                       child: Text(
-                        data?['content'].toString().substring(0, min(100, data['content'].toString().length)) ?? '*'*100,
+                        data?['content'].toString().substring(0,
+                                min(100, data['content'].toString().length)) ??
+                            '*' * 100,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
                         style: TextStyle(
@@ -187,7 +201,11 @@ class HomePage extends StatelessWidget {
                     child: Container(
                       color: Colors.white.withOpacity(0.8),
                       child: Text(
-                        data?['finish_date']?.toString().toDateTime().toFormattedString() ?? '1 Ocak 2000',
+                        data?['finish_date']
+                                ?.toString()
+                                .toDateTime()
+                                .toFormattedString() ??
+                            '1 Ocak 2000',
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -231,11 +249,14 @@ class HomePage extends StatelessWidget {
                     child: SizedBox(
                       width: 0.6.sw,
                       height: 0.2.sh,
-                      child: data == null ? Container(
-                        color: Colors.white.withOpacity(0.8),) : Image.network(
-                        Util.imageConvertUrl(imageName: data['image']),
-                        fit: BoxFit.cover,
-                      ),
+                      child: data == null
+                          ? Container(
+                              color: Colors.white.withOpacity(0.8),
+                            )
+                          : Image.network(
+                              Util.imageConvertUrl(imageName: data['image']),
+                              fit: BoxFit.cover,
+                            ),
                     ),
                   ),
                   Positioned(
@@ -276,7 +297,7 @@ class HomePage extends StatelessWidget {
                     color: Colors.white.withOpacity(0.8),
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      data?['title']?.toString() ?? '*'*20,
+                      data?['title']?.toString() ?? '*' * 20,
                       style: TextStyle(
                         fontSize: 56.sp,
                         fontWeight: FontWeight.bold,
@@ -416,7 +437,8 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget profileMenuCard(BuildContext context, String title, String icon, void Function()? onTap) {
+  Widget profileMenuCard(
+      BuildContext context, String title, String icon, void Function()? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -442,8 +464,10 @@ class HomePage extends StatelessWidget {
   Future _fetchActivity(BuildContext context) async {
     try {
       // await Future.delayed(Duration(seconds: 5));
-      activityDataList = (await Provider.of<TableViewModel>(context, listen: false)
-          .fetchTable(tableName: TableName.Activity.name, page: 1, limit: 5)).data;
+      activityDataList =
+          (await Provider.of<TableViewModel>(context, listen: false).fetchTable(
+                  tableName: TableName.Activity.name, page: 1, limit: 5))
+              .data;
     } catch (e) {
       HandleExceptions.handle(exception: e, context: context);
     }
@@ -453,7 +477,8 @@ class HomePage extends StatelessWidget {
     try {
       // await Future.delayed(Duration(seconds: 5));
       blogDataList = (await Provider.of<TableViewModel>(context, listen: false)
-          .fetchTable(tableName: TableName.Blog.name, page: 1, limit: 4)).data;
+              .fetchTable(tableName: TableName.Blog.name, page: 1, limit: 4))
+          .data;
     } catch (e) {
       HandleExceptions.handle(exception: e, context: context);
     }

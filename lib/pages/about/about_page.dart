@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/style.dart';
+import 'package:fungimobil/constants/table_util.dart';
+import 'package:fungimobil/constants/util.dart';
+import 'package:fungimobil/data/api_client.dart';
+import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/widgets/appbar.dart';
+import 'package:fungimobil/widgets/shimmer/shimmer.dart';
+import 'package:fungimobil/widgets/shimmer/shimmer_loading.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({Key? key}) : super(key: key);
@@ -9,56 +16,96 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: getAppBar("Hakkımızda"),
-      body: aboutBody(context),
+      body: Shimmer(
+        linearGradient: Style.shimmerGradient,
+        child: FutureBuilder(
+          future: ApiClient().fetchTable(
+            tableName: TableName.About.name,
+            token: "",
+            page: 1,
+            limit: 5,
+            filter: {},
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData &&
+                snapshot.data != null) {
+              var datas = (snapshot.data as tableModel.TableModel).data;
+              debugPrint(datas?.length.toString());
+              return aboutBody(context, datas);
+            } else if (snapshot.hasError && snapshot.error != null) {
+              HandleExceptions.handle(
+                exception: snapshot.error,
+                context: context,
+              );
+              return Container();
+            } else {
+              return Container();
+            }
+          },
+        ),
+      ),
     );
   }
 
-  Widget aboutBody(BuildContext context) {
+  Widget aboutBody(BuildContext context, List<Map<String, dynamic>>? dataMap) {
+    debugPrint(dataMap.toString());
     return SingleChildScrollView(
       child: Padding(
         padding: Style.defaultPagePadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-              child: Image.asset(
-                'assets/images/fungi1.jpeg',
-                fit: BoxFit.cover,
-              ),
+            ListView.builder(
+              itemCount: dataMap?.length ?? 0,
+              shrinkWrap: true,
+              physics: const BouncingScrollPhysics(),
+              itemBuilder: (context, index) {
+                return aboutCard(dataMap, index);
+              },
             ),
-            Padding(
-              padding:
-                  EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
-              child: bigTitle("Misyonumuz"),
-            ),
-            desc(),
-            Padding(
-              padding: EdgeInsets.only(top: Style.defautlVerticalPadding),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-                child: Image.asset(
-                  'assets/images/fungi2.jpeg',
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Padding(
-              padding:
-                  EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
-              child: bigTitle("Vizyonumuz"),
-            ),
-            desc(),
           ],
         ),
       ),
     );
   }
 
-  Widget desc() {
+  Widget aboutCard(List<Map<String, dynamic>>? dataMap, int index) {
+    // debugPrint(dataMap![index]["image"].toString());
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ShimmerLoading(
+          isLoading: dataMap == null,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
+            child: Image.network(
+              Util.imageConvertUrl(imageName: dataMap?[index]["image"]),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
+          child: ShimmerLoading(
+            isLoading: dataMap == null,
+            child: bigTitle(dataMap?[index]["title"].toString() ?? ""),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: ShimmerLoading(
+            isLoading: dataMap == null,
+            child: desc(dataMap?[index]["content"].toString() ?? ""),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget desc(String desc) {
     return Text(
-      "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s" *
-          10,
+      desc,
       style: TextStyle(
         fontSize: Style.defaultTextSize,
         color: Style.textGreyColor,

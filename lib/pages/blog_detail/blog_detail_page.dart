@@ -1,81 +1,114 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fungimobil/constants/extension.dart';
+import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/style.dart';
+import 'package:fungimobil/constants/table_util.dart';
+import 'package:fungimobil/constants/util.dart';
+import 'package:fungimobil/data/api_client.dart';
+import 'package:fungimobil/model/single_record_model.dart' as tableModel;
+import 'package:fungimobil/model/table_model.dart' as tableModelss;
 import 'package:fungimobil/widgets/card_for_social_media.dart';
+import 'package:fungimobil/widgets/custom_text_field.dart';
 
 class BlogDetailPage extends StatelessWidget {
-  const BlogDetailPage({Key? key}) : super(key: key);
+  const BlogDetailPage({Key? key, required this.id}) : super(key: key);
+  final String id;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: blogBody(context),
+      body: SingleChildScrollView(
+        child: FutureBuilder(
+          future: ApiClient().fetchRecord(
+              tableName: TableName.Blog.name, id: int.parse(id), token: ""),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData &&
+                snapshot.data != null) {
+              var datas = (snapshot.data as tableModel.SingleRecordModel).data;
+              debugPrint("asdasasdadasds ----${datas!.length}");
+              return Column(
+                children: [
+                  blogBody(context, datas),
+                ],
+              );
+            } else if (snapshot.hasError && snapshot.error != null) {
+              HandleExceptions.handle(
+                exception: snapshot.error,
+                context: context,
+              );
+              return Container();
+            } else {
+              return Container();
+            }
+          },
+        ),
+      ),
     );
   }
 
-  Widget blogBody(BuildContext context) {
-    return SingleChildScrollView(
-      child: Stack(
-        children: [
-          SizedBox(
-            height: 900.h,
-            width: double.infinity,
-            child: Image.asset(
-              'assets/images/r.jpeg',
-              fit: BoxFit.cover,
-            ),
+  Widget blogBody(BuildContext context, Map<String, dynamic>? data) {
+    return Stack(
+      children: [
+        SizedBox(
+          height: 900.h,
+          width: double.infinity,
+          child: Image.network(
+            Util.imageConvertUrl(imageName: data!["image"]),
+            fit: BoxFit.cover,
           ),
-          arrowBack(context),
+        ),
+        arrowBack(context),
 
-          headerDateandUser(context),
-          // buttonForRecord(),
-          Container(
-            padding: Style.defaultPagePadding,
-            margin: EdgeInsets.only(top: 900.h),
-            color: Style.primaryColor,
-            // color: Colors.red,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                bigTitle(),
-                Padding(
-                  padding: EdgeInsets.only(top: Style.defautlVerticalPadding),
-                  child: Row(
-                    children: const [
-                      CardForSocialMedia(
-                        iconSvg: "assets/icons/twitter.svg",
-                      ),
-                      CardForSocialMedia(
-                        iconSvg: "assets/icons/instagram.svg",
-                      ),
-                      CardForSocialMedia(
-                        iconSvg: "assets/icons/facebook.svg",
-                      ),
-                      CardForSocialMedia(
-                        iconSvg: "assets/icons/whatsapp.svg",
-                      ),
-                    ],
-                  ),
+        headerDateandUser(context, data),
+        // buttonForRecord(),
+        Container(
+          padding: Style.defaultPagePadding,
+          margin: EdgeInsets.only(top: 900.h),
+          color: Style.primaryColor,
+          // color: Colors.red,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              bigTitle(data["title"] ?? ""),
+              Padding(
+                padding: EdgeInsets.only(top: Style.defautlVerticalPadding),
+                child: Row(
+                  children: const [
+                    CardForSocialMedia(
+                      iconSvg: "assets/icons/twitter.svg",
+                    ),
+                    CardForSocialMedia(
+                      iconSvg: "assets/icons/instagram.svg",
+                    ),
+                    CardForSocialMedia(
+                      iconSvg: "assets/icons/facebook.svg",
+                    ),
+                    CardForSocialMedia(
+                      iconSvg: "assets/icons/whatsapp.svg",
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: Style.defautlVerticalPadding),
-                  child: desc(),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: Style.defautlVerticalPadding),
+                child: desc(data["content"] ?? ""),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: Style.defautlVerticalPadding,
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: Style.defautlVerticalPadding,
-                  ),
-                  child: commentTitle(context),
-                ),
-                commentForActivity(),
-                SizedBox(
-                  height: 300.h,
-                ),
-              ],
-            ),
+                child: commentTitle(context),
+              ),
+              // commentForActivity(),
+              SizedBox(
+                height: 300.h,
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -83,16 +116,44 @@ class BlogDetailPage extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        titleForActivity("Yorumlar :"),
-        Padding(
-          padding: EdgeInsets.only(left: Style.defautlHorizontalPadding / 2),
-          child: Text(
-            "Toplam 12 Yorum",
-            style: TextStyle(
-              fontSize: 56.sp,
-              fontWeight: FontWeight.w400,
-            ),
+        FutureBuilder(
+          future: ApiClient().fetchTable(
+            tableName: TableName.BlogComment.name,
+            token: "",
+            page: 1,
+            limit: 1,
+            filter: {
+              "blog_id": id,
+              "status": 1,
+            },
           ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData &&
+                snapshot.data != null) {
+              var datas = (snapshot.data as tableModelss.TableModel).data;
+              debugPrint(datas?.length.toString());
+              return Padding(
+                padding:
+                    EdgeInsets.only(left: Style.defautlHorizontalPadding / 2),
+                child: Text(
+                  "Toplam ${datas?.length} Yorum",
+                  style: TextStyle(
+                    fontSize: 56.sp,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              );
+            } else if (snapshot.hasError && snapshot.error != null) {
+              HandleExceptions.handle(
+                exception: snapshot.error,
+                context: context,
+              );
+              return Container();
+            } else {
+              return Container();
+            }
+          },
         ),
         const Spacer(),
         GestureDetector(
@@ -121,10 +182,9 @@ class BlogDetailPage extends StatelessWidget {
     );
   }
 
-  Widget desc() {
+  Widget desc(String content) {
     return Text(
-      "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s" *
-          20,
+      content,
       style: TextStyle(
         fontSize: Style.defaultTextSize,
         color: Style.textGreyColor,
@@ -132,9 +192,9 @@ class BlogDetailPage extends StatelessWidget {
     );
   }
 
-  Widget bigTitle() {
+  Widget bigTitle(String title) {
     return Text(
-      "Mantar Avcılığı İçin Gerekli Ekipmanlar",
+      title,
       style: TextStyle(
         fontSize: Style.bigTitleTextSize,
         fontWeight: FontWeight.w500,
@@ -219,7 +279,7 @@ class BlogDetailPage extends StatelessWidget {
     );
   }
 
-  Widget headerDateandUser(BuildContext context) {
+  Widget headerDateandUser(BuildContext context, Map<String, dynamic>? data) {
     return Positioned(
       top: 130.h,
       right: 48.w,
@@ -236,7 +296,7 @@ class BlogDetailPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              "15 Ağustos 2022",
+              data!["added_date"].toString().toDateTime().toFormattedString(),
               style: TextStyle(
                 color: const Color(0xffF4A261),
                 fontSize: 40.sp,
@@ -245,7 +305,7 @@ class BlogDetailPage extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(top: 8.h),
               child: Text(
-                "Ömer Üngör",
+                data["own_id"],
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 40.sp,
@@ -300,83 +360,153 @@ class BlogDetailPage extends StatelessWidget {
                 padding: EdgeInsets.symmetric(
                     vertical: Style.defautlVerticalPadding / 2,
                     horizontal: Style.defautlHorizontalPadding / 2),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Center(
-                      child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          height: 8.h,
-                          width: 300.w,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: Style.defautlHorizontalPadding,
-                          top: Style.defautlVerticalPadding * 2),
-                      child: Row(
+                child: FutureBuilder(
+                  future: ApiClient().fetchTable(
+                    tableName: TableName.BlogComment.name,
+                    token: "",
+                    page: 1,
+                    limit: 10,
+                    filter: {
+                      "blog_id": id,
+                      "status": 1,
+                    },
+                  ),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData &&
+                        snapshot.data != null) {
+                      var datas =
+                          (snapshot.data as tableModelss.TableModel).data;
+                      debugPrint(datas?.length.toString());
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            "12 Yorum",
-                            style: TextStyle(
-                              fontSize: Style.bigTitleTextSize,
-                              fontWeight: FontWeight.bold,
+                          Center(
+                            child: GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: Container(
+                                height: 8.h,
+                                width: 300.w,
+                                color: Colors.grey,
+                              ),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    ListView.builder(
-                      itemCount: 12,
-                      physics: const BouncingScrollPhysics(),
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          minLeadingWidth: 0,
-                          dense: true,
-                          leading:
-                              const Icon(Icons.supervised_user_circle_outlined),
-                          title: Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    right: Style.defautlHorizontalPadding / 2),
-                                child: Text(
-                                  "Emir Gözcü",
+                          GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  actions: [
+                                    TextButton(
+                                      style: TextButton.styleFrom(
+                                        backgroundColor: Style.secondaryColor,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text(
+                                        "İptal",
+                                        style: TextStyle(
+                                            color: Style.primaryColor),
+                                      ),
+                                    ),
+                                  ],
+                                  title: const Text("Etkinlik Yorum"),
+                                  contentPadding: EdgeInsets.all(60.r),
+                                  content: CustomTextField(
+                                    hintText: "Blog Yorumunuzu Giriniz",
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                top: Style.defautlVerticalPadding / 2,
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                vertical: Style.defautlVerticalPadding / 2,
+                                horizontal: Style.defautlHorizontalPadding,
+                              ),
+                              decoration: BoxDecoration(
+                                boxShadow: [Style.defaultShadow],
+                                borderRadius: BorderRadius.circular(
+                                  Style.defaultRadiusSize,
+                                ),
+                                color: Style.secondaryColor,
+                              ),
+                              child: const Text("Yorum Yap"),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: Style.defautlHorizontalPadding,
+                                top: Style.defautlVerticalPadding * 2),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "${datas?.length.toString()} Yorum",
                                   style: TextStyle(
-                                    fontSize: Style.defaultTextSize,
+                                    fontSize: Style.bigTitleTextSize,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              ),
-                              Text(
-                                "2 saat önce",
-                                style: TextStyle(
-                                  fontSize: 40.sp,
+                              ],
+                            ),
+                          ),
+                          ListView.builder(
+                            itemCount: datas?.length ?? 0,
+                            physics: const BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                minLeadingWidth: 0,
+                                dense: true,
+                                leading: const Icon(
+                                    Icons.supervised_user_circle_outlined),
+                                title: Row(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          right:
+                                              Style.defautlHorizontalPadding /
+                                                  2),
+                                      child: Text(
+                                        (datas?[index]["name"] ?? "") +
+                                            " " +
+                                            (datas?[index]["surname"] ?? ""),
+                                        style: TextStyle(
+                                          fontSize: Style.defaultTextSize,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      datas?[index]["added_date"].toString() ??
+                                          "",
+                                      style: TextStyle(
+                                        fontSize: 40.sp,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
+                                subtitle: Text(
+                                  datas?[index]["comment"],
+                                ),
+                              );
+                            },
                           ),
-                          subtitle: const Text(
-                            "Lorem Ipsum has been the industry's stand",
-                          ),
-                          trailing: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.favorite_border,
-                                size: 64.r,
-                              ),
-                              const Text("15"),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                        ],
+                      );
+                    } else if (snapshot.hasError && snapshot.error != null) {
+                      HandleExceptions.handle(
+                        exception: snapshot.error,
+                        context: context,
+                      );
+                      return Container();
+                    } else {
+                      return Container();
+                    }
+                  },
                 ),
               ),
             );
