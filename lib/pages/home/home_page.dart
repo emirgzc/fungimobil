@@ -1,20 +1,37 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fungimobil/constants/extension.dart';
+import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
+import 'package:fungimobil/constants/table_util.dart';
+import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/pages/home/components/home_drawer.dart';
+import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
+import 'package:fungimobil/widgets/shimmer/shimmer.dart';
+import 'package:fungimobil/widgets/shimmer/shimmer_loading.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
+
+  List<Map<String, dynamic>>? activityDataList, blogDataList;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarHomePage(context),
       drawer: const HomeDrawer(),
-      body: homePageBody(context),
+      body: Shimmer(linearGradient: Style.shimmerGradient,
+      child: Builder(
+        builder: (context) {
+          return homePageBody(context);
+        }
+      )),
     );
   }
 
@@ -59,29 +76,41 @@ class HomePage extends StatelessWidget {
               "Tümünü Göster",
               () => Navigator.pushNamed(context, Routes.activityPage),
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  for (int i = 0; i < 5; i++) actHomeCard(context),
-                ],
-              ),
+            FutureBuilder(
+              future: activityDataList == null ? _fetchActivity(context) : null,
+              builder: (context, snapshot) {
+                // if (activityDataList == null) {
+                //   return const SizedBox();
+                // }
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      for (int i = 0; i < min(5, activityDataList?.length ?? 5); i++)
+                        actHomeCard(activityDataList == null ? null : activityDataList![i], context),
+                    ],
+                  ),
+                );
+              },
             ),
             titleForRow(
               "Bloglar",
               "Tümünü Göster",
               () => Navigator.pushNamed(context, Routes.blogPage),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 48.h),
-              child: ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: 4,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return blogCard(context);
-                },
-              ),
+            SizedBox(height: 48.h,),
+            FutureBuilder(
+              future: blogDataList == null ? _fetchBlog(context) : null,
+              builder: (context, snapshot) {
+                return ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: min(4, blogDataList?.length ?? 4),
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return blogCard(blogDataList == null ? null : blogDataList![index],context);
+                  },
+                );
+              }
             ),
           ],
         ),
@@ -89,7 +118,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget blogCard(BuildContext context) {
+  Widget blogCard(Map<String, dynamic>? data, BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, Routes.blogDetailPage);
@@ -108,12 +137,16 @@ class HomePage extends StatelessWidget {
           children: [
             Padding(
               padding: EdgeInsets.only(right: 24.w),
-              child: SizedBox(
-                width: 420.w,
-                height: 300.h,
-                child: Image.asset(
-                  "assets/images/fungi2.jpeg",
-                  fit: BoxFit.cover,
+              child: ShimmerLoading(
+                isLoading: data == null,
+                child: SizedBox(
+                  width: 420.w,
+                  height: 300.h,
+                  child: data == null ? Container(
+                    color: Colors.white.withOpacity(0.8),) : Image.network(
+                    Util.imageConvertUrl(imageName: data['image']),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
@@ -122,25 +155,42 @@ class HomePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "Mantar Toplanması İçin Gereken Eşyalar",
-                    style: TextStyle(
-                      fontSize: 48.sp,
-                      fontWeight: FontWeight.bold,
+                  ShimmerLoading(
+                    isLoading: data == null,
+                    child: Container(
+                      color: Colors.white.withOpacity(0.8),
+                      child: Text(
+                        data?['title'] ?? 'Blog başlığı',
+                        style: TextStyle(
+                          fontSize: 48.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
-                  Text(
-                    "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s" *
-                        2,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    style: TextStyle(
-                      fontSize: Style.defaultTextSize / (4 / 3),
+                  ShimmerLoading(
+                    isLoading: data == null,
+                    child: Container(
+                      color: Colors.white.withOpacity(0.8),
+                      child: Text(
+                        data?['content'].toString().substring(0, min(100, data['content'].toString().length)) ?? '*'*100,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        style: TextStyle(
+                          fontSize: Style.defaultTextSize / (4 / 3),
+                        ),
+                      ),
                     ),
                   ),
-                  const Text(
-                    "12 Ağustos 2022",
-                    overflow: TextOverflow.ellipsis,
+                  ShimmerLoading(
+                    isLoading: data == null,
+                    child: Container(
+                      color: Colors.white.withOpacity(0.8),
+                      child: Text(
+                        data?['finish_date']?.toString().toDateTime().toFormattedString() ?? '1 Ocak 2000',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -151,14 +201,14 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget actHomeCard(BuildContext context) {
+  Widget actHomeCard(Map<String, dynamic>? data, BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, Routes.activityDetailPage);
       },
       child: Container(
         margin: EdgeInsets.only(top: 48.h, bottom: 48.h, right: 24.w),
-        width: 660.w,
+        // width: 660.w,
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.8),
           borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
@@ -172,10 +222,22 @@ class HomePage extends StatelessWidget {
             left: 18.w,
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Stack(
                 children: [
-                  Image.asset("assets/images/fungi1.jpeg"),
+                  ShimmerLoading(
+                    isLoading: data == null,
+                    child: SizedBox(
+                      width: 0.6.sw,
+                      height: 0.2.sh,
+                      child: data == null ? Container(
+                        color: Colors.white.withOpacity(0.8),) : Image.network(
+                        Util.imageConvertUrl(imageName: data['image']),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
                   Positioned(
                     bottom: 0,
                     right: 0,
@@ -195,7 +257,7 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        "Son Kayıt : 12 Haziran 2022",
+                        "Son Kayıt : ${data?['finish_date']?.toString().toDateTime().toFormattedString() ?? '1 Ocak 2000'}",
                         style: TextStyle(
                           fontSize: 36.sp,
                           fontWeight: FontWeight.w500,
@@ -208,15 +270,23 @@ class HomePage extends StatelessWidget {
               ),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 24.h),
-                child: Text(
-                  "Fungi Turkey Mantar Etkinliği",
-                  style: TextStyle(
-                    fontSize: 56.sp,
-                    fontWeight: FontWeight.bold,
+                child: ShimmerLoading(
+                  isLoading: data == null,
+                  child: Container(
+                    color: Colors.white.withOpacity(0.8),
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      data?['title']?.toString() ?? '*'*20,
+                      style: TextStyle(
+                        fontSize: 56.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
               ),
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
                     padding: EdgeInsets.only(right: 8.w),
@@ -225,11 +295,18 @@ class HomePage extends StatelessWidget {
                       height: 36.r,
                     ),
                   ),
-                  Text(
-                    "Bolu/Türkiye",
-                    style: TextStyle(
-                      fontSize: 44.sp,
-                      fontWeight: FontWeight.w400,
+                  ShimmerLoading(
+                    isLoading: data == null,
+                    child: Container(
+                      color: Colors.white.withOpacity(0.8),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Bolu/Türkiye",
+                        style: TextStyle(
+                          fontSize: 44.sp,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -339,8 +416,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget profileMenuCard(
-      BuildContext context, String title, String icon, void Function()? onTap) {
+  Widget profileMenuCard(BuildContext context, String title, String icon, void Function()? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -361,5 +437,25 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future _fetchActivity(BuildContext context) async {
+    try {
+      // await Future.delayed(Duration(seconds: 5));
+      activityDataList = (await Provider.of<TableViewModel>(context, listen: false)
+          .fetchTable(tableName: TableName.Activity.name, page: 1, limit: 5)).data;
+    } catch (e) {
+      HandleExceptions.handle(exception: e, context: context);
+    }
+  }
+
+  Future _fetchBlog(BuildContext context) async {
+    try {
+      // await Future.delayed(Duration(seconds: 5));
+      blogDataList = (await Provider.of<TableViewModel>(context, listen: false)
+          .fetchTable(tableName: TableName.Blog.name, page: 1, limit: 4)).data;
+    } catch (e) {
+      HandleExceptions.handle(exception: e, context: context);
+    }
   }
 }

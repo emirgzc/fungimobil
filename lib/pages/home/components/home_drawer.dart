@@ -10,14 +10,17 @@ class HomeDrawer extends StatelessWidget {
     return Container(
       color: Style.primaryColor,
       width: 300,
+      height: double.infinity,
       child: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                color: Style.secondaryColor,
+              ),
               margin: const EdgeInsets.only(bottom: 8),
-              width: double.infinity,
-              color: Style.secondaryColor,
-              child: DrawerHeader(
+              child: SizedBox(
+                width: double.infinity,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

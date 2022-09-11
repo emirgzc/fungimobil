@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fungimobil/constants/locator.dart';
 import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
+import 'package:fungimobil/viewmodel/auth_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 void main() {
+  setupLocator();
   runApp(const MyApp());
 }
 
@@ -19,19 +22,22 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp(
-          theme: ThemeData(
-            appBarTheme: const AppBarTheme(
-              centerTitle: true,
-              backgroundColor: Style.primaryColor,
-              elevation: 0,
-              foregroundColor: Style.textColor,
+        return ChangeNotifierProvider(
+          create: (_) => AuthViewModel(),
+          child: MaterialApp(
+            theme: ThemeData(
+              appBarTheme: const AppBarTheme(
+                centerTitle: true,
+                backgroundColor: Style.primaryColor,
+                elevation: 0,
+                foregroundColor: Style.textColor,
+              ),
+              scaffoldBackgroundColor: Style.primaryColor,
             ),
-            scaffoldBackgroundColor: Style.primaryColor,
+            debugShowCheckedModeBanner: false,
+            // home: const DemoPage(),
+            onGenerateRoute: Routes.onGenerateRoute,
           ),
-          debugShowCheckedModeBanner: false,
-          home: const DemoPage(),
-          onGenerateRoute: Routes.onGenerateRoute,
         );
       },
     );
@@ -155,9 +161,7 @@ class DemoPage extends StatelessWidget {
     Function() onPressed,
   ) {
     return Container(
-      margin: EdgeInsets.only(
-          bottom: Style.defautlVerticalPadding / 2,
-          top: Style.defautlVerticalPadding / 4),
+      margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding / 2, top: Style.defautlVerticalPadding / 4),
       height: Style.defautlVerticalPadding * 2,
       child: ElevatedButton(
         child: Text(title),

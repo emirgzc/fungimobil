@@ -8,9 +8,9 @@ import 'package:fungimobil/pages/blog_detail/blog_detail_page.dart';
 import 'package:fungimobil/pages/contact/contact_page.dart';
 import 'package:fungimobil/pages/galery/galery_page.dart';
 import 'package:fungimobil/pages/home/home_page.dart';
+import 'package:fungimobil/pages/landing_page.dart';
 import 'package:fungimobil/pages/login_register/forget_password_page.dart';
 import 'package:fungimobil/pages/login_register/login_page.dart';
-import 'package:fungimobil/main.dart';
 import 'package:fungimobil/pages/login_register/register_page.dart';
 import 'package:fungimobil/pages/organizasyon/service_page.dart';
 import 'package:fungimobil/pages/profile/activity_comment_list.dart';
@@ -18,6 +18,9 @@ import 'package:fungimobil/pages/profile/blog_comment_list.dart';
 import 'package:fungimobil/pages/profile/profile_page.dart';
 import 'package:fungimobil/pages/profile/record_list.dart';
 import 'package:fungimobil/pages/sponsor/sponsor_page.dart';
+import 'package:provider/provider.dart';
+
+import '../viewmodel/table_view_model.dart';
 
 class Routes {
   static const String root = '/';
@@ -44,13 +47,13 @@ class Routes {
     late Widget page;
     switch (settings.name) {
       case '/':
-        page = const DemoPage();
+        page = const LandingPage();
         break;
       case loginPage:
-        page = const LoginPage();
+        page = LoginPage();
         break;
       case registerPage:
-        page = const RegisterPage();
+        page = ChangeNotifierProvider(create: (_) => TableViewModel(), child: RegisterPage());
         break;
       case forgetPassPage:
         page = const ForgetPasswordPage();
@@ -86,7 +89,7 @@ class Routes {
         page = const ContactPage();
         break;
       case homePage:
-        page = HomePage();
+        page = ChangeNotifierProvider(create: (_) => TableViewModel(), child: HomePage());
         break;
       case profilePage:
         page = const ProfilePage();
