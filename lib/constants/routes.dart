@@ -53,7 +53,10 @@ class Routes {
         page = LoginPage();
         break;
       case registerPage:
-        page = ChangeNotifierProvider(create: (_) => TableViewModel(), child: RegisterPage());
+        page = ChangeNotifierProvider(
+          create: (_) => TableViewModel(),
+          child: RegisterPage(),
+        );
         break;
       case forgetPassPage:
         page = const ForgetPasswordPage();
@@ -67,10 +70,15 @@ class Routes {
         page = const BlogPage();
         break;
       case blogDetailPage:
-        page = const BlogDetailPage();
+        page = BlogDetailPage(
+          id: settings.arguments.toString(),
+        );
         break;
       case aboutPage:
-        page = const AboutPage();
+        page = ChangeNotifierProvider(
+          create: (_) => TableViewModel(),
+          child: AboutPage(),
+        );
         break;
       case teamPage:
         page = const TeamPage();
@@ -91,7 +99,8 @@ class Routes {
         page = const ContactPage();
         break;
       case homePage:
-        page = ChangeNotifierProvider(create: (_) => TableViewModel(), child: HomePage());
+        page = ChangeNotifierProvider(
+            create: (_) => TableViewModel(), child: HomePage());
         break;
       case profilePage:
         page = const ProfilePage();

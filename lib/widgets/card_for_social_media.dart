@@ -13,10 +13,12 @@ class CardForSocialMedia extends StatelessWidget {
       margin: EdgeInsets.only(right: 24.w),
       padding: EdgeInsets.symmetric(horizontal: 36.w, vertical: 36.h),
       decoration: BoxDecoration(
-        border: Border.all(
-          width: 1,
-          color: Style.secondaryColor.withOpacity(0.3),
-        ),
+        boxShadow: [Style.defaultShadow],
+        color: Colors.white,
+        // border: Border.all(
+        //   width: 1,
+        //   color: Style.secondaryColor.withOpacity(0.3),
+        // ),
         borderRadius: BorderRadius.circular(24.r),
       ),
       child: SvgPicture.asset(

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/style.dart';
+import 'package:fungimobil/constants/table_util.dart';
+import 'package:fungimobil/constants/util.dart';
+import 'package:fungimobil/data/api_client.dart';
+import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/widgets/appbar.dart';
 
 class SponsorPage extends StatelessWidget {
@@ -18,21 +23,46 @@ class SponsorPage extends StatelessWidget {
     return SingleChildScrollView(
       child: Padding(
         padding: Style.defaultPagePadding,
-        child: Column(
-          children: [
-            ...List.generate(
-              4,
-              (index) {
-                return sponsorCard();
-              },
-            ),
-          ],
+        child: FutureBuilder(
+          future: ApiClient().fetchTable(
+            tableName: TableName.Sponsor.name,
+            token: "",
+            page: 1,
+            limit: 10,
+            filter: {},
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData &&
+                snapshot.data != null) {
+              var datas = (snapshot.data as tableModel.TableModel).data;
+              debugPrint(datas?.length.toString());
+              return Column(
+                children: [
+                  ...List.generate(
+                    datas?.length ?? 0,
+                    (index) {
+                      return sponsorCard(datas, index);
+                    },
+                  ),
+                ],
+              );
+            } else if (snapshot.hasError && snapshot.error != null) {
+              HandleExceptions.handle(
+                exception: snapshot.error,
+                context: context,
+              );
+              return Container();
+            } else {
+              return Container();
+            }
+          },
         ),
       ),
     );
   }
 
-  Widget sponsorCard() {
+  Widget sponsorCard(List<Map<String, dynamic>>? datas, int index) {
     return Container(
       margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding),
       child: Column(
@@ -42,8 +72,8 @@ class SponsorPage extends StatelessWidget {
             width: double.infinity,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-              child: Image.asset(
-                "assets/images/abc.jpg",
+              child: Image.network(
+                Util.imageConvertUrl(imageName: datas![index]["image"]),
                 fit: BoxFit.cover,
               ),
             ),
@@ -53,7 +83,7 @@ class SponsorPage extends StatelessWidget {
               vertical: Style.defautlVerticalPadding / 2,
             ),
             child: Text(
-              "MANTAR AVCILIĞI EĞİTİMLERİ",
+              datas[index]["title"],
               style: TextStyle(
                 fontSize: Style.bigTitleTextSize,
                 fontWeight: FontWeight.w500,
@@ -61,7 +91,7 @@ class SponsorPage extends StatelessWidget {
             ),
           ),
           Text(
-            "www.fungiturkey.org",
+            datas[index]["web_site"],
             style: TextStyle(
               color: Colors.blue.withOpacity(0.7),
             ),

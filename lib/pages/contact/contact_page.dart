@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/style.dart';
+import 'package:fungimobil/constants/table_util.dart';
+import 'package:fungimobil/data/api_client.dart';
+import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/pages/login_register/components/big_title.dart';
 import 'package:fungimobil/pages/login_register/components/button_login.dart';
 import 'package:fungimobil/widgets/appbar.dart';
@@ -14,11 +18,45 @@ class ContactPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: getAppBar("İletişim"),
-      body: contactBody(),
+      body: FutureBuilder(
+        future: ApiClient().fetchTable(
+          tableName: TableName.Contact.name,
+          token: "",
+          page: 1,
+          limit: 10,
+          filter: {},
+        ),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData &&
+              snapshot.data != null) {
+            var datas = (snapshot.data as tableModel.TableModel).data;
+            debugPrint(datas?.length.toString());
+            return Column(
+              children: [
+                ...List.generate(
+                  datas?.length ?? 0,
+                  (index) {
+                    return contactBody(datas, index);
+                  },
+                ),
+              ],
+            );
+          } else if (snapshot.hasError && snapshot.error != null) {
+            HandleExceptions.handle(
+              exception: snapshot.error,
+              context: context,
+            );
+            return Container();
+          } else {
+            return Container();
+          }
+        },
+      ),
     );
   }
 
-  Widget contactBody() {
+  Widget contactBody(List<Map<String, dynamic>>? datas, int index) {
     return SingleChildScrollView(
       child: Padding(
         padding: Style.defaultPagePadding,
@@ -26,14 +64,18 @@ class ContactPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             BigTitle(title: "İletişim Bilgileri", size: 72.sp),
-            contactInfoTitle("İstanbul | Türkiye", Icons.home),
-            contactInfoTitle("Telefon: 555 555 55 55", Icons.phone_android),
             contactInfoTitle(
-              "Mail Adresi: info@fungiturkey.org",
+                "Adres", datas?[index]["adress"] ?? "", Icons.home),
+            contactInfoTitle(
+                "Telefon", datas?[index]["phone"], Icons.phone_android),
+            contactInfoTitle(
+              "Mail Adresi",
+              datas?[index]["mail"],
               Icons.mail_outline_rounded,
             ),
             contactInfoTitle(
-              "Yönetici: Ömer Üngör | Selçuk Ekşi",
+              "Yönetici",
+              datas?[index]["director"],
               Icons.people_alt_outlined,
             ),
             Padding(
@@ -68,7 +110,7 @@ class ContactPage extends StatelessWidget {
     );
   }
 
-  Widget contactInfoTitle(String title, IconData icon) {
+  Widget contactInfoTitle(String title, String data, IconData icon) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding / 4),
       child: Row(
@@ -80,7 +122,7 @@ class ContactPage extends StatelessWidget {
             child: Icon(icon, size: 60.r),
           ),
           Text(
-            title,
+            "$title: $data",
             style: TextStyle(fontSize: Style.defaultTextSize),
           ),
         ],

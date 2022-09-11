@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/style.dart';
+import 'package:fungimobil/constants/table_util.dart';
+import 'package:fungimobil/constants/util.dart';
+import 'package:fungimobil/data/api_client.dart';
+import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/widgets/appbar.dart';
 
 class ServicePage extends StatelessWidget {
@@ -13,22 +18,48 @@ class ServicePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: Style.defaultPagePadding,
-          child: Column(
-            children: [
-              ...List.generate(
-                8,
-                (index) {
-                  return serviceCard(context);
-                },
-              ),
-            ],
+          child: FutureBuilder(
+            future: ApiClient().fetchTable(
+              tableName: TableName.Services.name,
+              token: "",
+              page: 1,
+              limit: 10,
+              filter: {},
+            ),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done &&
+                  snapshot.hasData &&
+                  snapshot.data != null) {
+                var datas = (snapshot.data as tableModel.TableModel).data;
+                debugPrint(datas?.length.toString());
+                return Column(
+                  children: [
+                    ...List.generate(
+                      datas?.length ?? 0,
+                      (index) {
+                        return serviceCard(context, datas, index);
+                      },
+                    ),
+                  ],
+                );
+              } else if (snapshot.hasError && snapshot.error != null) {
+                HandleExceptions.handle(
+                  exception: snapshot.error,
+                  context: context,
+                );
+                return Container();
+              } else {
+                return Container();
+              }
+            },
           ),
         ),
       ),
     );
   }
 
-  Widget serviceCard(BuildContext context) {
+  Widget serviceCard(
+      BuildContext context, List<Map<String, dynamic>>? datas, int index) {
     return Container(
       margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding),
       width: double.infinity,
@@ -36,13 +67,13 @@ class ServicePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: () => detailPop(context),
+            onTap: () => detailPop(context, datas, index),
             child: Stack(
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-                  child: Image.asset(
-                    "assets/images/fungi2.jpeg",
+                  child: Image.network(
+                    Util.imageConvertUrl(imageName: datas![index]["image"]),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -75,7 +106,7 @@ class ServicePage extends StatelessWidget {
             padding: EdgeInsets.symmetric(
                 vertical: Style.defautlVerticalPadding / 2),
             child: Text(
-              "MANTAR AVCILIĞI EĞİTİMLERİ",
+              datas[index]["title"],
               style: TextStyle(
                 fontSize: Style.bigTitleTextSize,
                 fontWeight: FontWeight.w500,
@@ -85,8 +116,7 @@ class ServicePage extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(bottom: Style.defautlVerticalPadding / 2),
             child: Text(
-              "Lorem Ipsum has been the industry's standard dummy text the 1500s" *
-                  4,
+              datas[index]["content"],
               maxLines: 2,
               style: TextStyle(
                 overflow: TextOverflow.ellipsis,
@@ -106,7 +136,8 @@ class ServicePage extends StatelessWidget {
     );
   }
 
-  Future detailPop(BuildContext context) {
+  Future detailPop(
+      BuildContext context, List<Map<String, dynamic>>? datas, int index) {
     return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -140,7 +171,7 @@ class ServicePage extends StatelessWidget {
                 padding: EdgeInsets.symmetric(
                     vertical: Style.defautlVerticalPadding),
                 child: Text(
-                  "Organizasyon",
+                  datas?[index]["title"] ?? "",
                   style: TextStyle(
                     fontSize: Style.bigTitleTextSize,
                     fontWeight: FontWeight.bold,
@@ -149,8 +180,7 @@ class ServicePage extends StatelessWidget {
                 ),
               ),
               Text(
-                "Lorem Ipsum has been the industry's standard dummy text the 1500s" *
-                    4,
+                datas?[index]["content"] ?? "",
               ),
             ],
           ),
