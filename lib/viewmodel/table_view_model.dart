@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fungimobil/model/single_record_model.dart';
 
 import '../constants/locator.dart';
 import '../repository/table_repository.dart';
@@ -34,6 +35,20 @@ class TableViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       var data = await _repository.tableCreate(tableName, isUserDb: isUserDb);
+      return data;
+    } catch (e) {
+      rethrow;
+    } finally {
+      status = TableVMStatus.free;
+      notifyListeners();
+    }
+  }
+
+  Future<SingleRecordModel> fetchRecord(String tableName, int id, {bool isUserDb = false}) async {
+    status = TableVMStatus.busy;
+    notifyListeners();
+    try {
+      var data = await _repository.fetchRecord(tableName, id, isUserDb: isUserDb);
       return data;
     } catch (e) {
       rethrow;

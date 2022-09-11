@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'table_model.dart';
+
 class SingleRecordModel {
   SingleRecordModel({
     this.data,
@@ -21,7 +23,9 @@ class SingleRecordModel {
 
   factory SingleRecordModel.fromJson(Map<String, dynamic> json) => SingleRecordModel(
     data: json['data'] == null ? null : Map<String, dynamic>.from(json['data']),
-    columns: json["columns"] == null ? null : Map<String, Column>.from(json['columns']),
+    columns: json["columns"] == null
+        ? null
+        : Map.from(json["columns"]).map((k, v) => MapEntry<String, Column>(k, Column.fromJson(v))),
     status: json["status"],
   );
 
@@ -32,50 +36,3 @@ class SingleRecordModel {
   };
 }
 
-class Column {
-  Column({
-    this.name,
-    this.display,
-    this.type,
-    this.length,
-    this.aboutNull,
-    this.aboutDefault,
-    this.privileges,
-    this.key,
-  });
-
-  final String? name;
-  final String? display;
-  final String? type;
-  final String? length;
-  final String? aboutNull;
-  final String? aboutDefault;
-  final String? privileges;
-  final String? key;
-
-  factory Column.fromRawJson(String str) => Column.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
-
-  factory Column.fromJson(Map<String, dynamic> json) => Column(
-    name: json["name"],
-    display: json["display"],
-    type: json["type"],
-    length: json["length"],
-    aboutNull: json["null"],
-    aboutDefault: json["default"],
-    privileges: json["privileges"],
-    key: json["key"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "name": name,
-    "display": display,
-    "type": type,
-    "length": length,
-    "null": aboutNull,
-    "default": aboutDefault,
-    "privileges": privileges,
-    "key": key,
-  };
-}

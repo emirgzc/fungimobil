@@ -3,6 +3,8 @@ import 'package:fungimobil/data/api_client.dart';
 import 'package:fungimobil/data/preferences_helper.dart';
 import 'package:fungimobil/model/table_model.dart';
 
+import '../model/single_record_model.dart';
+
 class TableRepository {
   final ApiClient _apiClient = locator<ApiClient>();
   final PreferencesHelper _preferencesHelper = locator<PreferencesHelper>();
@@ -33,6 +35,16 @@ class TableRepository {
     try {
       String token = await _preferencesHelper.getUserToken() ?? '';
       var result = await _apiClient.tableCreate(tableName: tableName, token: token, isUserDb: isUserDb);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SingleRecordModel> fetchRecord(String tableName, int id, {bool isUserDb = false}) async {
+    try {
+      String token = await _preferencesHelper.getUserToken() ?? '';
+      var result = await _apiClient.fetchRecord(tableName: tableName, id: id, token: token, isUserDb: isUserDb);
       return result;
     } catch (e) {
       rethrow;

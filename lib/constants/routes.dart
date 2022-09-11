@@ -59,7 +59,9 @@ class Routes {
         page = const ForgetPasswordPage();
         break;
       case activityDetailPage:
-        page = const ActivityDetailPage();
+        page = ChangeNotifierProvider(
+            create: (_) => TableViewModel(),
+            child: ActivityDetailPage(data: settings.arguments as Map<String, dynamic>,));
         break;
       case blogPage:
         page = const BlogPage();
