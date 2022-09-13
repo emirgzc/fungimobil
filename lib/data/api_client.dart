@@ -98,7 +98,7 @@ class ApiClient {
         'limit': limit,
         'filter': filter,
       };
-      String url = '$_baseUrl/fungitu2_fungiturkey/$tableName';
+      String url = '$_baseUrlWithDb/$tableName';
       debugPrint('apiUrl ::: $url');
       debugPrint('params : $requestBody');
       final response = await http.post(
@@ -123,6 +123,48 @@ class ApiClient {
         return tableModel;
       } else {
         debugPrint('ApiClient fetchTable ERROR ::: ${response.body}');
+        throw ApiException();
+      }
+    } catch (e) {
+      if (e is SocketException) throw ApiException();
+      rethrow;
+    }
+  }
+
+  Future<int> fetchTableCount({
+    required String tableName,
+    required String token,
+    required Map filter,
+  }) async {
+    try {
+      filter = Map.of(filter);
+      filter['status'] = 1;
+      final Map<String, dynamic> requestBody = {
+        'filter': filter,
+      };
+      String url = '$_baseUrlWithDb/$tableName/count';
+      debugPrint('apiUrl ::: $url');
+      debugPrint('params : $requestBody');
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'token': token,
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      debugPrint('Response ::: ${response.body}');
+
+      Map<String, dynamic> json = jsonDecode(response.body);
+      if (_isRequestHaveMessage(json)) {
+        _throwError(json);
+      }
+
+      if (response.statusCode == 200) {
+        return int.tryParse(json['data'].toString()) ?? 0;
+      } else {
+        debugPrint('ApiClient fetchTableCount ERROR ::: ${response.body}');
         throw ApiException();
       }
     } catch (e) {

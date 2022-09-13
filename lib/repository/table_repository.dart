@@ -31,6 +31,24 @@ class TableRepository {
     }
   }
 
+  Future<int> fetchTableCount({
+    required String tableName,
+    Map filter = const {},
+  }) async {
+    try {
+      String token = await _preferencesHelper.getUserToken() ?? '';
+
+      int count = await _apiClient.fetchTableCount(
+        tableName: tableName,
+        token: token,
+        filter: filter,
+      );
+      return count;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<SingleRecordModel> fetchRecord({required String tableName, required int id, bool isUserDb = false}) async {
     try {
       String token = await _preferencesHelper.getUserToken() ?? '';

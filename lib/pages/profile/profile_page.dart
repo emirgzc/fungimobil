@@ -24,20 +24,21 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   Map<String, dynamic>? editData;
-  final Map<String, dynamic> updateData = {};
+  UserModel? userModel;
+  int? blogCommentNumber, activityCommentNumber, recordNumber;
 
-  int? id;
+
+  final Map<String, dynamic> updateData = {};
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: getAppBar("Profil Sayfası"),
-      body: FutureBuilder<UserModel>(
-          future: Provider.of<AuthViewModel>(context, listen: false).getUserInfoFromLocale(),
+      body: FutureBuilder(
+          future: _fetchUserInfo(),
           builder: (context, snapshot) {
-            if (snapshot.hasData && snapshot.data != null) {
-              id = int.parse(snapshot.data!.id!);
-              return profileBody(snapshot.data!, context);
+            if (userModel != null && blogCommentNumber != null && activityCommentNumber != null && recordNumber != null) {
+              return profileBody(userModel!, context);
             } else if (snapshot.hasError && snapshot.error != null) {
               HandleExceptions.handle(exception: snapshot.error, context: context);
             }
@@ -153,21 +154,21 @@ class _ProfilePageState extends State<ProfilePage> {
                     Navigator.pushNamed(context, Routes.blogCommentPage);
                   },
                   "Blog Yorumlarım",
-                  99999,
+                  "${blogCommentNumber!} Yorum",
                 ),
                 profileMenuItem(
                   () {
                     Navigator.pushNamed(context, Routes.activityCommentPage);
                   },
                   "Etkinlik Yorumlarım",
-                  999999,
+                  "${activityCommentNumber!} Yorum",
                 ),
                 profileMenuItem(
                   () {
                     Navigator.pushNamed(context, Routes.recordListPage);
                   },
                   "Kayıtlarım",
-                  9999999,
+                  '${recordNumber!} Kayıt',
                 ),
               ],
             ),
@@ -177,7 +178,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget profileMenuItem(void Function()? onTap, String title, int count) {
+  Widget profileMenuItem(void Function()? onTap, String title, String content) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -209,7 +210,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("$count Yorum"),
+                Text(content),
                 Icon(
                   Icons.arrow_circle_right_outlined,
                   color: Style.textColor.withOpacity(0.6),
@@ -333,10 +334,21 @@ class _ProfilePageState extends State<ProfilePage> {
     ).then((value) => editData = null);
   }
 
+  Future _fetchUserInfo() async {
+    userModel = await Provider.of<AuthViewModel>(context, listen: false).getUserInfoFromLocale();
+    if (!mounted) return;
+    blogCommentNumber = await Provider.of<TableViewModel>(context, listen: false).fetchTableCount(tableName: TableName.BlogComment.name, filter: {'own_id': userModel!.id});
+    if (!mounted) return;
+    activityCommentNumber = await Provider.of<TableViewModel>(context, listen: false).fetchTableCount(tableName: TableName.ActivityComment.name, filter: {'own_id': userModel!.id});
+    if (!mounted) return;
+    recordNumber = await Provider.of<TableViewModel>(context, listen: false).fetchTableCount(tableName: TableName.ActivityRecord.name, filter: {'own_id': userModel!.id});
+
+  }
+
   Future<Map<String, dynamic>?> _fetchEditData() async {
     try {
       editData = await Provider.of<TableViewModel>(context, listen: false)
-          .tableEdit(tableName: TableName.users.name, id: id!, isUserDb: true);
+          .tableEdit(tableName: TableName.users.name, id: int.parse(userModel!.id!), isUserDb: true);
       return editData!;
     } catch (e) {
       HandleExceptions.handle(exception: e, context: context);
@@ -346,7 +358,7 @@ class _ProfilePageState extends State<ProfilePage> {
   _updateData() async {
     try {
       Provider.of<TableViewModel>(context, listen: false)
-          .tableUpdate(tableName: TableName.users.name, data: updateData, id: id!, isUserDb: true)
+          .tableUpdate(tableName: TableName.users.name, data: updateData, id: int.parse(userModel!.id!), isUserDb: true)
           .then((value) {
         Provider.of<AuthViewModel>(context, listen: false).syncLocaleUserInfo().then((value) {
           Navigator.pop(context);

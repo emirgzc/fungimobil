@@ -30,6 +30,21 @@ class TableViewModel extends ChangeNotifier {
     }
   }
 
+  Future<int> fetchTableCount({
+      required String tableName,
+        Map filter = const {},
+      }) async {
+    try {
+      int count = await _repository.fetchTableCount(
+        tableName: tableName,
+        filter: filter,
+      );
+      return count;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<SingleRecordModel> fetchRecord({required String tableName, required int id, bool isUserDb = false}) async {
     status = TableVMStatus.busy;
     notifyListeners();
