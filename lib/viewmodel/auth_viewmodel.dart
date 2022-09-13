@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../constants/locator.dart';
+import '../model/user_model.dart';
 import '../repository/auth_repository.dart';
 
 enum AuthVMStatus { busy, free }
@@ -45,6 +46,25 @@ class AuthViewModel extends ChangeNotifier {
       // notifyListeners();
     }
   }
+
+  Future<UserModel> getUserInfoFromLocale() async {
+    try {
+      final result = await _repository.getUserInfoFromLocale();
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<UserModel> getUserInfoFromApi({String? token}) async {
+    try {
+      final result = await _repository.getUserInfoFromApi(token: token);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   //
   // Future<bool> isUserExistsWithApi() async {
   //   try {
@@ -57,9 +77,7 @@ class AuthViewModel extends ChangeNotifier {
 
   Future<bool> signOut() async {
     try {
-      // final result = await _repository.signOut();
-      // return result;
-      return true;
+      return await _repository.signOut();
     } catch (e) {
       rethrow;
     }

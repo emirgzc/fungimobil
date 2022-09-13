@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/pages/login_register/components/button_login.dart';
+import 'package:fungimobil/viewmodel/auth_viewmodel.dart';
 import 'package:fungimobil/widgets/appbar.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
+import 'package:fungimobil/widgets/loading_widget.dart';
+import 'package:provider/provider.dart';
+
+import '../../model/user_model.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -13,11 +19,20 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: getAppBar("Profil Sayfası"),
-      body: profileBody(context),
+      body: FutureBuilder<UserModel>(
+          future: Provider.of<AuthViewModel>(context, listen: false).getUserInfoFromLocale(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              return profileBody(snapshot.data!, context);
+            } else if (snapshot.hasError && snapshot.error != null) {
+              HandleExceptions.handle(exception: snapshot.error, context: context);
+            }
+            return const LoadingWidget();
+          }),
     );
   }
 
-  Widget profileBody(BuildContext context) {
+  Widget profileBody(UserModel userModel, BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
         padding: Style.defaultPagePadding,
@@ -27,8 +42,7 @@ class ProfilePage extends StatelessWidget {
             Column(
               children: [
                 Container(
-                  margin:
-                      EdgeInsets.only(bottom: Style.defautlVerticalPadding / 2),
+                  margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding / 2),
                   padding: EdgeInsets.all(100.r),
                   decoration: BoxDecoration(
                     boxShadow: [Style.defaultShadow],
@@ -40,7 +54,7 @@ class ProfilePage extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   child: Text(
-                    "E G",
+                    '${userModel.name?[0] ?? ''} ${userModel.surname?[0] ?? ''}',
                     style: TextStyle(
                       fontSize: Style.bigTitleTextSize,
                       fontWeight: FontWeight.bold,
@@ -48,43 +62,70 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: Style.defautlVerticalPadding / 4),
+                  padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding / 4),
                   child: Text(
-                    "Muhammed Emir Gözcü",
+                    '${userModel.name ?? ''} ${userModel.surname ?? ''}',
                     style: TextStyle(
                       fontSize: 56.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.mail_outline_rounded,
-                      size: 40.r,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          right: Style.defautlHorizontalPadding,
-                          left: Style.defautlHorizontalPadding / 4),
-                      child: const Text("emirgzc4@gmail.com"),
-                    ),
-                    Icon(
-                      Icons.phone_android_outlined,
-                      size: 40.r,
-                    ),
-                    const Text("0 555 555 55 55"),
-                  ],
+                const SizedBox(height: Style.defaultPadding/2,),
+                Align(
+                  alignment: Alignment.center,
+                  child: Table(
+                    columnWidths: const {
+                      0: MinColumnWidth(FractionColumnWidth(1), IntrinsicColumnWidth()),
+                      1: MinColumnWidth(FractionColumnWidth(1), IntrinsicColumnWidth()),
+                      2: MinColumnWidth(FractionColumnWidth(1), IntrinsicColumnWidth()),
+                    },
+                    children: [
+                      TableRow(children: [
+                        Icon(
+                          Icons.mail_outline_rounded,
+                          size: 40.r,
+                        ),
+                        const SizedBox(
+                          width: Style.defaultPadding / 2,
+                        ),
+                        Align(alignment: Alignment.center, child: Text(userModel.email ?? '')),
+                      ]),
+                      const TableRow(children: [
+                        SizedBox(
+                          height: Style.defaultPadding / 2,
+                        ),
+                        SizedBox(
+                          height: Style.defaultPadding / 2,
+                        ),
+                        SizedBox(
+                          height: Style.defaultPadding / 2,
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Icon(
+                          Icons.phone_android_outlined,
+                          size: 40.r,
+                        ),
+                        const SizedBox(
+                          width: Style.defaultPadding / 2,
+                        ),
+                        Align(alignment: Alignment.center, child: Text(userModel.phone ?? '')),
+                      ]),
+                    ],
+                  ),
                 ),
+                // Column(
+                //   crossAxisAlignment: CrossAxisAlignment.center,
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //
+                //   ],
+                // ),
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: Style.defautlVerticalPadding),
+                  padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
                   child: Text(
-                    "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s" *
-                        4,
+                    userModel.about ?? '',
                     style: TextStyle(
                       fontSize: 44.sp,
                       color: Style.textColor.withOpacity(0.6),
@@ -96,21 +137,21 @@ class ProfilePage extends StatelessWidget {
                     Navigator.pushNamed(context, Routes.blogCommentPage);
                   },
                   "Blog Yorumlarım",
-                  12,
+                  99999,
                 ),
                 profileMenuItem(
                   () {
                     Navigator.pushNamed(context, Routes.activityCommentPage);
                   },
                   "Etkinlik Yorumlarım",
-                  6,
+                  999999,
                 ),
                 profileMenuItem(
                   () {
                     Navigator.pushNamed(context, Routes.recordListPage);
                   },
                   "Kayıtlarım",
-                  8,
+                  9999999,
                 ),
               ],
             ),
@@ -211,8 +252,7 @@ class ProfilePage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: Style.defautlVerticalPadding),
+                  padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
