@@ -50,71 +50,75 @@ class Routes {
         page = const LandingPage();
         break;
       case loginPage:
-        page = LoginPage();
+        page = SafeArea(child: LoginPage());
         break;
       case registerPage:
         page = ChangeNotifierProvider(
           create: (_) => TableViewModel(),
-          child: RegisterPage(),
+          child: SafeArea(child: RegisterPage()),
         );
         break;
       case forgetPassPage:
-        page = const ForgetPasswordPage();
+        page = const SafeArea(child: ForgetPasswordPage());
         break;
       case activityDetailPage:
         page = ChangeNotifierProvider(
             create: (_) => TableViewModel(),
-            child: ActivityDetailPage(data: settings.arguments as Map<String, dynamic>,));
+            child: SafeArea(child: ActivityDetailPage(data: settings.arguments as Map<String, dynamic>,)));
         break;
       case blogPage:
-        page = const BlogPage();
+        page = const SafeArea(child: BlogPage());
         break;
       case blogDetailPage:
-        page = BlogDetailPage(
-          id: settings.arguments.toString(),
+        page = SafeArea(
+          child: BlogDetailPage(
+            id: settings.arguments.toString(),
+          ),
         );
         break;
       case aboutPage:
         page = ChangeNotifierProvider(
           create: (_) => TableViewModel(),
-          child: AboutPage(),
+          child: const SafeArea(child: AboutPage()),
         );
         break;
       case teamPage:
-        page = const TeamPage();
+        page = const SafeArea(child: TeamPage());
         break;
       case servicePage:
-        page = const ServicePage();
+        page = const SafeArea(child: ServicePage());
         break;
       case activityPage:
         page = ChangeNotifierProvider(
             create: (context) => TableViewModel(),
-            child: const ActivityPage());
+            child: const SafeArea(child: ActivityPage()));
         break;
       case galeryPage:
-        page = const GaleryPage();
+        page = const SafeArea(child: GaleryPage());
         break;
       case sponsorPage:
-        page = const SponsorPage();
+        page = const SafeArea(child: SponsorPage());
         break;
       case contactPage:
-        page = const ContactPage();
+        page = const SafeArea(child: ContactPage());
         break;
       case homePage:
         page = ChangeNotifierProvider(
-            create: (_) => TableViewModel(), child: HomePage());
+            create: (_) => TableViewModel(), child: SafeArea(child: HomePage()));
         break;
       case profilePage:
-        page = const ProfilePage();
+        page = ChangeNotifierProvider(
+            create: (_) => TableViewModel(),
+            child: const SafeArea(child: ProfilePage()));
         break;
       case blogCommentPage:
-        page = const BlogCommentList();
+        page = const SafeArea(child: BlogCommentList());
         break;
       case activityCommentPage:
-        page = const ActivityCommentList();
+        page = const SafeArea(child: ActivityCommentList());
         break;
       case recordListPage:
-        page = const RecordList();
+        page = const SafeArea(child: RecordList());
         break;
     }
 

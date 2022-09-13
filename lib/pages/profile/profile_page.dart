@@ -3,8 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
+import 'package:fungimobil/constants/table_util.dart';
+import 'package:fungimobil/model/table_model.dart' as table;
 import 'package:fungimobil/pages/login_register/components/button_login.dart';
 import 'package:fungimobil/viewmodel/auth_viewmodel.dart';
+import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/appbar.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
 import 'package:fungimobil/widgets/loading_widget.dart';
@@ -12,8 +15,18 @@ import 'package:provider/provider.dart';
 
 import '../../model/user_model.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  Map<String, dynamic>? editData;
+  final Map<String, dynamic> updateData = {};
+
+  int? id;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +36,7 @@ class ProfilePage extends StatelessWidget {
           future: Provider.of<AuthViewModel>(context, listen: false).getUserInfoFromLocale(),
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data != null) {
+              id = int.parse(snapshot.data!.id!);
               return profileBody(snapshot.data!, context);
             } else if (snapshot.hasError && snapshot.error != null) {
               HandleExceptions.handle(exception: snapshot.error, context: context);
@@ -71,7 +85,9 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: Style.defaultPadding/2,),
+                const SizedBox(
+                  height: Style.defaultPadding / 2,
+                ),
                 Align(
                   alignment: Alignment.center,
                   child: Table(
@@ -211,7 +227,7 @@ class ProfilePage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         GestureDetector(
-          onTap: () => editPop(context),
+          onTap: () => editPop(),
           child: Container(
             padding: EdgeInsets.all(32.r),
             decoration: BoxDecoration(
@@ -230,7 +246,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Future editPop(BuildContext context) {
+  Future editPop() {
     return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -241,49 +257,104 @@ class ProfilePage extends StatelessWidget {
           topRight: Radius.circular(Style.defaultRadiusSize),
         ),
       ),
-      builder: (context) {
-        return SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: Style.defautlVerticalPadding,
-              horizontal: Style.defautlHorizontalPadding,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Profil Güncelleme",
-                        style: TextStyle(
-                          fontSize: Style.bigTitleTextSize,
-                          fontWeight: FontWeight.bold,
+      builder: (context1) {
+        return FutureBuilder<Map<String, dynamic>?>(
+            future: editData == null ? _fetchEditData() : null,
+            builder: (context, snapshot) {
+              if (editData != null) {
+                Map<String, dynamic> userData = snapshot.data!['data'];
+                var columns = (snapshot.data!['columns'] as Map)
+                    .map((key, value) => MapEntry(key as String, table.Column.fromJson(value)));
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: Style.defautlVerticalPadding,
+                      horizontal: Style.defautlHorizontalPadding,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Profil Güncelleme",
+                                style: TextStyle(
+                                  fontSize: Style.bigTitleTextSize,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () => Navigator.pop(context),
+                                child: const Icon(Icons.close),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: const Icon(Icons.close),
-                      ),
-                    ],
+                        ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: columns.length,
+                            itemBuilder: (context, index) {
+                              var column = columns.values.toList()[index];
+                              return CustomTextField(
+                                hintText: column.display!,
+                                initialValue: userData[column.name],
+                                onChanged: (value) {
+                                  if (value == null) {
+                                    updateData.remove(column.name);
+                                  } else {
+                                    updateData[column.name!] = value;
+                                  }
+                                },
+                              );
+                            }),
+                        // CustomTextField(hintText: "İsim Soyisim"),
+                        // CustomTextField(hintText: "Mail Adresi"),
+                        // CustomTextField(hintText: "Telefon Numarası"),
+                        // CustomTextField(hintText: "Şehir"),
+                        // CustomTextField(hintText: "Meslek"),
+                        // CustomTextField(hintText: "Hakkımda"),
+                        // CustomTextField(hintText: "Şifre"),
+                        // CustomTextField(hintText: "Şifre Tekrar"),
+                        ButtonForLogin(title: "Güncelle", onTap: _updateData),
+                      ],
+                    ),
                   ),
-                ),
-                CustomTextField(hintText: "İsim Soyisim"),
-                CustomTextField(hintText: "Mail Adresi"),
-                CustomTextField(hintText: "Telefon Numarası"),
-                CustomTextField(hintText: "Şehir"),
-                CustomTextField(hintText: "Meslek"),
-                CustomTextField(hintText: "Hakkımda"),
-                CustomTextField(hintText: "Şifre"),
-                CustomTextField(hintText: "Şifre Tekrar"),
-                const ButtonForLogin(title: "Güncelle"),
-              ],
-            ),
-          ),
-        );
+                );
+              } else if (snapshot.hasError && snapshot.error != null) {
+                HandleExceptions.handle(exception: snapshot.error, context: context);
+              }
+              return const LoadingWidget();
+            });
       },
-    );
+    ).then((value) => editData = null);
+  }
+
+  Future<Map<String, dynamic>?> _fetchEditData() async {
+    try {
+      editData = await Provider.of<TableViewModel>(context, listen: false)
+          .tableEdit(tableName: TableName.users.name, id: id!, isUserDb: true);
+      return editData!;
+    } catch (e) {
+      HandleExceptions.handle(exception: e, context: context);
+    }
+  }
+
+  _updateData() async {
+    try {
+      Provider.of<TableViewModel>(context, listen: false)
+          .tableUpdate(tableName: TableName.users.name, data: updateData, id: id!, isUserDb: true)
+          .then((value) {
+        Provider.of<AuthViewModel>(context, listen: false).syncLocaleUserInfo().then((value) {
+          Navigator.pop(context);
+          setState(() {});
+        });
+      });
+    } catch (e) {
+      HandleExceptions.handle(exception: e, context: context);
+    }
   }
 }

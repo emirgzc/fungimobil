@@ -30,11 +30,11 @@ class TableViewModel extends ChangeNotifier {
     }
   }
 
-  Future<Map<String, table.Column>> tableCreate(String tableName, {bool isUserDb = false}) async {
+  Future<SingleRecordModel> fetchRecord({required String tableName, required int id, bool isUserDb = false}) async {
     status = TableVMStatus.busy;
     notifyListeners();
     try {
-      var data = await _repository.tableCreate(tableName, isUserDb: isUserDb);
+      var data = await _repository.fetchRecord(tableName: tableName, id: id, isUserDb: isUserDb);
       return data;
     } catch (e) {
       rethrow;
@@ -44,12 +44,54 @@ class TableViewModel extends ChangeNotifier {
     }
   }
 
-  Future<SingleRecordModel> fetchRecord(String tableName, int id, {bool isUserDb = false}) async {
+  Future<Map<String, table.Column>> tableCreate({required String tableName, bool isUserDb = false}) async {
     status = TableVMStatus.busy;
     notifyListeners();
     try {
-      var data = await _repository.fetchRecord(tableName, id, isUserDb: isUserDb);
-      return data;
+      var result = await _repository.tableCreate(tableName: tableName, isUserDb: isUserDb);
+      return result;
+    } catch (e) {
+      rethrow;
+    } finally {
+      status = TableVMStatus.free;
+      notifyListeners();
+    }
+  }
+
+  Future tableStore({required String tableName, required Map<String, dynamic> data, bool isUserDb = false}) async {
+    status = TableVMStatus.busy;
+    notifyListeners();
+    try {
+      var result = await _repository.tableStore(tableName: tableName, data: data, isUserDb: isUserDb);
+      return result;
+    } catch (e) {
+      rethrow;
+    } finally {
+      status = TableVMStatus.free;
+      notifyListeners();
+    }
+  }
+
+  Future<Map<String, dynamic>> tableEdit({required String tableName, required int id, bool isUserDb = false}) async {
+    // status = TableVMStatus.busy;
+    // notifyListeners();
+    try {
+      var result = await _repository.tableEdit(tableName: tableName, id: id, isUserDb: isUserDb);
+      return result;
+    } catch (e) {
+      rethrow;
+    }/* finally {
+      status = TableVMStatus.free;
+      notifyListeners();
+    }*/
+  }
+
+  Future tableUpdate({required String tableName, required Map<String, dynamic> data, required int id, bool isUserDb = false}) async {
+    status = TableVMStatus.busy;
+    notifyListeners();
+    try {
+      var result = await _repository.tableUpdate(tableName: tableName, data: data, id: id, isUserDb: isUserDb);
+      return result;
     } catch (e) {
       rethrow;
     } finally {

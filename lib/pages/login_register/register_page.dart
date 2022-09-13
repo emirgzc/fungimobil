@@ -32,7 +32,7 @@ class _RegisterPageState extends State<RegisterPage> {
     data = {};
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) async {
       try {
-        createData = await Provider.of<TableViewModel>(context, listen: false).tableCreate(TableName.users.name, isUserDb: true);
+        createData = await Provider.of<TableViewModel>(context, listen: false).tableCreate(tableName: TableName.users.name, isUserDb: true);
         setState(() {});
       } catch (e) {
         HandleExceptions.handle(exception: e, context: context);

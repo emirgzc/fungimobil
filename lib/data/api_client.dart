@@ -143,7 +143,7 @@ class ApiClient {
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'token': '',
+          'token': token,
         },
       );
 
@@ -161,6 +161,130 @@ class ApiClient {
         return columns;
       } else {
         debugPrint('ApiClient tableCreate ERROR ::: ${response.body}');
+        throw ApiException();
+      }
+    } catch (e) {
+      if (e is SocketException) throw ApiException();
+      rethrow;
+    }
+  }
+
+  /// Tamamlanmadı. Kontrol edilecek
+  Future storeRecord({
+    required String tableName,
+    required String token,
+    required Map<String, dynamic> data,
+    bool isUserDb = false,
+  }) async {
+    try {
+      String url = '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/store';
+      debugPrint('apiUrl ::: $url');
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'token': token
+        },
+        body: jsonEncode(data),
+      );
+
+      Map<String, dynamic> json = jsonDecode(response.body);
+      if (_isRequestHaveMessage(json)) {
+        _throwError(json);
+      }
+
+      if (response.statusCode == 200) {
+        // debugPrint('ApiClient tableCreate fulldata ::: ${jsonDecode(response.body)}');
+        // final columnsMap = (json['columns'] as Map);
+        // final columns = columnsMap.map((key, value) => MapEntry(key as String, table.Column.fromJson(value)));
+        // debugPrint('ApiClient tableCreate data ::: $columns');
+        // debugPrint('ApiClient tableCreate SUCCESS');
+        // return columns;
+        debugPrint('ApiClient tableStore SUCCESS data:: $json');
+        return;
+      } else {
+        debugPrint('ApiClient tableStore ERROR ::: ${response.body}');
+        throw ApiException();
+      }
+    } catch (e) {
+      if (e is SocketException) throw ApiException();
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> editRecord({
+    required String tableName,
+    required String token,
+    required int id,
+    bool isUserDb = false,
+  }) async {
+    try {
+      String url = '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/$id/edit';
+      debugPrint('apiUrl ::: $url');
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'token': token,
+        },
+      );
+
+      Map<String, dynamic> json = jsonDecode(response.body);
+      if (_isRequestHaveMessage(json)) {
+        _throwError(json);
+      }
+
+      if (response.statusCode == 200) {
+        debugPrint('ApiClient tableCreate fulldata ::: ${jsonDecode(response.body)}');
+        debugPrint('ApiClient tableCreate SUCCESS');
+        return json;
+      } else {
+        debugPrint('ApiClient tableCreate ERROR ::: ${response.body}');
+        throw ApiException();
+      }
+    } catch (e) {
+      if (e is SocketException) throw ApiException();
+      rethrow;
+    }
+  }
+
+  Future updateRecord({
+    required String tableName,
+    required String token,
+    required Map<String, dynamic> data,
+    required int id,
+    bool isUserDb = false,
+  }) async {
+    try {
+      String url = '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/$id/update';
+      debugPrint('apiUrl ::: $url');
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'token': token
+        },
+        body: jsonEncode(data),
+      );
+
+      debugPrint('response body : ${response.body}');
+
+      Map<String, dynamic> json = jsonDecode(response.body);
+      if (_isRequestHaveMessage(json)) {
+        _throwError(json);
+      }
+
+      if (response.statusCode == 200) {
+        // debugPrint('ApiClient tableCreate fulldata ::: ${jsonDecode(response.body)}');
+        // final columnsMap = (json['columns'] as Map);
+        // final columns = columnsMap.map((key, value) => MapEntry(key as String, table.Column.fromJson(value)));
+        // debugPrint('ApiClient tableCreate data ::: $columns');
+        // debugPrint('ApiClient tableCreate SUCCESS');
+        // return columns;
+        debugPrint('ApiClient tableStore SUCCESS data:: $json');
+        return;
+      } else {
+        debugPrint('ApiClient tableStore ERROR ::: ${response.body}');
         throw ApiException();
       }
     } catch (e) {

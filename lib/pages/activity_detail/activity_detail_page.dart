@@ -750,9 +750,8 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> with TickerProv
 
   Future _fetchRecord() async {
     try {
-      await Future.delayed(const Duration(seconds: 5));
       int id = int.parse(widget.data['id'].toString());
-      recordModel = await Provider.of<TableViewModel>(context, listen: false).fetchRecord(TableName.Activity.name, id);
+      recordModel = await Provider.of<TableViewModel>(context, listen: false).fetchRecord(tableName: TableName.Activity.name, id: id);
     } catch (e) {
       HandleExceptions.handle(exception: e, context: context);
     }

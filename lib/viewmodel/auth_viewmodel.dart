@@ -65,6 +65,15 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
+  Future<bool> syncLocaleUserInfo() async {
+    try {
+      final result = await _repository.saveUserInfo();
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   //
   // Future<bool> isUserExistsWithApi() async {
   //   try {
