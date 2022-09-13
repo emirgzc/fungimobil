@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fungimobil/constants/extension.dart';
+import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
+import 'package:fungimobil/constants/table_util.dart';
+import 'package:fungimobil/constants/util.dart';
+import 'package:fungimobil/model/table_model.dart' as table;
 import 'package:fungimobil/widgets/appbar.dart';
+import 'package:fungimobil/widgets/loading_widget.dart';
+import 'package:provider/provider.dart';
+
+import '../../viewmodel/table_view_model.dart';
 
 class ActivityPage extends StatelessWidget {
   const ActivityPage({Key? key}) : super(key: key);
@@ -12,25 +21,30 @@ class ActivityPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Style.primaryColor,
       appBar: getAppBar("Etkinlikler"),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: Style.defaultPagePadding,
-          child: Column(
-            children: [
-              ...List.generate(
-                4,
-                (index) {
-                  return activityCard(context);
-                },
-              ),
-            ],
-          ),
-        ),
+      body: FutureBuilder<table.TableModel>(
+        future: Provider.of<TableViewModel>(context, listen: false).fetchTable(tableName: TableName.Activity.name, page: 1, limit: 100),
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data != null) {
+            // snapshot.data!.data
+            List<Map<String, dynamic>> dataList = snapshot.data!.data!;//(snapshot.data as List).map((e) => e as Map<String, dynamic>).toList();
+            return ListView.builder(
+              padding: const EdgeInsets.all(Style.defaultPadding),
+                itemCount: dataList.length,
+                itemBuilder: (context, index) {
+              return activityCard(dataList[index], context);
+            });
+          } else if (snapshot.hasError && snapshot.error != null) {
+            HandleExceptions.handle(exception: snapshot.error, context: context);
+          }
+
+          return const LoadingWidget();
+
+        }
       ),
     );
   }
 
-  Widget activityCard(BuildContext context) {
+  Widget activityCard(Map<String, dynamic> data, BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, Routes.activityDetailPage);
@@ -41,10 +55,10 @@ class ActivityPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            imageForActivity(),
-            title(),
-            desc(),
-            detailDateandDirector(),
+            imageForActivity(context, Util.imageConvertUrl(imageName: data['image']), data),
+            title(data['title']),
+            desc(data['content']),
+            detailDateandDirector(data['director'], data['last_record_date'].toString().toDateTime().toFormattedString()),
             Container(
               margin: const EdgeInsets.symmetric(
                   vertical: Style.defaultPadding / 3),
@@ -58,9 +72,9 @@ class ActivityPage extends StatelessWidget {
     );
   }
 
-  Widget desc() {
+  Widget desc(String content) {
     return Text(
-      "Mantar avcılığı yapabilmemiz için ekipmanlara ihtiyacımız vardır. Bu ekipmanların olmazsa olmazı sepet, çakı ve fırçadır. Diğer ekleyeceğimiz ekipmanlar ise bizim konforumuz ve güvenliğimiz açısından önem taşımaktadır.",
+      content,
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(
@@ -69,11 +83,11 @@ class ActivityPage extends StatelessWidget {
     );
   }
 
-  Widget title() {
+  Widget title(String title) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
       child: Text(
-        "Mantar Avcılığı İçin Gerekli Ekipmanlar",
+        title,
         style: TextStyle(
           fontSize: Style.bigTitleTextSize,
           fontWeight: FontWeight.w600,
@@ -82,7 +96,7 @@ class ActivityPage extends StatelessWidget {
     );
   }
 
-  Widget imageForActivity() {
+  Widget imageForActivity(BuildContext context, String imageUrl, Map<String, dynamic> data) {
     return Stack(
       children: [
         SizedBox(
@@ -90,44 +104,49 @@ class ActivityPage extends StatelessWidget {
           width: double.infinity,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-            child: Image.asset(
-              "assets/images/fungi1.jpeg",
+            child: Image.network(
+              imageUrl,
               fit: BoxFit.cover,
             ),
           ),
         ),
-        buttonForContinue(),
+        buttonForContinue(context, data),
       ],
     );
   }
 
-  Widget buttonForContinue() {
+  Widget buttonForContinue(BuildContext context, Map<String, dynamic> data) {
     return Positioned(
       bottom: Style.defautlVerticalPadding / 2,
       right: Style.defautlHorizontalPadding / 2,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: Style.defautlVerticalPadding / 4,
-          horizontal: Style.defautlHorizontalPadding / 2,
-        ),
-        decoration: BoxDecoration(
-          color: Style.secondaryColor.withOpacity(0.9),
-          borderRadius: BorderRadius.circular(
-            Style.defaultRadiusSize,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, Routes.activityDetailPage, arguments: data);
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            vertical: Style.defautlVerticalPadding / 4,
+            horizontal: Style.defautlHorizontalPadding / 2,
           ),
-        ),
-        child: Text(
-          "Devamını Oku...",
-          style: TextStyle(
-            color: Style.textColor,
-            fontSize: Style.defaultTextSize,
+          decoration: BoxDecoration(
+            color: Style.secondaryColor.withOpacity(0.9),
+            borderRadius: BorderRadius.circular(
+              Style.defaultRadiusSize,
+            ),
+          ),
+          child: Text(
+            "Devamını Oku...",
+            style: TextStyle(
+              color: Style.textColor,
+              fontSize: Style.defaultTextSize,
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget detailDateandDirector() {
+  Widget detailDateandDirector(String creatorName, String lastRecordDate) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding / 2),
       child: Row(
@@ -145,7 +164,7 @@ class ActivityPage extends StatelessWidget {
                 padding:
                     EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
                 child: Text(
-                  "Ömer Üngör",
+                  creatorName,
                   style: TextStyle(
                     overflow: TextOverflow.ellipsis,
                     color: Style.textGreyColor,
@@ -154,9 +173,9 @@ class ActivityPage extends StatelessWidget {
               ),
             ],
           ),
-          const Text(
-            "Son Kayıt : 12 Ağustos 2022",
-            style: TextStyle(
+          Text(
+            "Son Kayıt : $lastRecordDate",
+            style: const TextStyle(
               overflow: TextOverflow.ellipsis,
               color: Style.dangerColor,
             ),

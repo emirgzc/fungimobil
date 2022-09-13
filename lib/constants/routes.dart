@@ -87,7 +87,9 @@ class Routes {
         page = const ServicePage();
         break;
       case activityPage:
-        page = const ActivityPage();
+        page = ChangeNotifierProvider(
+            create: (context) => TableViewModel(),
+            child: const ActivityPage());
         break;
       case galeryPage:
         page = const GaleryPage();
