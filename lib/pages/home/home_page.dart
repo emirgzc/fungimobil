@@ -11,7 +11,6 @@ import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/pages/home/components/home_drawer.dart';
 import 'package:fungimobil/viewmodel/table_view_model.dart';
-import 'package:fungimobil/widgets/custom_text_field.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer_loading.dart';
 import 'package:provider/provider.dart';
@@ -61,13 +60,22 @@ class HomePage extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 30.h),
-              child: CustomTextField(
-                hintText: "Aramak istediğiniz kelime",
-                prefixIcon: const Icon(
-                  Icons.search,
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SizedBox(
+                  height: 60,
+                  child: Row(
+                    children: [
+                      for (int i = 0; i <= categoriesItem.length - 1; i++)
+                        sliderCardItem(
+                          categoriesItem[i].title.toString(),
+                          context,
+                          categoriesItem[i].routesWay.toString(),
+                        ),
+                    ],
+                  ),
                 ),
-                suffixIcon: const Icon(Icons.sort),
               ),
             ),
             titleForRow(
@@ -123,6 +131,33 @@ class HomePage extends StatelessWidget {
                   );
                 }),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget sliderCardItem(String title, BuildContext context, String routeName) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, routeName);
+      },
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(
+          vertical: 8,
+          horizontal: 8,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(
+            Style.defaultRadiusSize,
+          ),
+          boxShadow: [Style.defaultShadow],
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+              color: Style.textColor, fontSize: Style.defaultTextSize),
         ),
       ),
     );
@@ -224,7 +259,8 @@ class HomePage extends StatelessWidget {
   Widget actHomeCard(Map<String, dynamic>? data, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, Routes.activityDetailPage, arguments: data);
+        Navigator.pushNamed(context, Routes.activityDetailPage,
+            arguments: data);
       },
       child: Container(
         margin: EdgeInsets.only(top: 48.h, bottom: 48.h, right: 24.w),
@@ -251,14 +287,17 @@ class HomePage extends StatelessWidget {
                     child: SizedBox(
                       width: 0.6.sw,
                       height: 0.2.sh,
-                      child: data == null ? Container(
-                        color: Colors.white.withOpacity(0.8),) : Hero(
-                        tag: data['image'],
-                        child: Image.network(
-                          Util.imageConvertUrl(imageName: data['image']),
-                          fit: BoxFit.cover,
-                      ),
-                        ),
+                      child: data == null
+                          ? Container(
+                              color: Colors.white.withOpacity(0.8),
+                            )
+                          : Hero(
+                              tag: data['image'],
+                              child: Image.network(
+                                Util.imageConvertUrl(imageName: data['image']),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                     ),
                   ),
                   Positioned(
@@ -486,3 +525,29 @@ class HomePage extends StatelessWidget {
     }
   }
 }
+
+class Categories {
+  String? title;
+  String? icon;
+  String? routesWay;
+
+  Categories({
+    required this.title,
+    required this.icon,
+    required this.routesWay,
+  });
+}
+
+List<Categories> categoriesItem = [
+  Categories(title: "Hakkımızda", icon: "icon", routesWay: Routes.aboutPage),
+  Categories(title: "Takımımız", icon: "icon", routesWay: Routes.teamPage),
+  Categories(
+      title: "Organizasyonumuz", icon: "icon", routesWay: Routes.servicePage),
+  Categories(title: "Galeri", icon: "icon", routesWay: Routes.galeryPage),
+  Categories(
+      title: "Etkinlikler", icon: "icon", routesWay: Routes.activityPage),
+  Categories(title: "Blog", icon: "icon", routesWay: Routes.blogPage),
+  Categories(
+      title: "Sponsorlarımız", icon: "icon", routesWay: Routes.sponsorPage),
+  Categories(title: "İletişim", icon: "icon", routesWay: Routes.contactPage),
+];
