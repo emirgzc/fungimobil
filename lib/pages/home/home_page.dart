@@ -85,6 +85,7 @@ class HomePage extends StatelessWidget {
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       for (int i = 0;
                           i < min(5, activityDataList?.length ?? 5);
@@ -130,7 +131,8 @@ class HomePage extends StatelessWidget {
   Widget blogCard(Map<String, dynamic>? data, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, Routes.blogDetailPage);
+        Navigator.pushNamed(context, Routes.blogDetailPage,
+            arguments: data!["id"]);
       },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
@@ -226,7 +228,7 @@ class HomePage extends StatelessWidget {
       },
       child: Container(
         margin: EdgeInsets.only(top: 48.h, bottom: 48.h, right: 24.w),
-        // width: 660.w,
+        width: 660.w,
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.8),
           borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
