@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:fungimobil/model/table_model.dart';
+import 'table_model.dart';
 
 class SingleRecordModel {
   SingleRecordModel({
@@ -17,26 +17,22 @@ class SingleRecordModel {
   final Map<String, Column>? columns;
   final String? status;
 
-  factory SingleRecordModel.fromRawJson(String str) =>
-      SingleRecordModel.fromJson(json.decode(str));
+  factory SingleRecordModel.fromRawJson(String str) => SingleRecordModel.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory SingleRecordModel.fromJson(Map<String, dynamic> json) =>
-      SingleRecordModel(
-        data: json['data'] == null
-            ? null
-            : Map<String, dynamic>.from(json['data']),
-        columns: json["columns"] == null
-            ? null
-            : Map.from(json["columns"])
-                .map((k, v) => MapEntry<String, Column>(k, Column.fromJson(v))),
-        status: json["status"],
-      );
+  factory SingleRecordModel.fromJson(Map<String, dynamic> json) => SingleRecordModel(
+    data: json['data'] == null ? null : Map<String, dynamic>.from(json['data']),
+    columns: json["columns"] == null
+        ? null
+        : Map.from(json["columns"]).map((k, v) => MapEntry<String, Column>(k, Column.fromJson(v))),
+    status: json["status"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "data": data,
-        "columns": columns,
-        "status": status,
-      };
+    "data": data,
+    "columns": columns,
+    "status": status,
+  };
 }
+

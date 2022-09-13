@@ -1,24 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fungimobil/constants/extension.dart';
+import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/style.dart';
+import 'package:fungimobil/constants/table_util.dart';
+import 'package:fungimobil/constants/util.dart';
+import 'package:fungimobil/model/single_record_model.dart';
 import 'package:fungimobil/pages/login_register/components/button_login.dart';
+import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/card_for_social_media.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
+import 'package:provider/provider.dart';
+
+import '../../widgets/shimmer/shimmer.dart';
+import '../../widgets/shimmer/shimmer_loading.dart';
 
 class ActivityDetailPage extends StatefulWidget {
-  const ActivityDetailPage({Key? key}) : super(key: key);
+  const ActivityDetailPage({Key? key, required this.data}) : super(key: key);
+
+  final Map<String, dynamic> data;
 
   @override
   State<ActivityDetailPage> createState() => _ActivityDetailPageState();
 }
 
-class _ActivityDetailPageState extends State<ActivityDetailPage>
-    with TickerProviderStateMixin {
+class _ActivityDetailPageState extends State<ActivityDetailPage> with TickerProviderStateMixin {
   AnimationController? controller;
+  SingleRecordModel? recordModel;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: activityDetailBody(context),
+      body: Shimmer(linearGradient: Style.shimmerDarkGradient, child: activityDetailBody(context)),
     );
   }
 
@@ -29,9 +42,12 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
           SizedBox(
             height: 900.h,
             width: double.infinity,
-            child: Image.asset(
-              'assets/images/fungi1.jpeg',
-              fit: BoxFit.cover,
+            child: Hero(
+              tag: widget.data['image'],
+              child: Image.network(
+                Util.imageConvertUrl(imageName: widget.data['image']),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           arrowBack(),
@@ -53,31 +69,30 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                   ),
                   child: socialCardandPrice(),
                 ),
-                bigTitle(),
+                // bigTitle(),
                 Padding(
                   padding: EdgeInsets.only(top: Style.defautlVerticalPadding),
-                  child: desc(),
+                  child: FutureBuilder(
+                      future: recordModel == null ? _fetchRecord() : null,
+                      builder: (context, snapshot) {
+                        return desc(recordModel?.data?['content']);
+                      }),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: Style.defautlVerticalPadding),
+                  padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
                   child: titleForActivity("Etkinlik Bilgisi"),
                 ),
                 Padding(
-                  padding:
-                      EdgeInsets.only(bottom: Style.defautlVerticalPadding),
+                  padding: EdgeInsets.only(bottom: Style.defautlVerticalPadding),
                   child: infoActivity(),
                 ),
                 titleForActivity("Konum Bilgisi"),
                 Padding(
-                  padding: EdgeInsets.only(
-                      top: Style.defautlVerticalPadding,
-                      bottom: Style.defautlVerticalPadding / 2),
+                  padding: EdgeInsets.only(top: Style.defautlVerticalPadding, bottom: Style.defautlVerticalPadding / 2),
                   child: map(),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: Style.defautlVerticalPadding),
+                  padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
                   child: commentTitle(context),
                 ),
                 // commentForActivity(),
@@ -92,6 +107,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
     );
   }
 
+  // TODO: Yorumlar yapılacak
   Widget commentTitle(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -160,7 +176,9 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                   fontSize: Style.defaultTextSize,
                 ),
               ),
-              const Text("17 Ağustos 2022 - 16:50"),
+              Expanded(
+                child: Text(widget.data['finish_date'].toString().toDateTime().toFormattedStringWithTime()),
+              ),
             ],
           ),
         ),
@@ -188,7 +206,9 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                   fontSize: Style.defaultTextSize,
                 ),
               ),
-              const Text("Ömer Üngör, Selçuk Ekşi"),
+              Expanded(
+                child: Text(widget.data['director']),
+              ),
             ],
           ),
         ),
@@ -206,29 +226,66 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
     );
   }
 
-  Widget desc() {
-    return Text(
-      "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s" *
-          20,
-      style: TextStyle(
-        fontSize: Style.defaultTextSize,
-        color: Style.textColor.withOpacity(0.6),
-      ),
+  Widget desc(String? content) {
+    String text;
+    if (content != null) {
+      text = content;
+    } else {
+      String minimalContent = widget.data['content'].toString();
+      text = minimalContent.endsWith('...') ? minimalContent.substring(0, minimalContent.length - 3) : minimalContent;
+    }
+    return Column(
+      children: [
+        /*ShimmerLoading(
+          isLoading: content == null,
+          child: Text.rich(TextSpan(
+              style: TextStyle(
+                fontSize: Style.defaultTextSize,
+                color: Style.textColor.withOpacity(0.6),
+              ),
+              children: [
+                TextSpan(text: text),
+              ]
+          )),
+        ),*/
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: Style.defaultTextSize,
+            color: Style.textColor.withOpacity(0.6),
+          ),
+        ),
+        /*if (content == null) SizedBox(width: 0.4.sw, child: const LinearProgressIndicator(color: Style.secondaryColor, backgroundColor: Colors.transparent,)),*/
+        // if (content == null) const CircularProgressIndicator(color: Style.secondaryColor,),
+        if (content == null)
+          ShimmerLoading(
+            isLoading: content == null,
+            child: Text(
+              '...',
+              style: TextStyle(
+                fontSize: Style.defaultTextSize * 3,
+                color: Style.textColor.withOpacity(0.6),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
-  Widget bigTitle() {
-    return Text(
-      "One of best destinations in Turkey",
-      style: TextStyle(
-        fontSize: Style.bigTitleTextSize,
-        fontWeight: FontWeight.w500,
-      ),
-    );
-  }
+  // Widget bigTitle() {
+  //   return Text(
+  //     "One of best destinations in Turkey",
+  //     style: TextStyle(
+  //       fontSize: Style.bigTitleTextSize,
+  //       fontWeight: FontWeight.w500,
+  //     ),
+  //   );
+  // }
 
   Widget socialCardandPrice() {
-    String price = "850";
+    String formattedPrice = widget.data['price'].toString().toNumberFormat();
+    String priceIntegerSection = formattedPrice.split(',')[0];
+    String priceDecimalSection = formattedPrice.split(',')[1];
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,8 +301,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                   size: 60.r,
                 ),
                 Padding(
-                  padding:
-                      EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
+                  padding: EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
                   child: Text(
                     "Bolu, Türkiye",
                     style: TextStyle(
@@ -284,15 +340,15 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
               // crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  price,
+                  priceIntegerSection,
                   style: TextStyle(
-                    fontSize: price.length > 3 ? 80.sp : 96.sp,
+                    fontSize: priceIntegerSection.length > 3 ? 80.sp : 96.sp,
                     fontWeight: FontWeight.w500,
                     color: Style.secondaryColor,
                   ),
                 ),
                 Text(
-                  ",00 ₺",
+                  ",$priceDecimalSection ₺",
                   style: TextStyle(
                     fontSize: 60.sp,
                     fontWeight: FontWeight.w500,
@@ -314,7 +370,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
             Padding(
               padding: EdgeInsets.only(top: 12.h),
               child: Text(
-                "Kontenjan : 30",
+                "Kontenjan : ${widget.data['quota']}",
                 style: TextStyle(
                   fontSize: 40.sp,
                   color: Style.textColor.withOpacity(0.5),
@@ -335,7 +391,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
       children: [
         Expanded(
           child: Text(
-            titleAct,
+            widget.data['title'],
             style: TextStyle(
               fontSize: titleAct.length > 30 ? 60.sp : 80.sp,
               fontWeight: FontWeight.w500,
@@ -365,10 +421,9 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                 size: 60.r,
               ),
               Padding(
-                padding:
-                    EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
+                padding: EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
                 child: Text(
-                  "15 Ağustos 2022",
+                  widget.data['start_date'].toString().toDateTime().toFormattedString(),
                   style: TextStyle(
                     fontSize: 40.sp,
                     color: Style.textColor.withOpacity(0.4),
@@ -413,17 +468,16 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
         onTap: () => recordPop(context),
         child: Container(
           padding: EdgeInsets.symmetric(
-              vertical: Style.defautlVerticalPadding / 4,
-              horizontal: Style.defautlHorizontalPadding / 2),
+              vertical: Style.defautlVerticalPadding / 4, horizontal: Style.defautlHorizontalPadding / 2),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: const [
+            children: [
               Text(
-                "Son Tarih : 15 Ağustos 2022",
+                "Son Tarih : ${widget.data['last_record_date'].toString().toDateTime().toFormattedString()}",
                 style: TextStyle(
                   color: Style.dangerColor,
                   fontSize: 13,
@@ -539,9 +593,8 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(
-                          left: Style.defautlHorizontalPadding,
-                          top: Style.defautlVerticalPadding * 2),
+                      padding:
+                          EdgeInsets.only(left: Style.defautlHorizontalPadding, top: Style.defautlVerticalPadding * 2),
                       child: Row(
                         children: [
                           Text(
@@ -562,13 +615,11 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                         return ListTile(
                           minLeadingWidth: 0,
                           dense: true,
-                          leading:
-                              const Icon(Icons.supervised_user_circle_outlined),
+                          leading: const Icon(Icons.supervised_user_circle_outlined),
                           title: Row(
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(
-                                    right: Style.defautlHorizontalPadding / 2),
+                                padding: EdgeInsets.only(right: Style.defautlHorizontalPadding / 2),
                                 child: Text(
                                   "Emir Gözcü",
                                   style: TextStyle(
@@ -611,6 +662,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
     );
   }
 
+  //  TODO: Kayıt yapılacak
   Future recordPop(BuildContext context) {
     return showModalBottomSheet(
       isScrollControlled: true,
@@ -624,9 +676,8 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
       ),
       builder: (context) {
         return Padding(
-          padding: EdgeInsets.symmetric(
-              vertical: Style.defautlVerticalPadding,
-              horizontal: Style.defautlHorizontalPadding),
+          padding:
+              EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding, horizontal: Style.defautlHorizontalPadding),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -641,12 +692,10 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: Style.defautlVerticalPadding),
+                padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
                 child: Text(
                   "Etkinlik Kayıt",
-                  style:
-                      TextStyle(fontSize: 62.sp, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 62.sp, fontWeight: FontWeight.bold),
                 ),
               ),
               CustomTextField(hintText: "İsim Soyisim"),
@@ -697,5 +746,15 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
         );
       },
     );
+  }
+
+  Future _fetchRecord() async {
+    try {
+      await Future.delayed(const Duration(seconds: 5));
+      int id = int.parse(widget.data['id'].toString());
+      recordModel = await Provider.of<TableViewModel>(context, listen: false).fetchRecord(TableName.Activity.name, id);
+    } catch (e) {
+      HandleExceptions.handle(exception: e, context: context);
+    }
   }
 }

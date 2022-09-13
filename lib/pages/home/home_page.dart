@@ -224,7 +224,7 @@ class HomePage extends StatelessWidget {
   Widget actHomeCard(Map<String, dynamic>? data, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, Routes.activityDetailPage);
+        Navigator.pushNamed(context, Routes.activityDetailPage, arguments: data);
       },
       child: Container(
         margin: EdgeInsets.only(top: 48.h, bottom: 48.h, right: 24.w),
@@ -251,14 +251,14 @@ class HomePage extends StatelessWidget {
                     child: SizedBox(
                       width: 0.6.sw,
                       height: 0.2.sh,
-                      child: data == null
-                          ? Container(
-                              color: Colors.white.withOpacity(0.8),
-                            )
-                          : Image.network(
-                              Util.imageConvertUrl(imageName: data['image']),
-                              fit: BoxFit.cover,
-                            ),
+                      child: data == null ? Container(
+                        color: Colors.white.withOpacity(0.8),) : Hero(
+                        tag: data['image'],
+                        child: Image.network(
+                          Util.imageConvertUrl(imageName: data['image']),
+                          fit: BoxFit.cover,
+                      ),
+                        ),
                     ),
                   ),
                   Positioned(
