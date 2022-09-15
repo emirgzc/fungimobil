@@ -10,6 +10,7 @@ import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/pages/home/components/home_drawer.dart';
+import 'package:fungimobil/viewmodel/auth_viewmodel.dart';
 import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer_loading.dart';
@@ -439,7 +440,8 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Future editPop(BuildContext context) {
+  Future editPop(BuildContext context) async {
+    bool isUserExists = await Provider.of<AuthViewModel>(context, listen: false).isUserExists();
     return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -459,17 +461,23 @@ class HomePage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              profileMenuCard(
+              if (isUserExists) profileMenuCard(
                 context,
                 "Profil",
                 "assets/icons/users.svg",
                 () => Navigator.pushNamed(context, Routes.profilePage),
               ),
+              if(!isUserExists) profileMenuCard(
+                context,
+                "Giriş Yap",
+                "assets/icons/user.svg",
+                    () => Navigator.pushNamed(context, Routes.loginPage),
+              ),
               profileMenuCard(
                 context,
                 "Çıkış Yap",
                 "assets/icons/exit.svg",
-                () {},
+                () => Navigator.pushNamedAndRemoveUntil(context, Routes.homePage, (route) => false),
               ),
             ],
           ),

@@ -230,10 +230,10 @@ class ApiClient {
         body: jsonEncode(data),
       );
 
-      Map<String, dynamic> json = jsonDecode(response.body);
-      if (_isRequestHaveMessage(json)) {
-        _throwError(json);
-      }
+      // Map<String, dynamic> json = jsonDecode(response.body);
+      // if (_isRequestHaveMessage(json)) {
+      //   _throwError(json);
+      // }
 
       if (response.statusCode == 200) {
         // debugPrint('ApiClient tableCreate fulldata ::: ${jsonDecode(response.body)}');

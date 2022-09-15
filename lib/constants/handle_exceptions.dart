@@ -81,6 +81,8 @@ class HandleExceptions {
             content: message,
             onDismiss: onDismiss,
           );
-        }).whenComplete(() => onDismiss(context));
+        }).whenComplete(() {
+          onDismiss(context);
+        });
   }
 }

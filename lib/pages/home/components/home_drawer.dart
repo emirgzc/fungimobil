@@ -71,7 +71,7 @@ class HomeDrawer extends StatelessWidget {
             drawerItem(context, "Çıkış Yap", Routes.loginPage, Icons.logout_outlined, onTap: () async {
               Provider.of<AuthViewModel>(context, listen: false)
                   .signOut()
-                  .then((value) => Navigator.pushNamedAndRemoveUntil(context, Routes.loginPage, (route) => false));
+                  .then((value) => Navigator.pushNamedAndRemoveUntil(context, Routes.homePage, (route) => false));
             }),
           ],
         ),
