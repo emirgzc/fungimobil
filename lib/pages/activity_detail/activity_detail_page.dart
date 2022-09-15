@@ -12,6 +12,7 @@ import 'package:fungimobil/widgets/card_for_social_media.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
 import 'package:provider/provider.dart';
 
+import '../../widgets/comment/comment_list_widget.dart';
 import '../../widgets/shimmer/shimmer.dart';
 import '../../widgets/shimmer/shimmer_loading.dart';
 
@@ -27,6 +28,14 @@ class ActivityDetailPage extends StatefulWidget {
 class _ActivityDetailPageState extends State<ActivityDetailPage> with TickerProviderStateMixin {
   AnimationController? controller;
   SingleRecordModel? recordModel;
+  List<Map<String, dynamic>>? commentlist;
+  late Map<String, dynamic> commentFilter;
+
+  @override
+  void initState() {
+    super.initState();
+    commentFilter = {'activity_id': widget.data['id']};
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,35 +118,48 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> with TickerProv
 
   // TODO: Yorumlar yapılacak
   Widget commentTitle(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        titleForActivity("Yorumlar :"),
-        Padding(
-          padding: EdgeInsets.only(left: Style.defautlHorizontalPadding / 2),
-          child: Text(
-            "Toplam 12 Yorum",
-            style: TextStyle(
-              fontSize: 56.sp,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ),
-        const Spacer(),
-        GestureDetector(
-          onTap: () async {
-            menuPop(context);
-          },
-          child: Text(
-            "Tüm Yorumlar",
-            style: TextStyle(
-              decoration: TextDecoration.underline,
-              fontSize: Style.defaultTextSize * (3 / 4),
-            ),
-          ),
-        ),
-      ],
-    );
+    return FutureBuilder(
+        future: _fetchComment(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError && snapshot.error != null) {
+            HandleExceptions.handle(exception: snapshot.error, context: context);
+          }
+          return CommentListWidget(
+            tableName: TableName.ActivityComment.name,
+            defaultItems: commentlist,
+            filter: commentFilter,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          );
+        });
+    // return Row(
+    //   crossAxisAlignment: CrossAxisAlignment.end,
+    //   children: [
+    //     titleForActivity("Yorumlar :"),
+    //     Padding(
+    //       padding: EdgeInsets.only(left: Style.defautlHorizontalPadding / 2),
+    //       child: Text(
+    //         "Toplam 12 Yorum",
+    //         style: TextStyle(
+    //           fontSize: 56.sp,
+    //           fontWeight: FontWeight.w400,
+    //         ),
+    //       ),
+    //     ),
+    //     const Spacer(),
+    //     GestureDetector(
+    //       onTap: () async {
+    //         menuPop(context);
+    //       },
+    //       child: Text(
+    //         "Tüm Yorumlar",
+    //         style: TextStyle(
+    //           decoration: TextDecoration.underline,
+    //           fontSize: Style.defaultTextSize * (3 / 4),
+    //         ),
+    //       ),
+    //     ),
+    //   ],
+    // );
   }
 
   Widget map() {
@@ -726,8 +748,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> with TickerProv
                           title: const Text("Açık Rıza Metni"),
                           contentPadding: EdgeInsets.all(60.r),
                           content: Text(
-                            "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s," *
-                                5,
+                            "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s," * 5,
                           ),
                         ),
                       );
@@ -751,7 +772,18 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> with TickerProv
   Future _fetchRecord() async {
     try {
       int id = int.parse(widget.data['id'].toString());
-      recordModel = await Provider.of<TableViewModel>(context, listen: false).fetchRecord(tableName: TableName.Activity.name, id: id);
+      recordModel = await Provider.of<TableViewModel>(context, listen: false)
+          .fetchRecord(tableName: TableName.Activity.name, id: id);
+    } catch (e) {
+      HandleExceptions.handle(exception: e, context: context);
+    }
+  }
+
+  Future _fetchComment() async {
+    try {
+      var commentTable = await Provider.of<TableViewModel>(context, listen: false)
+          .fetchTable(tableName: TableName.ActivityComment.name, page: 1, limit: 5, filter: commentFilter,);
+      commentlist = commentTable.data!;
     } catch (e) {
       HandleExceptions.handle(exception: e, context: context);
     }
