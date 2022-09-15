@@ -321,7 +321,7 @@ class HomePage extends StatelessWidget {
                             ),
                     ),
                   ),
-                  Positioned(
+                  if(data != null) Positioned(
                     bottom: 0,
                     right: 0,
                     child: Container(
@@ -340,7 +340,7 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        "Son Kayıt : ${data?['finish_date']?.toString().toDateTime().toFormattedString() ?? '1 Ocak 2000'}",
+                        "Son Kayıt : ${data['finish_date']?.toString().toDateTime().toFormattedString() ?? '1 Ocak 2000'}",
                         style: TextStyle(
                           fontSize: 36.sp,
                           fontWeight: FontWeight.w500,

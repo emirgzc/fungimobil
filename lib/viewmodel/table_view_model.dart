@@ -46,16 +46,16 @@ class TableViewModel extends ChangeNotifier {
   }
 
   Future<SingleRecordModel> fetchRecord({required String tableName, required int id, bool isUserDb = false}) async {
-    status = TableVMStatus.busy;
-    notifyListeners();
+    // status = TableVMStatus.busy;
+    // notifyListeners();
     try {
       var data = await _repository.fetchRecord(tableName: tableName, id: id, isUserDb: isUserDb);
       return data;
     } catch (e) {
       rethrow;
     } finally {
-      status = TableVMStatus.free;
-      notifyListeners();
+      // status = TableVMStatus.free;
+      // notifyListeners();
     }
   }
 
