@@ -9,6 +9,7 @@ import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
+import 'package:fungimobil/model/user_model.dart';
 import 'package:fungimobil/pages/home/components/home_drawer.dart';
 import 'package:fungimobil/viewmodel/auth_viewmodel.dart';
 import 'package:fungimobil/viewmodel/table_view_model.dart';
@@ -41,16 +42,35 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.only(top: 24.h, bottom: 12.h),
-              child: Text(
-                "Hoşgeldin Ömer Üngör,",
-                style: TextStyle(
-                  fontSize: Style.bigTitleTextSize,
-                  color: Style.textColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+            FutureBuilder(
+              future: Provider.of<AuthViewModel>(context, listen: false)
+                  .getUserInfoFromLocale(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.hasData &&
+                    snapshot.data != null) {
+                  var datas = snapshot.data as UserModel;
+                  return Padding(
+                    padding: EdgeInsets.only(top: 24.h, bottom: 12.h),
+                    child: Text(
+                      "Hoşgeldin ${datas.name}" " ${datas.surname},",
+                      style: TextStyle(
+                        fontSize: Style.bigTitleTextSize,
+                        color: Style.textColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                } else if (snapshot.hasError && snapshot.error != null) {
+                  HandleExceptions.handle(
+                    exception: snapshot.error,
+                    context: context,
+                  );
+                  return Container();
+                } else {
+                  return Container();
+                }
+              },
             ),
             Text(
               "Fungi Turkey ©",
@@ -477,7 +497,11 @@ class HomePage extends StatelessWidget {
                 context,
                 "Çıkış Yap",
                 "assets/icons/exit.svg",
-                () => Navigator.pushNamedAndRemoveUntil(context, Routes.homePage, (route) => false),
+                    () {
+                  Provider.of<AuthViewModel>(context, listen: false).signOut().then((value) {
+                    Navigator.pushNamedAndRemoveUntil(context, Routes.homePage, (route) => false);
+                  });
+                },
               ),
             ],
           ),
