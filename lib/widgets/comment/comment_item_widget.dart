@@ -5,7 +5,9 @@ import '../../constants/style.dart';
 import '../shimmer/shimmer_loading.dart';
 
 class CommentItemWidget extends StatelessWidget {
-  CommentItemWidget({Key? key, required this.data, required this.backgroundColor}) : super(key: key);
+  CommentItemWidget(
+      {Key? key, required this.data, required this.backgroundColor})
+      : super(key: key);
 
   Map<String, dynamic>? data;
   final Color backgroundColor;
@@ -13,13 +15,13 @@ class CommentItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: Style.defaultPadding, vertical: Style.defaultPadding / 2),
+      padding: const EdgeInsets.symmetric(horizontal: Style.defaultPadding),
       child: ShimmerLoading(
         isLoading: data == null,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
           child: Container(
-              color: backgroundColor,
+            color: backgroundColor,
             child: ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(
@@ -27,22 +29,25 @@ class CommentItemWidget extends StatelessWidget {
                 color: Style.secondaryColor,
               ),
               title: Padding(
-                padding: const EdgeInsets.only(bottom: Style.defaultPadding / 3),
-                child: Text(data == null ? 'Kullanıcı ad soyad' : '${data!['name']} ${data!['surname']}'),
+                padding:
+                    const EdgeInsets.only(bottom: Style.defaultPadding / 3),
+                child: Text(data == null
+                    ? 'Kullanıcı ad soyad'
+                    : '${data!['name']} ${data!['surname']}'),
               ),
               subtitle: Text(
                 data != null ? data!['comment'] : '*' * 50,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: Theme.of(context).disabledColor,
-                ),
+                      color: Theme.of(context).disabledColor,
+                    ),
                 maxLines: 4,
                 overflow: TextOverflow.ellipsis,
               ),
               onTap: data == null
                   ? null
                   : () {
-                _showCommentDetails(data!, context);
-              },
+                      _showCommentDetails(data!, context);
+                    },
             ),
           ),
         ),
@@ -50,7 +55,8 @@ class CommentItemWidget extends StatelessWidget {
     );
   }
 
-  Future<dynamic> _showCommentDetails(Map<String, dynamic> data, BuildContext context) {
+  Future<dynamic> _showCommentDetails(
+      Map<String, dynamic> data, BuildContext context) {
     return showModalBottomSheet(
         context: context,
         backgroundColor: Colors.transparent,
@@ -64,15 +70,19 @@ class CommentItemWidget extends StatelessWidget {
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: Style.defaultPadding * 1.5),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: Style.defaultPadding * 1.5),
                     child: Column(
                       children: [
                         Container(
-                          margin: const EdgeInsets.all(Style.defaultPadding / 2),
+                          margin:
+                              const EdgeInsets.all(Style.defaultPadding / 2),
                           height: Style.defaultPadding / 3,
                           width: Style.defaultPadding * 3,
                           decoration: BoxDecoration(
-                            color: Theme.of(context).disabledColor.withOpacity(0.1),
+                            color: Theme.of(context)
+                                .disabledColor
+                                .withOpacity(0.1),
                             borderRadius: BorderRadius.circular(10000),
                           ),
                         ),
@@ -81,9 +91,10 @@ class CommentItemWidget extends StatelessWidget {
                         ),
                         Text(
                           '${data['name']} ${data['surname']}',
-                          style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                         const SizedBox(
                           height: Style.defaultPadding,
@@ -98,11 +109,16 @@ class CommentItemWidget extends StatelessWidget {
                         Align(
                           alignment: Alignment.topRight,
                           child: Text(
-                            data['added_date'].toString().toDateTime().toFormattedString(),
+                            data['added_date']
+                                .toString()
+                                .toDateTime()
+                                .toFormattedString(),
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium!
-                                .copyWith(fontStyle: FontStyle.italic, color: Theme.of(context).disabledColor),
+                                .copyWith(
+                                    fontStyle: FontStyle.italic,
+                                    color: Theme.of(context).disabledColor),
                           ),
                         ),
                       ],

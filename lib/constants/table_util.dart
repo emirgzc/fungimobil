@@ -9,6 +9,8 @@ enum TableName {
   Contact,
   Feedbacks,
   Galery,
+  Team,
+
   Services,
   Sponsor,
 }

@@ -22,32 +22,35 @@ class ActivityPage extends StatelessWidget {
       backgroundColor: Style.primaryColor,
       appBar: getAppBar("Etkinlikler"),
       body: FutureBuilder<table.TableModel>(
-        future: Provider.of<TableViewModel>(context, listen: false).fetchTable(tableName: TableName.Activity.name, page: 1, limit: 100),
-        builder: (context, snapshot) {
-          if (snapshot.hasData && snapshot.data != null) {
-            // snapshot.data!.data
-            List<Map<String, dynamic>> dataList = snapshot.data!.data!;//(snapshot.data as List).map((e) => e as Map<String, dynamic>).toList();
-            return ListView.builder(
-              padding: const EdgeInsets.all(Style.defaultPadding),
-                itemCount: dataList.length,
-                itemBuilder: (context, index) {
-              return activityCard(dataList[index], context);
-            });
-          } else if (snapshot.hasError && snapshot.error != null) {
-            HandleExceptions.handle(exception: snapshot.error, context: context);
-          }
+          future: Provider.of<TableViewModel>(context, listen: false)
+              .fetchTable(
+                  tableName: TableName.Activity.name, page: 1, limit: 100),
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              // snapshot.data!.data
+              List<Map<String, dynamic>> dataList = snapshot.data!
+                  .data!; //(snapshot.data as List).map((e) => e as Map<String, dynamic>).toList();
+              return ListView.builder(
+                  padding: const EdgeInsets.all(Style.defaultPadding),
+                  itemCount: dataList.length,
+                  itemBuilder: (context, index) {
+                    return activityCard(dataList[index], context);
+                  });
+            } else if (snapshot.hasError && snapshot.error != null) {
+              HandleExceptions.handle(
+                  exception: snapshot.error, context: context);
+            }
 
-          return const LoadingWidget();
-
-        }
-      ),
+            return const LoadingWidget();
+          }),
     );
   }
 
   Widget activityCard(Map<String, dynamic> data, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, Routes.activityDetailPage);
+        Navigator.pushNamed(context, Routes.activityDetailPage,
+            arguments: data);
       },
       child: Container(
         margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding),
@@ -55,10 +58,16 @@ class ActivityPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            imageForActivity(context, Util.imageConvertUrl(imageName: data['image']), data),
+            imageForActivity(
+                context, Util.imageConvertUrl(imageName: data['image']), data),
             title(data['title']),
             desc(data['content']),
-            detailDateandDirector(data['director'], data['last_record_date'].toString().toDateTime().toFormattedString()),
+            detailDateandDirector(
+                data['director'],
+                data['last_record_date']
+                    .toString()
+                    .toDateTime()
+                    .toFormattedString()),
             Container(
               margin: const EdgeInsets.symmetric(
                   vertical: Style.defaultPadding / 3),
@@ -96,7 +105,8 @@ class ActivityPage extends StatelessWidget {
     );
   }
 
-  Widget imageForActivity(BuildContext context, String imageUrl, Map<String, dynamic> data) {
+  Widget imageForActivity(
+      BuildContext context, String imageUrl, Map<String, dynamic> data) {
     return Stack(
       children: [
         SizedBox(
@@ -121,7 +131,8 @@ class ActivityPage extends StatelessWidget {
       right: Style.defautlHorizontalPadding / 2,
       child: GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, Routes.activityDetailPage, arguments: data);
+          Navigator.pushNamed(context, Routes.activityDetailPage,
+              arguments: data);
         },
         child: Container(
           padding: EdgeInsets.symmetric(

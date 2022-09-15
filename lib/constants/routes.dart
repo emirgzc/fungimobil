@@ -64,7 +64,10 @@ class Routes {
       case activityDetailPage:
         page = ChangeNotifierProvider(
             create: (_) => TableViewModel(),
-            child: SafeArea(child: ActivityDetailPage(data: settings.arguments as Map<String, dynamic>,)));
+            child: SafeArea(
+                child: ActivityDetailPage(
+              data: settings.arguments as Map<String, dynamic>,
+            )));
         break;
       case blogPage:
         page = const SafeArea(child: BlogPage());
@@ -83,7 +86,10 @@ class Routes {
         );
         break;
       case teamPage:
-        page = const SafeArea(child: TeamPage());
+        page = ChangeNotifierProvider(
+          create: (_) => TableViewModel(),
+          child: const SafeArea(child: TeamPage()),
+        );
         break;
       case servicePage:
         page = const SafeArea(child: ServicePage());
@@ -104,7 +110,8 @@ class Routes {
         break;
       case homePage:
         page = ChangeNotifierProvider(
-            create: (_) => TableViewModel(), child: SafeArea(child: HomePage()));
+            create: (_) => TableViewModel(),
+            child: SafeArea(child: HomePage()));
         break;
       case profilePage:
         page = ChangeNotifierProvider(
