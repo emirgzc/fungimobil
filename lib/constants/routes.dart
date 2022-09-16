@@ -67,7 +67,9 @@ class Routes {
             child: ActivityDetailPage(data: settings.arguments as Map<String, dynamic>,));
         break;
       case blogPage:
-        page = const BlogPage();
+        page = ChangeNotifierProvider(
+            create: (_) => TableViewModel(),
+            child: const BlogPage());
         break;
       case blogDetailPage:
         page = BlogDetailPage(

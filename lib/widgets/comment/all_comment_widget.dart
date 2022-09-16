@@ -40,7 +40,7 @@ class _AllCommentWidgetState extends State<AllCommentWidget> {
   Widget build(BuildContext context) {
     return FutureBuilder<table.TableModel>(
         future: Provider.of<TableViewModel>(context, listen: false)
-            .fetchTable(tableName: widget.tableName, page: 1, limit: 10, filter: widget.filter),
+            .fetchTable(tableName: widget.tableName, page: 1, limit: 1000, filter: widget.filter),
         builder: (context, snapshot) {
           recordTable = snapshot.data;
           allCommentList = snapshot.data?.data;

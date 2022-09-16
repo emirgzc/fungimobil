@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fungimobil/constants/extension.dart';
-import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
-import 'package:fungimobil/model/table_model.dart' as table;
 import 'package:fungimobil/widgets/appbar.dart';
-import 'package:fungimobil/widgets/loading_widget.dart';
-import 'package:provider/provider.dart';
-
-import '../../viewmodel/table_view_model.dart';
+import 'package:fungimobil/widgets/paginable_list_widget.dart';
 
 class ActivityPage extends StatelessWidget {
   const ActivityPage({Key? key}) : super(key: key);
@@ -21,26 +16,11 @@ class ActivityPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Style.primaryColor,
       appBar: getAppBar("Etkinlikler"),
-      body: FutureBuilder<table.TableModel>(
-        future: Provider.of<TableViewModel>(context, listen: false).fetchTable(tableName: TableName.Activity.name, page: 1, limit: 100),
-        builder: (context, snapshot) {
-          if (snapshot.hasData && snapshot.data != null) {
-            // snapshot.data!.data
-            List<Map<String, dynamic>> dataList = snapshot.data!.data!;//(snapshot.data as List).map((e) => e as Map<String, dynamic>).toList();
-            return ListView.builder(
-              padding: const EdgeInsets.all(Style.defaultPadding),
-                itemCount: dataList.length,
-                itemBuilder: (context, index) {
-              return activityCard(dataList[index], context);
-            });
-          } else if (snapshot.hasError && snapshot.error != null) {
-            HandleExceptions.handle(exception: snapshot.error, context: context);
-          }
-
-          return const LoadingWidget();
-
-        }
-      ),
+      body: PaginableList(
+          tableName: TableName.Activity.name,
+          itemBuilder: (context, data) {
+            return activityCard(data!, context);
+          }),
     );
   }
 
@@ -58,14 +38,8 @@ class ActivityPage extends StatelessWidget {
             imageForActivity(context, Util.imageConvertUrl(imageName: data['image']), data),
             title(data['title']),
             desc(data['content']),
-            detailDateandDirector(data['director'], data['last_record_date'].toString().toDateTime().toFormattedString()),
-            Container(
-              margin: const EdgeInsets.symmetric(
-                  vertical: Style.defaultPadding / 3),
-              height: 1,
-              width: double.infinity,
-              color: Style.secondaryColor.withOpacity(0.2),
-            ),
+            detailDateandDirector(
+                data['director'], data['last_record_date'].toString().toDateTime().toFormattedString()),
           ],
         ),
       ),
@@ -161,8 +135,7 @@ class ActivityPage extends StatelessWidget {
                 color: Style.textGreyColor,
               ),
               Padding(
-                padding:
-                    EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
+                padding: EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
                 child: Text(
                   creatorName,
                   style: TextStyle(

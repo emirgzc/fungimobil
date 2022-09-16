@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fungimobil/constants/exceptions.dart';
 import 'package:fungimobil/model/single_record_model.dart';
 
 import '../constants/locator.dart';
@@ -11,7 +12,50 @@ class TableViewModel extends ChangeNotifier {
   final TableRepository _repository = locator<TableRepository>();
   TableVMStatus status = TableVMStatus.free;
 
+  table.TableModel? _tableModel;
+  Map<String, dynamic>? _filter;
+  int? _page;
+  int? _limit;
+
+  Future<table.TableModel?> listenTable() async {
+    return _tableModel;
+  }
+
+  table.TableModel? get tableModel => _tableModel;
+
+  Map<String, dynamic>? get filter => _filter;
+
+  int get page => _page ?? 1;
+
+  int get limit => _limit ?? 10;
+
+  void changePage(int newPage) {
+    _page = newPage;
+    notifyListeners();
+  }
+
   Future<table.TableModel> fetchTable({
+      required String tableName,
+      required int page,
+      required int limit,
+        Map filter = const {},
+      }) async {
+    try {
+      _tableModel = await _repository.fetchTable(
+        tableName: tableName,
+        page: page,
+        limit: limit,
+        filter: filter,
+      );
+      return _tableModel!;
+    } catch (e) {
+      rethrow;
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<table.TableModel> fetchTempTable({
       required String tableName,
       required int page,
       required int limit,
@@ -27,6 +71,37 @@ class TableViewModel extends ChangeNotifier {
       return tableModel;
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<table.TableModel> changePageTableData({
+    required String tableName,
+    required int page,
+    required int limit,
+    Map filter = const {},}) async {
+    try {
+      if (_tableModel == null) {
+        throw UnknownException();
+      }
+      final data = await _repository.fetchTable(
+        tableName: tableName,
+        page: page,
+        limit: limit,
+        filter: filter,
+      );
+      table.TableModel tempTableModel = table.TableModel.of(_tableModel!);
+      tempTableModel.data!.addAll(data.data!);
+
+      tempTableModel.page = data.page;
+      _tableModel = tempTableModel;
+
+      _page = page;
+
+      return _tableModel!;
+    } catch (e) {
+      rethrow;
+    } finally {
+      notifyListeners();
     }
   }
 
