@@ -83,7 +83,10 @@ class Routes {
         );
         break;
       case teamPage:
-        page = const TeamPage();
+        page = ChangeNotifierProvider(
+          create: (_) => TableViewModel(),
+          child: TeamPage(),
+        );
         break;
       case servicePage:
         page = const ServicePage();

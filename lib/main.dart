@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fungimobil/constants/locator.dart';
 import 'package:fungimobil/constants/routes.dart';
@@ -9,6 +10,7 @@ import 'package:provider/provider.dart';
 void main() {
   setupLocator();
   runApp(const MyApp());
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 }
 
 class MyApp extends StatelessWidget {
@@ -161,7 +163,9 @@ class DemoPage extends StatelessWidget {
     Function() onPressed,
   ) {
     return Container(
-      margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding / 2, top: Style.defautlVerticalPadding / 4),
+      margin: EdgeInsets.only(
+          bottom: Style.defautlVerticalPadding / 2,
+          top: Style.defautlVerticalPadding / 4),
       height: Style.defautlVerticalPadding * 2,
       child: ElevatedButton(
         child: Text(title),

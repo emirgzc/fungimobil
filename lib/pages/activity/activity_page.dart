@@ -27,7 +27,8 @@ class ActivityPage extends StatelessWidget {
   Widget activityCard(Map<String, dynamic> data, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, Routes.activityDetailPage);
+        Navigator.pushNamed(context, Routes.activityDetailPage,
+            arguments: data);
       },
       child: Container(
         margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding),

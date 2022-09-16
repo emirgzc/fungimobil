@@ -231,6 +231,8 @@ class HomePage extends StatelessWidget {
                       color: Colors.white.withOpacity(0.8),
                       child: Text(
                         data?['title'] ?? 'Blog başlığı',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 48.sp,
                           fontWeight: FontWeight.bold,
@@ -243,11 +245,9 @@ class HomePage extends StatelessWidget {
                     child: Container(
                       color: Colors.white.withOpacity(0.8),
                       child: Text(
-                        data?['content'].toString().substring(0,
-                                min(100, data['content'].toString().length)) ??
-                            '*' * 100,
+                        data?['content'].toString() ?? '*' * 100,
                         overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
+                        maxLines: 3,
                         style: TextStyle(
                           fontSize: Style.defaultTextSize / (4 / 3),
                         ),
@@ -259,7 +259,7 @@ class HomePage extends StatelessWidget {
                     child: Container(
                       color: Colors.white.withOpacity(0.8),
                       child: Text(
-                        data?['finish_date']
+                        data?['added_date']
                                 ?.toString()
                                 .toDateTime()
                                 .toFormattedString() ??
@@ -321,34 +321,35 @@ class HomePage extends StatelessWidget {
                             ),
                     ),
                   ),
-                  if(data != null) Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 8.h,
-                        horizontal: 12.w,
-                      ),
-                      margin: EdgeInsets.symmetric(
-                        vertical: 12.h,
-                        horizontal: 12.w,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.7),
-                        borderRadius: BorderRadius.circular(
-                          Style.defaultRadiusSize / 2,
+                  if (data != null)
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 8.h,
+                          horizontal: 12.w,
                         ),
-                      ),
-                      child: Text(
-                        "Son Kayıt : ${data['finish_date']?.toString().toDateTime().toFormattedString() ?? '1 Ocak 2000'}",
-                        style: TextStyle(
-                          fontSize: 36.sp,
-                          fontWeight: FontWeight.w500,
-                          color: Style.primaryColor,
+                        margin: EdgeInsets.symmetric(
+                          vertical: 12.h,
+                          horizontal: 12.w,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.7),
+                          borderRadius: BorderRadius.circular(
+                            Style.defaultRadiusSize / 2,
+                          ),
+                        ),
+                        child: Text(
+                          "Son Kayıt : ${data['last_record_date']?.toString().toDateTime().toFormattedString() ?? '1 Ocak 2000'}",
+                          style: TextStyle(
+                            fontSize: 36.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Style.primaryColor,
+                          ),
                         ),
                       ),
                     ),
-                  ),
                 ],
               ),
               Padding(
@@ -384,7 +385,7 @@ class HomePage extends StatelessWidget {
                       color: Colors.white.withOpacity(0.8),
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "Bolu/Türkiye",
+                        data?['location']?.toString() ?? '*' * 20,
                         style: TextStyle(
                           fontSize: 44.sp,
                           fontWeight: FontWeight.w400,
