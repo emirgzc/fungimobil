@@ -103,10 +103,10 @@ class CommentItemWidget extends StatelessWidget {
                           data['comment'],
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
-                        const SizedBox(
+                        if(data['added_date'] != null) const SizedBox(
                           height: Style.defaultPadding / 3,
                         ),
-                        Align(
+                        if(data['added_date'] != null) Align(
                           alignment: Alignment.topRight,
                           child: Text(
                             data['added_date']
@@ -121,6 +121,7 @@ class CommentItemWidget extends StatelessWidget {
                                     color: Theme.of(context).disabledColor),
                           ),
                         ),
+                        const SizedBox(height: Style.defaultPadding,),
                       ],
                     ),
                   ),

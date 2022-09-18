@@ -52,7 +52,10 @@ class CommentListWidget extends StatelessWidget {
   }
 
   Widget _buildItem(Map<String, dynamic>? data, BuildContext context) {
-    return CommentItemWidget(data: data, backgroundColor: backgroundColor,);
+    return CommentItemWidget(
+      data: data,
+      backgroundColor: backgroundColor,
+    );
   }
 
   GestureDetector _buildTitle(BuildContext context) {
@@ -97,8 +100,11 @@ class CommentListWidget extends StatelessWidget {
         ),
       ),
       builder: (context) {
-        return ChangeNotifierProvider(
-          create: (_) => TableViewModel(),
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => TableViewModel()),
+            // ChangeNotifierProvider(create: (_) => CommentViewModel()),
+          ],
           child: AllCommentWidget(
             tableName: tableName,
             filter: filter,

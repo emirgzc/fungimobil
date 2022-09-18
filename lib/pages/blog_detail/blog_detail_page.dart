@@ -6,13 +6,16 @@ import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/data/api_client.dart';
-import 'package:fungimobil/model/single_record_model.dart' as tableModel;
-import 'package:fungimobil/model/table_model.dart' as tableModelss;
-import 'package:fungimobil/viewmodel/table_view_model.dart';
+import 'package:fungimobil/model/single_record_model.dart';
 import 'package:fungimobil/widgets/card_for_social_media.dart';
 import 'package:fungimobil/widgets/comment/comment_list_widget.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
+import 'package:fungimobil/widgets/html_text_widget.dart';
 import 'package:provider/provider.dart';
+
+import '../../model/table_model.dart' as table;
+import '../../viewmodel/table_view_model.dart';
+import '../../widgets/custom_network_image_widget.dart';
 
 class BlogDetailPage extends StatefulWidget {
   const BlogDetailPage({Key? key, required this.id}) : super(key: key);
@@ -36,20 +39,17 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: FutureBuilder(
-          future: ApiClient().fetchRecord(
-              tableName: TableName.Blog.name,
-              id: int.parse(widget.id),
-              token: ""),
+        child: FutureBuilder<SingleRecordModel>(
+          future: Provider.of<TableViewModel>(context, listen: false)
+              .fetchRecord(
+                  tableName: TableName.Blog.name, id: int.parse(widget.id)),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData &&
                 snapshot.data != null) {
-              var datas = (snapshot.data as tableModel.SingleRecordModel).data;
-              debugPrint("asdasasdadasds ----${datas!.length}");
               return Column(
                 children: [
-                  blogBody(context, datas),
+                  blogBody(context, snapshot.data!.data),
                 ],
               );
             } else if (snapshot.hasError && snapshot.error != null) {
@@ -71,16 +71,10 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
     return Stack(
       children: [
         SizedBox(
-          height: 900.h,
-          width: double.infinity,
-          child: Hero(
-            tag: data!["image"],
-            child: Image.network(
-              Util.imageConvertUrl(imageName: data["image"]),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
+            height: 900.h,
+            width: double.infinity,
+            child: CustomNetworkImageWidget(
+                imageUrl: Util.imageConvertUrl(imageName: data!["image"]))),
         arrowBack(context),
 
         headerDateandUser(context, data),
@@ -177,13 +171,14 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
   }
 
   Widget desc(String content) {
-    return Text(
-      content,
-      style: TextStyle(
-        fontSize: Style.defaultTextSize,
-        color: Style.textGreyColor,
-      ),
-    );
+    return HtmlTextWidget(content: content, color: Style.textGreyColor);
+    // return Text(
+    //   content,
+    //   style: TextStyle(
+    //     fontSize: Style.defaultTextSize,
+    //     color: Style.textGreyColor,
+    //   ),
+    // );
   }
 
   Widget bigTitle(String title) {
@@ -297,7 +292,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                 fontSize: 40.sp,
               ),
             ),
-            FutureBuilder<tableModel.SingleRecordModel>(
+            FutureBuilder<SingleRecordModel>(
               future: Provider.of<TableViewModel>(context, listen: false)
                   .fetchRecord(
                 tableName: TableName.users.name,
@@ -396,8 +391,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                     if (snapshot.connectionState == ConnectionState.done &&
                         snapshot.hasData &&
                         snapshot.data != null) {
-                      var datas =
-                          (snapshot.data as tableModelss.TableModel).data;
+                      var datas = (snapshot.data as table.TableModel).data;
                       debugPrint(datas?.length.toString());
                       return Column(
                         mainAxisSize: MainAxisSize.min,

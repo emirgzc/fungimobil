@@ -335,14 +335,18 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future _fetchUserInfo() async {
-    userModel = await Provider.of<AuthViewModel>(context, listen: false).getUserInfoFromLocale();
-    if (!mounted) return;
-    blogCommentNumber = await Provider.of<TableViewModel>(context, listen: false).fetchTableCount(tableName: TableName.BlogComment.name, filter: {'own_id': userModel!.id});
-    if (!mounted) return;
-    activityCommentNumber = await Provider.of<TableViewModel>(context, listen: false).fetchTableCount(tableName: TableName.ActivityComment.name, filter: {'own_id': userModel!.id});
-    if (!mounted) return;
-    recordNumber = await Provider.of<TableViewModel>(context, listen: false).fetchTableCount(tableName: TableName.ActivityRecord.name, filter: {'own_id': userModel!.id});
+    try {
+      userModel = await Provider.of<AuthViewModel>(context, listen: false).getUserInfoFromLocale();
+      if (!mounted) return;
+      blogCommentNumber = await Provider.of<TableViewModel>(context, listen: false).fetchTableCount(tableName: TableName.BlogComment.name, filter: {'own_id': userModel!.id});
+      if (!mounted) return;
+      activityCommentNumber = await Provider.of<TableViewModel>(context, listen: false).fetchTableCount(tableName: TableName.ActivityComment.name, filter: {'own_id': userModel!.id});
+      if (!mounted) return;
+      recordNumber = await Provider.of<TableViewModel>(context, listen: false).fetchTableCount(tableName: TableName.ActivityRecord.name, filter: {'own_id': userModel!.id});
 
+    } catch (e) {
+      HandleExceptions.handle(exception: e, context: context);
+    }
   }
 
   Future<Map<String, dynamic>?> _fetchEditData() async {

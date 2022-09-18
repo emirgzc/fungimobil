@@ -121,6 +121,6 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   _navigateLogin() {
-    Navigator.pushNamed(context, Routes.loginPage);
+    Navigator.pushNamedAndRemoveUntil(context, Routes.loginPage, (route) => false,);
   }
 }

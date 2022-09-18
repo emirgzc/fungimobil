@@ -13,9 +13,12 @@ import 'package:fungimobil/model/user_model.dart';
 import 'package:fungimobil/pages/home/components/home_drawer.dart';
 import 'package:fungimobil/viewmodel/auth_viewmodel.dart';
 import 'package:fungimobil/viewmodel/table_view_model.dart';
+import 'package:fungimobil/widgets/html_text_widget.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer_loading.dart';
 import 'package:provider/provider.dart';
+
+import '../../widgets/custom_network_image_widget.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -213,11 +216,9 @@ class HomePage extends StatelessWidget {
                       ? Container(
                           color: Colors.white.withOpacity(0.8),
                         )
-                      : Hero(
-                          tag: data['image'],
-                          child: Image.network(
-                            Util.imageConvertUrl(imageName: data['image']),
-                            fit: BoxFit.cover,
+                      : CustomNetworkImageWidget(
+                          imageUrl: Util.imageConvertUrl(
+                            imageName: data['image'],
                           ),
                         ),
                 ),
@@ -247,14 +248,27 @@ class HomePage extends StatelessWidget {
                     isLoading: data == null,
                     child: Container(
                       color: Colors.white.withOpacity(0.8),
-                      child: Text(
+                      child: HtmlTextWidget(
+                        content: data?['content'],
+                        maxContentLength: 35,
+                        isLoading: data == null,
+                        loadingText: '*' * 100,
+                        fontSize: Style.defaultTextSize * 0.75,
+                      ),
+
+                      /*HtmlWidget(
+                        '${data?['content'].toString().substring(0, min(35, data['content'].toString().length)) ?? '*' * 100}...',
+                        textStyle: TextStyle(
+                          fontSize: Style.defaultTextSize * 0.75,
+                        ),
+                      ),*/ /*Text(
                         data?['content'].toString() ?? '*' * 100,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 3,
                         style: TextStyle(
                           fontSize: Style.defaultTextSize / (4 / 3),
                         ),
-                      ),
+                      ),*/
                     ),
                   ),
                   ShimmerLoading(
@@ -317,10 +331,9 @@ class HomePage extends StatelessWidget {
                             )
                           : Hero(
                               tag: data['image'],
-                              child: Image.network(
-                                Util.imageConvertUrl(imageName: data['image']),
-                                fit: BoxFit.cover,
-                              ),
+                              child: CustomNetworkImageWidget(
+                                  imageUrl: Util.imageConvertUrl(
+                                      imageName: data['image'])),
                             ),
                     ),
                   ),
@@ -464,7 +477,9 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Future editPop(BuildContext context) {
+  Future editPop(BuildContext context) async {
+    bool isUserExists =
+        await Provider.of<AuthViewModel>(context, listen: false).isUserExists();
     return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -484,18 +499,31 @@ class HomePage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              profileMenuCard(
-                context,
-                "Profil",
-                "assets/icons/users.svg",
-                () => Navigator.pushNamed(context, Routes.profilePage),
-              ),
+              if (isUserExists)
+                profileMenuCard(
+                  context,
+                  "Profil",
+                  "assets/icons/users.svg",
+                  () => Navigator.pushNamed(context, Routes.profilePage),
+                ),
+              if (!isUserExists)
+                profileMenuCard(
+                  context,
+                  "Giriş Yap",
+                  "assets/icons/user.svg",
+                  () => Navigator.pushNamed(context, Routes.loginPage),
+                ),
               profileMenuCard(
                 context,
                 "Çıkış Yap",
                 "assets/icons/exit.svg",
                 () {
-                  Provider.of<AuthViewModel>(context, listen: false).signOut();
+                  Provider.of<AuthViewModel>(context, listen: false)
+                      .signOut()
+                      .then((value) {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, Routes.homePage, (route) => false);
+                  });
                 },
               ),
             ],

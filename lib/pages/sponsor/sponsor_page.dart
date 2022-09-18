@@ -8,6 +8,8 @@ import 'package:fungimobil/data/api_client.dart';
 import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/widgets/appbar.dart';
 
+import '../../widgets/custom_network_image_widget.dart';
+
 class SponsorPage extends StatelessWidget {
   const SponsorPage({Key? key}) : super(key: key);
 
@@ -32,9 +34,7 @@ class SponsorPage extends StatelessWidget {
             filter: {},
           ),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData &&
-                snapshot.data != null) {
+            if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
               var datas = (snapshot.data as tableModel.TableModel).data;
               debugPrint(datas?.length.toString());
               return Column(
@@ -70,13 +70,7 @@ class SponsorPage extends StatelessWidget {
           SizedBox(
             height: 550.h,
             width: double.infinity,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-              child: Image.network(
-                Util.imageConvertUrl(imageName: datas![index]["image"]),
-                fit: BoxFit.cover,
-              ),
-            ),
+            child: CustomNetworkImageWidget(imageUrl: Util.imageConvertUrl(imageName: datas![index]["image"])),
           ),
           Padding(
             padding: EdgeInsets.symmetric(

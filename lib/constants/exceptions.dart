@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'routes.dart';
-
 abstract class CustomException implements Exception {
   abstract String title;
   abstract String subTitle;
@@ -40,7 +38,7 @@ class LoggedUserNotFoundException extends CustomException {
 
   @override
   void Function(BuildContext context) onDialogDismiss = (context) {
-    Navigator.pushNamedAndRemoveUntil(context, Routes.loginPage, (route) => false);
+    Navigator.pop(context);
   };
 
   @override

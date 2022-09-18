@@ -1,5 +1,12 @@
 extension StringExtension on String {
   DateTime toDateTime() {
+    
+    // List<int> dateSection = split(' ')[0].split('-').map((e) => e as int).toList();
+    // List<int> timeSection = split(' ')[1].split(':').map((e) => e as int).toList();
+    //
+    //
+    // return DateTime(dateSection[0], dateSection[1], dateSection[2], timeSection[0], timeSection[1], timeSection[2]);
+
     return DateTime.parse(this);
   }
 

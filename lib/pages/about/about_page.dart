@@ -6,6 +6,8 @@ import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/appbar.dart';
+import 'package:fungimobil/widgets/custom_network_image_widget.dart';
+import 'package:fungimobil/widgets/html_text_widget.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer_loading.dart';
 import 'package:provider/provider.dart';
@@ -27,9 +29,7 @@ class AboutPage extends StatelessWidget {
             limit: 100,
           ),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData &&
-                snapshot.data != null) {
+            if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
               var datas = (snapshot.data as tableModel.TableModel).data;
               debugPrint(datas?.length.toString());
               return aboutBody(context, datas);
@@ -77,13 +77,7 @@ class AboutPage extends StatelessWidget {
       children: [
         ShimmerLoading(
           isLoading: dataMap == null,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-            child: Image.network(
-              Util.imageConvertUrl(imageName: dataMap?[index]["image"]),
-              fit: BoxFit.cover,
-            ),
-          ),
+          child: CustomNetworkImageWidget(imageUrl: Util.imageConvertUrl(imageName: dataMap?[index]["image"])),
         ),
         Padding(
           padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
@@ -104,13 +98,18 @@ class AboutPage extends StatelessWidget {
   }
 
   Widget desc(String desc) {
-    return Text(
-      desc,
-      style: TextStyle(
-        fontSize: Style.defaultTextSize,
-        color: Style.textGreyColor,
-      ),
+    return HtmlTextWidget(
+      content: desc,
+      color: Style.textGreyColor,
     );
+
+    // return Text(
+    //   desc,
+    //   style: TextStyle(
+    //     fontSize: Style.defaultTextSize,
+    //     color: Style.textGreyColor,
+    //   ),
+    // );
   }
 
   Widget bigTitle(String title) {

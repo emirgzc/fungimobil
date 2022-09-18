@@ -70,11 +70,21 @@ class TableModel {
     required this.status,
   });
 
-  final List<Map<String, dynamic>>? data;
-  final Map<String, Column>? columns;
-  final int? page;
-  final int? count;
-  final String? status;
+  factory TableModel.of(TableModel tableModel) {
+    return TableModel(
+      data: tableModel.data,
+      columns: tableModel.columns,
+      page: tableModel.page,
+      count: tableModel.count,
+      status: tableModel.status,
+    );
+  }
+
+  List<Map<String, dynamic>>? data;
+  Map<String, Column>? columns;
+  int? page;
+  int? count;
+  String? status;
 
   factory TableModel.fromRawJson(String str) => TableModel.fromJson(json.decode(str));
 

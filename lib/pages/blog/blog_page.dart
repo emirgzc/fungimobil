@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fungimobil/constants/extension.dart';
-import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
-import 'package:fungimobil/model/table_model.dart' as tableModel;
-import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/appbar.dart';
-import 'package:provider/provider.dart';
+import 'package:fungimobil/widgets/html_text_widget.dart';
+import 'package:fungimobil/widgets/paginable_list_widget.dart';
+
+import '../../widgets/custom_network_image_widget.dart';
 
 class BlogPage extends StatelessWidget {
   const BlogPage({Key? key}) : super(key: key);
@@ -18,50 +18,16 @@ class BlogPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: getAppBar("Blog Sayfası"),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: Style.defaultPagePadding,
-          child: FutureBuilder(
-            future:
-                Provider.of<TableViewModel>(context, listen: false).fetchTable(
-              tableName: TableName.Blog.name,
-              page: 1,
-              limit: 100,
-            ),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.hasData &&
-                  snapshot.data != null) {
-                var datas = (snapshot.data as tableModel.TableModel).data;
-                debugPrint(datas?.length.toString());
-                return Column(
-                  children: [
-                    ...List.generate(
-                      datas?.length ?? 0,
-                      (index) {
-                        return blogCard(context, datas, index);
-                      },
-                    ),
-                  ],
-                );
-              } else if (snapshot.hasError && snapshot.error != null) {
-                HandleExceptions.handle(
-                  exception: snapshot.error,
-                  context: context,
-                );
-                return Container();
-              } else {
-                return Container();
-              }
-            },
-          ),
-        ),
+      body: PaginableList(
+        tableName: TableName.Blog.name,
+        itemBuilder: (context, data) {
+          return blogCard(context, data!);
+        },
       ),
     );
   }
 
-  Widget blogCard(
-      BuildContext context, List<Map<String, dynamic>>? datas, int index) {
+  Widget blogCard(BuildContext context, Map<String, dynamic> data) {
     return Container(
       margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding),
       width: double.infinity,
@@ -71,25 +37,13 @@ class BlogPage extends StatelessWidget {
           GestureDetector(
             onTap: () {
               Navigator.pushNamed(context, Routes.blogDetailPage,
-                  arguments: datas![index]["id"]);
+                  arguments: data["id"]);
             },
             child: Stack(
               children: [
-                SizedBox(
+                CustomNetworkImageWidget(
+                  imageUrl: Util.imageConvertUrl(imageName: data["image"]),
                   height: 700.h,
-                  width: double.infinity,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                      Style.defaultRadiusSize,
-                    ),
-                    child: Hero(
-                      tag: datas![index]["image"],
-                      child: Image.network(
-                        Util.imageConvertUrl(imageName: datas[index]["image"]),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
                 ),
                 Positioned(
                   bottom: Style.defautlVerticalPadding / 2,
@@ -121,19 +75,23 @@ class BlogPage extends StatelessWidget {
             padding: EdgeInsets.symmetric(
                 vertical: Style.defautlVerticalPadding / 2),
             child: Text(
-              datas[index]["title"],
+              data["title"],
               style: TextStyle(
                 fontSize: Style.bigTitleTextSize,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
-          Text(
-            datas[index]["content"],
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: Style.textGreyColor),
-          ),
+          HtmlTextWidget(
+              content: data['content'],
+              maxContentLength: 120,
+              color: Style.textGreyColor),
+          // Text(
+          //   data["content"],
+          //   maxLines: 2,
+          //   overflow: TextOverflow.ellipsis,
+          //   style: TextStyle(color: Style.textGreyColor),
+          // ),
           Padding(
             padding: EdgeInsets.symmetric(
                 vertical: Style.defautlVerticalPadding / 2),
@@ -151,7 +109,15 @@ class BlogPage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  datas[index]["added_date"]
+                  data["own_id"],
+                  style: TextStyle(color: Style.textGreyColor),
+                ),
+                const Text(
+                  " . ",
+                  style: TextStyle(),
+                ),
+                Text(
+                  data["added_date"]
                       .toString()
                       .toDateTime()
                       .toFormattedString(),
@@ -161,13 +127,6 @@ class BlogPage extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-          Container(
-            margin:
-                const EdgeInsets.symmetric(vertical: Style.defaultPadding / 3),
-            height: 1,
-            width: double.infinity,
-            color: Style.secondaryColor.withOpacity(0.2),
           ),
         ],
       ),

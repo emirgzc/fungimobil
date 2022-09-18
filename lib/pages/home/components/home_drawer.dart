@@ -59,7 +59,7 @@ class HomeDrawer extends StatelessWidget {
                 onTap: () async {
               Provider.of<AuthViewModel>(context, listen: false).signOut().then(
                   (value) => Navigator.pushNamedAndRemoveUntil(
-                      context, Routes.loginPage, (route) => false));
+                      context, Routes.homePage, (route) => false));
             }),
           ],
         ),
@@ -113,9 +113,7 @@ class HomeDrawer extends StatelessWidget {
     );
   }
 
-  Column drawerItem(
-      BuildContext context, String title, String routes, IconData icon,
-      {VoidCallback? onTap}) {
+  Column drawerItem(BuildContext context, String title, String routes, IconData icon, {VoidCallback? onTap}) {
     return Column(
       children: [
         ListTile(

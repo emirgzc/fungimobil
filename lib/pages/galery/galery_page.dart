@@ -8,6 +8,7 @@ import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/appbar.dart';
+import 'package:fungimobil/widgets/custom_network_image_widget.dart';
 import 'package:provider/provider.dart';
 
 class GaleryPage extends StatelessWidget {
@@ -50,16 +51,9 @@ class GaleryPage extends StatelessWidget {
                     onTap: () => detailPop(context, datas, index),
                     child: Tooltip(
                       message: datas?[index]["title"] ?? "null",
-                      child: ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(Style.defaultRadiusSize),
-                        child: Image.network(
-                          Util.imageConvertUrl(
-                            imageName: datas![index]["image"],
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                      child: CustomNetworkImageWidget(
+                          imageUrl: Util.imageConvertUrl(
+                              imageName: datas![index]["image"])),
                     ),
                   );
                 },
@@ -121,15 +115,9 @@ class GaleryPage extends StatelessWidget {
                   ),
                 ),
               ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-                child: Image.network(
-                  Util.imageConvertUrl(
-                    imageName: datas![index]["image"],
-                  ),
-                  fit: BoxFit.cover,
-                ),
-              ),
+              CustomNetworkImageWidget(
+                  imageUrl:
+                      Util.imageConvertUrl(imageName: datas![index]["image"]))
             ],
           ),
         );

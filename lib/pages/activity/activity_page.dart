@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fungimobil/constants/extension.dart';
-import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
-import 'package:fungimobil/model/table_model.dart' as table;
 import 'package:fungimobil/widgets/appbar.dart';
-import 'package:fungimobil/widgets/loading_widget.dart';
-import 'package:provider/provider.dart';
+import 'package:fungimobil/widgets/html_text_widget.dart';
+import 'package:fungimobil/widgets/paginable_list_widget.dart';
 
-import '../../viewmodel/table_view_model.dart';
+import '../../widgets/custom_network_image_widget.dart';
 
 class ActivityPage extends StatelessWidget {
   const ActivityPage({Key? key}) : super(key: key);
@@ -21,27 +19,10 @@ class ActivityPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Style.primaryColor,
       appBar: getAppBar("Etkinlikler"),
-      body: FutureBuilder<table.TableModel>(
-          future: Provider.of<TableViewModel>(context, listen: false)
-              .fetchTable(
-                  tableName: TableName.Activity.name, page: 1, limit: 100),
-          builder: (context, snapshot) {
-            if (snapshot.hasData && snapshot.data != null) {
-              // snapshot.data!.data
-              List<Map<String, dynamic>> dataList = snapshot.data!
-                  .data!; //(snapshot.data as List).map((e) => e as Map<String, dynamic>).toList();
-              return ListView.builder(
-                  padding: const EdgeInsets.all(Style.defaultPadding),
-                  itemCount: dataList.length,
-                  itemBuilder: (context, index) {
-                    return activityCard(dataList[index], context);
-                  });
-            } else if (snapshot.hasError && snapshot.error != null) {
-              HandleExceptions.handle(
-                  exception: snapshot.error, context: context);
-            }
-
-            return const LoadingWidget();
+      body: PaginableList(
+          tableName: TableName.Activity.name,
+          itemBuilder: (context, data) {
+            return activityCard(data!, context);
           }),
     );
   }
@@ -49,8 +30,7 @@ class ActivityPage extends StatelessWidget {
   Widget activityCard(Map<String, dynamic> data, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, Routes.activityDetailPage,
-            arguments: data);
+        Navigator.pushNamed(context, Routes.activityDetailPage, arguments: data);
       },
       child: Container(
         margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding),
@@ -58,23 +38,11 @@ class ActivityPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            imageForActivity(
-                context, Util.imageConvertUrl(imageName: data['image']), data),
+            imageForActivity(context, Util.imageConvertUrl(imageName: data['image']), data),
             title(data['title']),
             desc(data['content']),
             detailDateandDirector(
-                data['director'],
-                data['last_record_date']
-                    .toString()
-                    .toDateTime()
-                    .toFormattedString()),
-            Container(
-              margin: const EdgeInsets.symmetric(
-                  vertical: Style.defaultPadding / 3),
-              height: 1,
-              width: double.infinity,
-              color: Style.secondaryColor.withOpacity(0.2),
-            ),
+                data['director'], data['last_record_date'].toString().toDateTime().toFormattedString()),
           ],
         ),
       ),
@@ -82,14 +50,20 @@ class ActivityPage extends StatelessWidget {
   }
 
   Widget desc(String content) {
-    return Text(
-      content,
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-        color: Style.textGreyColor,
-      ),
+    return HtmlTextWidget(
+      content: content,
+      maxContentLength: 120,
+      color: Style.textGreyColor,
+      fontSize: Style.defaultTextSize * 0.9,
     );
+    // return Text(
+    //   content,
+    //   maxLines: 3,
+    //   overflow: TextOverflow.ellipsis,
+    //   style: TextStyle(
+    //     color: Style.textGreyColor,
+    //   ),
+    // );
   }
 
   Widget title(String title) {
@@ -105,20 +79,13 @@ class ActivityPage extends StatelessWidget {
     );
   }
 
-  Widget imageForActivity(
-      BuildContext context, String imageUrl, Map<String, dynamic> data) {
+  Widget imageForActivity(BuildContext context, String imageUrl, Map<String, dynamic> data) {
     return Stack(
       children: [
         SizedBox(
           height: 550.h,
           width: double.infinity,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-            child: Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-            ),
-          ),
+          child: CustomNetworkImageWidget(imageUrl: imageUrl),
         ),
         buttonForContinue(context, data),
       ],
@@ -131,8 +98,7 @@ class ActivityPage extends StatelessWidget {
       right: Style.defautlHorizontalPadding / 2,
       child: GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, Routes.activityDetailPage,
-              arguments: data);
+          Navigator.pushNamed(context, Routes.activityDetailPage, arguments: data);
         },
         child: Container(
           padding: EdgeInsets.symmetric(
@@ -172,8 +138,7 @@ class ActivityPage extends StatelessWidget {
                 color: Style.textGreyColor,
               ),
               Padding(
-                padding:
-                    EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
+                padding: EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
                 child: Text(
                   creatorName,
                   style: TextStyle(

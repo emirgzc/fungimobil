@@ -7,7 +7,9 @@ import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/appbar.dart';
-import 'package:provider/provider.dart';
+import 'package:fungimobil/widgets/custom_network_image_widget.dart';
+
+import '../../widgets/html_text_widget.dart';
 
 class ServicePage extends StatelessWidget {
   const ServicePage({Key? key}) : super(key: key);
@@ -67,16 +69,13 @@ class ServicePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: () => detailPop(context, datas, index),
+            onTap:
+                datas == null ? null : () => detailPop(context, datas, index),
             child: Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-                  child: Image.network(
-                    Util.imageConvertUrl(imageName: datas![index]["image"]),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                CustomNetworkImageWidget(
+                    imageUrl: Util.imageConvertUrl(
+                        imageName: datas![index]["image"])),
                 Positioned(
                   bottom: Style.defautlVerticalPadding / 2,
                   right: Style.defautlHorizontalPadding / 2,
@@ -115,14 +114,20 @@ class ServicePage extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.only(bottom: Style.defautlVerticalPadding / 2),
-            child: Text(
+            child: HtmlTextWidget(
+                content: datas[index]["content"],
+                maxContentLength: 120,
+                color: Style.textGreyColor,
+                fontSize: Style.defaultTextSize * 0.8),
+
+            /*Text(
               datas[index]["content"],
               maxLines: 4,
               style: TextStyle(
                 overflow: TextOverflow.ellipsis,
                 color: Style.textGreyColor,
               ),
-            ),
+            ),*/
           ),
           Container(
             margin:
@@ -137,7 +142,7 @@ class ServicePage extends StatelessWidget {
   }
 
   Future detailPop(
-      BuildContext context, List<Map<String, dynamic>>? datas, int index) {
+      BuildContext context, List<Map<String, dynamic>> datas, int index) {
     return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -171,7 +176,7 @@ class ServicePage extends StatelessWidget {
                 padding: EdgeInsets.symmetric(
                     vertical: Style.defautlVerticalPadding),
                 child: Text(
-                  datas?[index]["title"] ?? "",
+                  datas[index]["title"] ?? "",
                   style: TextStyle(
                     fontSize: Style.bigTitleTextSize,
                     fontWeight: FontWeight.bold,
@@ -179,9 +184,11 @@ class ServicePage extends StatelessWidget {
                   ),
                 ),
               ),
-              Text(
-                datas?[index]["content"] ?? "",
-              ),
+              HtmlTextWidget(
+                  content: datas[index]["content"],
+                  maxContentLength: 120,
+                  color: Style.textGreyColor,
+                  fontSize: Style.defaultTextSize * 0.8),
             ],
           ),
         );
