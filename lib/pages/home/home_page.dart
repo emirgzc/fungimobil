@@ -18,6 +18,8 @@ import 'package:fungimobil/widgets/shimmer/shimmer.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer_loading.dart';
 import 'package:provider/provider.dart';
 
+import '../../widgets/custom_network_image_widget.dart';
+
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
 
@@ -201,10 +203,9 @@ class HomePage extends StatelessWidget {
                       ? Container(
                           color: Colors.white.withOpacity(0.8),
                         )
-                      : Image.network(
-                          Util.imageConvertUrl(imageName: data['image']),
-                          fit: BoxFit.cover,
-                        ),
+                      : CustomNetworkImageWidget(
+                    imageUrl: Util.imageConvertUrl(imageName: data['image'],),
+                  ),
                 ),
               ),
             ),
@@ -310,10 +311,7 @@ class HomePage extends StatelessWidget {
                             )
                           : Hero(
                               tag: data['image'],
-                              child: Image.network(
-                                Util.imageConvertUrl(imageName: data['image']),
-                                fit: BoxFit.cover,
-                              ),
+                              child: CustomNetworkImageWidget(imageUrl: Util.imageConvertUrl(imageName: data['image'])),
                             ),
                     ),
                   ),

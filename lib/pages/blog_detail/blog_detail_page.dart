@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 
 import '../../model/table_model.dart' as table;
 import '../../viewmodel/table_view_model.dart';
+import '../../widgets/custom_network_image_widget.dart';
 
 class BlogDetailPage extends StatelessWidget {
   const BlogDetailPage({Key? key, required this.id}) : super(key: key);
@@ -52,13 +53,9 @@ class BlogDetailPage extends StatelessWidget {
     return Stack(
       children: [
         SizedBox(
-          height: 900.h,
-          width: double.infinity,
-          child: Image.network(
-            Util.imageConvertUrl(imageName: data!["image"]),
-            fit: BoxFit.cover,
-          ),
-        ),
+            height: 900.h,
+            width: double.infinity,
+            child: CustomNetworkImageWidget(imageUrl: Util.imageConvertUrl(imageName: data!["image"]))),
         arrowBack(context),
 
         headerDateandUser(context, data),

@@ -8,6 +8,7 @@ import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/data/api_client.dart';
 import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/widgets/appbar.dart';
+import 'package:fungimobil/widgets/custom_network_image_widget.dart';
 
 class GaleryPage extends StatelessWidget {
   const GaleryPage({Key? key}) : super(key: key);
@@ -33,9 +34,7 @@ class GaleryPage extends StatelessWidget {
             filter: {},
           ),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData &&
-                snapshot.data != null) {
+            if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
               var datas = (snapshot.data as tableModel.TableModel).data;
               debugPrint(datas?.length.toString());
               return MasonryGridView.count(
@@ -50,16 +49,7 @@ class GaleryPage extends StatelessWidget {
                     onTap: () => detailPop(context, datas, index),
                     child: Tooltip(
                       message: datas?[index]["title"] ?? "null",
-                      child: ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(Style.defaultRadiusSize),
-                        child: Image.network(
-                          Util.imageConvertUrl(
-                            imageName: datas![index]["image"],
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                      child: CustomNetworkImageWidget(imageUrl: Util.imageConvertUrl(imageName: datas![index]["image"])),
                     ),
                   );
                 },
@@ -79,8 +69,7 @@ class GaleryPage extends StatelessWidget {
     );
   }
 
-  Future detailPop(
-      BuildContext context, List<Map<String, dynamic>>? datas, int index) {
+  Future detailPop(BuildContext context, List<Map<String, dynamic>>? datas, int index) {
     return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -93,9 +82,8 @@ class GaleryPage extends StatelessWidget {
       ),
       builder: (context) {
         return Padding(
-          padding: EdgeInsets.symmetric(
-              vertical: Style.defautlVerticalPadding,
-              horizontal: Style.defautlHorizontalPadding),
+          padding:
+              EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding, horizontal: Style.defautlHorizontalPadding),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -121,15 +109,7 @@ class GaleryPage extends StatelessWidget {
                   ),
                 ),
               ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-                child: Image.network(
-                  Util.imageConvertUrl(
-                    imageName: datas![index]["image"],
-                  ),
-                  fit: BoxFit.cover,
-                ),
-              ),
+              CustomNetworkImageWidget(imageUrl: Util.imageConvertUrl(imageName: datas![index]["image"]))
             ],
           ),
         );

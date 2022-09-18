@@ -9,6 +9,8 @@ import 'package:fungimobil/widgets/appbar.dart';
 import 'package:fungimobil/widgets/html_text_widget.dart';
 import 'package:fungimobil/widgets/paginable_list_widget.dart';
 
+import '../../widgets/custom_network_image_widget.dart';
+
 class ActivityPage extends StatelessWidget {
   const ActivityPage({Key? key}) : super(key: key);
 
@@ -28,8 +30,7 @@ class ActivityPage extends StatelessWidget {
   Widget activityCard(Map<String, dynamic> data, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, Routes.activityDetailPage,
-            arguments: data);
+        Navigator.pushNamed(context, Routes.activityDetailPage, arguments: data);
       },
       child: Container(
         margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding),
@@ -49,7 +50,12 @@ class ActivityPage extends StatelessWidget {
   }
 
   Widget desc(String content) {
-    return HtmlTextWidget(content: content, maxContentLength: 120, color: Style.textGreyColor, fontSize: Style.defaultTextSize*0.9,);
+    return HtmlTextWidget(
+      content: content,
+      maxContentLength: 120,
+      color: Style.textGreyColor,
+      fontSize: Style.defaultTextSize * 0.9,
+    );
     // return Text(
     //   content,
     //   maxLines: 3,
@@ -79,13 +85,7 @@ class ActivityPage extends StatelessWidget {
         SizedBox(
           height: 550.h,
           width: double.infinity,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-            child: Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-            ),
-          ),
+          child: CustomNetworkImageWidget(imageUrl: imageUrl),
         ),
         buttonForContinue(context, data),
       ],

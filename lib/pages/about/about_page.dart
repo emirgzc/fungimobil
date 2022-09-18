@@ -6,6 +6,7 @@ import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/data/api_client.dart';
 import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/widgets/appbar.dart';
+import 'package:fungimobil/widgets/custom_network_image_widget.dart';
 import 'package:fungimobil/widgets/html_text_widget.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer_loading.dart';
@@ -76,13 +77,7 @@ class AboutPage extends StatelessWidget {
       children: [
         ShimmerLoading(
           isLoading: dataMap == null,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-            child: Image.network(
-              Util.imageConvertUrl(imageName: dataMap?[index]["image"]),
-              fit: BoxFit.cover,
-            ),
-          ),
+          child: CustomNetworkImageWidget(imageUrl: Util.imageConvertUrl(imageName: dataMap?[index]["image"])),
         ),
         Padding(
           padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),

@@ -9,6 +9,7 @@ import 'package:fungimobil/model/single_record_model.dart';
 import 'package:fungimobil/pages/login_register/components/button_login.dart';
 import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/card_for_social_media.dart';
+import 'package:fungimobil/widgets/custom_network_image_widget.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
 import 'package:fungimobil/widgets/html_text_widget.dart';
 import 'package:provider/provider.dart';
@@ -54,10 +55,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> with TickerProv
             width: double.infinity,
             child: Hero(
               tag: widget.data['image'],
-              child: Image.network(
-                Util.imageConvertUrl(imageName: widget.data['image']),
-                fit: BoxFit.cover,
-              ),
+              child: CustomNetworkImageWidget(imageUrl: Util.imageConvertUrl(imageName: widget.data['image'])),
             ),
           ),
           arrowBack(),

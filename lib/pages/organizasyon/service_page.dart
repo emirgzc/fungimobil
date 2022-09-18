@@ -7,6 +7,7 @@ import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/data/api_client.dart';
 import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/widgets/appbar.dart';
+import 'package:fungimobil/widgets/custom_network_image_widget.dart';
 
 import '../../widgets/html_text_widget.dart';
 
@@ -69,13 +70,7 @@ class ServicePage extends StatelessWidget {
             onTap: datas == null ? null : () => detailPop(context, datas, index),
             child: Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-                  child: Image.network(
-                    Util.imageConvertUrl(imageName: datas![index]["image"]),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                CustomNetworkImageWidget(imageUrl: Util.imageConvertUrl(imageName: datas![index]["image"])),
                 Positioned(
                   bottom: Style.defautlVerticalPadding / 2,
                   right: Style.defautlHorizontalPadding / 2,

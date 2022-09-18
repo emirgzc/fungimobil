@@ -9,6 +9,8 @@ import 'package:fungimobil/widgets/appbar.dart';
 import 'package:fungimobil/widgets/html_text_widget.dart';
 import 'package:fungimobil/widgets/paginable_list_widget.dart';
 
+import '../../widgets/custom_network_image_widget.dart';
+
 class BlogPage extends StatelessWidget {
   const BlogPage({Key? key}) : super(key: key);
 
@@ -38,18 +40,9 @@ class BlogPage extends StatelessWidget {
             },
             child: Stack(
               children: [
-                SizedBox(
+                CustomNetworkImageWidget(
+                  imageUrl: Util.imageConvertUrl(imageName: data["image"]),
                   height: 700.h,
-                  width: double.infinity,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                      Style.defaultRadiusSize,
-                    ),
-                    child: Image.network(
-                      Util.imageConvertUrl(imageName: data["image"]),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
                 ),
                 Positioned(
                   bottom: Style.defautlVerticalPadding / 2,
