@@ -3,11 +3,12 @@ import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
-import 'package:fungimobil/data/api_client.dart';
 import 'package:fungimobil/model/table_model.dart' as tableModel;
+import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/appbar.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer_loading.dart';
+import 'package:provider/provider.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({Key? key}) : super(key: key);
@@ -19,12 +20,11 @@ class AboutPage extends StatelessWidget {
       body: Shimmer(
         linearGradient: Style.shimmerGradient,
         child: FutureBuilder(
-          future: ApiClient().fetchTable(
+          future:
+              Provider.of<TableViewModel>(context, listen: false).fetchTable(
             tableName: TableName.About.name,
-            token: "",
             page: 1,
-            limit: 5,
-            filter: {},
+            limit: 100,
           ),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done &&

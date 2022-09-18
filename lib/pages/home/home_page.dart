@@ -213,9 +213,12 @@ class HomePage extends StatelessWidget {
                       ? Container(
                           color: Colors.white.withOpacity(0.8),
                         )
-                      : Image.network(
-                          Util.imageConvertUrl(imageName: data['image']),
-                          fit: BoxFit.cover,
+                      : Hero(
+                          tag: data['image'],
+                          child: Image.network(
+                            Util.imageConvertUrl(imageName: data['image']),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                 ),
               ),

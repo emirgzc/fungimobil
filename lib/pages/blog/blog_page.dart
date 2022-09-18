@@ -6,9 +6,10 @@ import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
-import 'package:fungimobil/data/api_client.dart';
 import 'package:fungimobil/model/table_model.dart' as tableModel;
+import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/appbar.dart';
+import 'package:provider/provider.dart';
 
 class BlogPage extends StatelessWidget {
   const BlogPage({Key? key}) : super(key: key);
@@ -21,12 +22,11 @@ class BlogPage extends StatelessWidget {
         child: Padding(
           padding: Style.defaultPagePadding,
           child: FutureBuilder(
-            future: ApiClient().fetchTable(
+            future:
+                Provider.of<TableViewModel>(context, listen: false).fetchTable(
               tableName: TableName.Blog.name,
-              token: "",
               page: 1,
-              limit: 10,
-              filter: {},
+              limit: 100,
             ),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done &&
@@ -82,9 +82,12 @@ class BlogPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(
                       Style.defaultRadiusSize,
                     ),
-                    child: Image.network(
-                      Util.imageConvertUrl(imageName: datas![index]["image"]),
-                      fit: BoxFit.cover,
+                    child: Hero(
+                      tag: datas![index]["image"],
+                      child: Image.network(
+                        Util.imageConvertUrl(imageName: datas[index]["image"]),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
@@ -142,18 +145,10 @@ class BlogPage extends StatelessWidget {
                   padding: EdgeInsets.only(
                       right: Style.defautlHorizontalPadding / 4),
                   child: Icon(
-                    Icons.person_outline_sharp,
+                    Icons.date_range,
                     color: Style.textGreyColor,
                     size: Style.defautlVerticalPadding,
                   ),
-                ),
-                Text(
-                  datas[index]["own_id"],
-                  style: TextStyle(color: Style.textGreyColor),
-                ),
-                const Text(
-                  " . ",
-                  style: TextStyle(),
                 ),
                 Text(
                   datas[index]["added_date"]

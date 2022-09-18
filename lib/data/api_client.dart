@@ -13,7 +13,8 @@ class ApiClient {
   final String _baseUrl = 'https://api.fungiturkey.org/api';
   final String _dbName = '/fungitu2_fungiturkey';
   final String _userDbName = '/fungitu2_Simple';
-  final String _baseUrlWithDb = 'https://api.fungiturkey.org/api/fungitu2_fungiturkey';
+  final String _baseUrlWithDb =
+      'https://api.fungiturkey.org/api/fungitu2_fungiturkey';
 
   Future<String> login(String email, String password) async {
     try {
@@ -179,7 +180,8 @@ class ApiClient {
     bool isUserDb = false,
   }) async {
     try {
-      String url = '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/create';
+      String url =
+          '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/create';
       debugPrint('apiUrl ::: $url');
       final response = await http.post(
         Uri.parse(url),
@@ -195,9 +197,11 @@ class ApiClient {
       }
 
       if (response.statusCode == 200) {
-        debugPrint('ApiClient tableCreate fulldata ::: ${jsonDecode(response.body)}');
+        debugPrint(
+            'ApiClient tableCreate fulldata ::: ${jsonDecode(response.body)}');
         final columnsMap = (json['columns'] as Map);
-        final columns = columnsMap.map((key, value) => MapEntry(key as String, table.Column.fromJson(value)));
+        final columns = columnsMap.map((key, value) =>
+            MapEntry(key as String, table.Column.fromJson(value)));
         debugPrint('ApiClient tableCreate data ::: $columns');
         debugPrint('ApiClient tableCreate SUCCESS');
         return columns;
@@ -219,7 +223,8 @@ class ApiClient {
     bool isUserDb = false,
   }) async {
     try {
-      String url = '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/store';
+      String url =
+          '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/store';
       debugPrint('apiUrl ::: $url');
       final response = await http.post(
         Uri.parse(url),
@@ -261,7 +266,8 @@ class ApiClient {
     bool isUserDb = false,
   }) async {
     try {
-      String url = '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/$id/edit';
+      String url =
+          '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/$id/edit';
       debugPrint('apiUrl ::: $url');
       final response = await http.post(
         Uri.parse(url),
@@ -277,7 +283,8 @@ class ApiClient {
       }
 
       if (response.statusCode == 200) {
-        debugPrint('ApiClient tableCreate fulldata ::: ${jsonDecode(response.body)}');
+        debugPrint(
+            'ApiClient tableCreate fulldata ::: ${jsonDecode(response.body)}');
         debugPrint('ApiClient tableCreate SUCCESS');
         return json;
       } else {
@@ -298,7 +305,8 @@ class ApiClient {
     bool isUserDb = false,
   }) async {
     try {
-      String url = '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/$id/update';
+      String url =
+          '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/$id/update';
       debugPrint('apiUrl ::: $url');
       final response = await http.post(
         Uri.parse(url),
@@ -342,7 +350,8 @@ class ApiClient {
     bool isUserDb = false,
   }) async {
     try {
-      String url = '$_baseUrlWithDb/$tableName/$id/get';
+      String url =
+          '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/$id/get';
       debugPrint('apiUrl ::: $url');
       final response = await http.post(
         Uri.parse(url),

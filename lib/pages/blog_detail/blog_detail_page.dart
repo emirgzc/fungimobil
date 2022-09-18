@@ -8,12 +8,29 @@ import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/data/api_client.dart';
 import 'package:fungimobil/model/single_record_model.dart' as tableModel;
 import 'package:fungimobil/model/table_model.dart' as tableModelss;
+import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/card_for_social_media.dart';
+import 'package:fungimobil/widgets/comment/comment_list_widget.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
+import 'package:provider/provider.dart';
 
-class BlogDetailPage extends StatelessWidget {
+class BlogDetailPage extends StatefulWidget {
   const BlogDetailPage({Key? key, required this.id}) : super(key: key);
   final String id;
+
+  @override
+  State<BlogDetailPage> createState() => _BlogDetailPageState();
+}
+
+class _BlogDetailPageState extends State<BlogDetailPage> {
+  List<Map<String, dynamic>>? commentlist;
+  late Map<String, dynamic> commentFilter;
+
+  @override
+  void initState() {
+    super.initState();
+    commentFilter = {'blog_id': widget.id};
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +38,9 @@ class BlogDetailPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: FutureBuilder(
           future: ApiClient().fetchRecord(
-              tableName: TableName.Blog.name, id: int.parse(id), token: ""),
+              tableName: TableName.Blog.name,
+              id: int.parse(widget.id),
+              token: ""),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData &&
@@ -54,9 +73,12 @@ class BlogDetailPage extends StatelessWidget {
         SizedBox(
           height: 900.h,
           width: double.infinity,
-          child: Image.network(
-            Util.imageConvertUrl(imageName: data!["image"]),
-            fit: BoxFit.cover,
+          child: Hero(
+            tag: data!["image"],
+            child: Image.network(
+              Util.imageConvertUrl(imageName: data["image"]),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         arrowBack(context),
@@ -113,63 +135,35 @@ class BlogDetailPage extends StatelessWidget {
   }
 
   Widget commentTitle(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        FutureBuilder(
-          future: ApiClient().fetchTable(
+    return FutureBuilder(
+        future: _fetchComment(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError && snapshot.error != null) {
+            HandleExceptions.handle(
+                exception: snapshot.error, context: context);
+          }
+          return CommentListWidget(
             tableName: TableName.BlogComment.name,
-            token: "",
-            page: 1,
-            limit: 1,
-            filter: {
-              "blog_id": id,
-              "status": 1,
-            },
-          ),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData &&
-                snapshot.data != null) {
-              var datas = (snapshot.data as tableModelss.TableModel).data;
-              debugPrint(datas?.length.toString());
-              return Padding(
-                padding:
-                    EdgeInsets.only(left: Style.defautlHorizontalPadding / 2),
-                child: Text(
-                  "Toplam ${datas?.length} Yorum",
-                  style: TextStyle(
-                    fontSize: 56.sp,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              );
-            } else if (snapshot.hasError && snapshot.error != null) {
-              HandleExceptions.handle(
-                exception: snapshot.error,
-                context: context,
-              );
-              return Container();
-            } else {
-              return Container();
-            }
-          },
-        ),
-        const Spacer(),
-        GestureDetector(
-          onTap: () async {
-            commentMenu(context);
-          },
-          child: Text(
-            "Tüm Yorumlar",
-            style: TextStyle(
-              decoration: TextDecoration.underline,
-              fontSize: 40.sp,
-            ),
-          ),
-        ),
-      ],
-    );
+            defaultItems: commentlist,
+            filter: commentFilter,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          );
+        });
+  }
+
+  Future _fetchComment() async {
+    try {
+      var commentTable =
+          await Provider.of<TableViewModel>(context, listen: false).fetchTable(
+        tableName: TableName.BlogComment.name,
+        page: 1,
+        limit: 5,
+        filter: commentFilter,
+      );
+      commentlist = commentTable.data!;
+    } catch (e) {
+      HandleExceptions.handle(exception: e, context: context);
+    }
   }
 
   Widget titleForActivity(String title) {
@@ -280,6 +274,7 @@ class BlogDetailPage extends StatelessWidget {
   }
 
   Widget headerDateandUser(BuildContext context, Map<String, dynamic>? data) {
+    debugPrint(widget.id.toString());
     return Positioned(
       top: 130.h,
       right: 48.w,
@@ -302,15 +297,41 @@ class BlogDetailPage extends StatelessWidget {
                 fontSize: 40.sp,
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 8.h),
-              child: Text(
-                data["own_id"],
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 40.sp,
-                ),
+            FutureBuilder<tableModel.SingleRecordModel>(
+              future: Provider.of<TableViewModel>(context, listen: false)
+                  .fetchRecord(
+                tableName: TableName.users.name,
+                id: int.parse(data["own_id"]),
+                isUserDb: true,
               ),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.hasData &&
+                    snapshot.data != null) {
+                  var datas = snapshot.data!.data;
+                  debugPrint(datas?.length.toString());
+                  return Padding(
+                    padding: EdgeInsets.only(top: 8.h),
+                    child: Text(
+                      (datas?["name"] ?? "asdasd") +
+                          " " +
+                          (datas?["surname"] ?? "asdasd"),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 40.sp,
+                      ),
+                    ),
+                  );
+                } else if (snapshot.hasError && snapshot.error != null) {
+                  HandleExceptions.handle(
+                    exception: snapshot.error,
+                    context: context,
+                  );
+                  return Container();
+                } else {
+                  return Container();
+                }
+              },
             ),
           ],
         ),
@@ -367,7 +388,7 @@ class BlogDetailPage extends StatelessWidget {
                     page: 1,
                     limit: 10,
                     filter: {
-                      "blog_id": id,
+                      "blog_id": widget.id,
                       "status": 1,
                     },
                   ),

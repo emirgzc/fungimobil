@@ -4,9 +4,10 @@ import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
-import 'package:fungimobil/data/api_client.dart';
 import 'package:fungimobil/model/table_model.dart' as tableModel;
+import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/appbar.dart';
+import 'package:provider/provider.dart';
 
 class ServicePage extends StatelessWidget {
   const ServicePage({Key? key}) : super(key: key);
@@ -19,12 +20,11 @@ class ServicePage extends StatelessWidget {
         child: Padding(
           padding: Style.defaultPagePadding,
           child: FutureBuilder(
-            future: ApiClient().fetchTable(
+            future:
+                Provider.of<TableViewModel>(context, listen: false).fetchTable(
               tableName: TableName.Services.name,
-              token: "",
               page: 1,
-              limit: 10,
-              filter: {},
+              limit: 100,
             ),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done &&
@@ -117,7 +117,7 @@ class ServicePage extends StatelessWidget {
             padding: EdgeInsets.only(bottom: Style.defautlVerticalPadding / 2),
             child: Text(
               datas[index]["content"],
-              maxLines: 2,
+              maxLines: 4,
               style: TextStyle(
                 overflow: TextOverflow.ellipsis,
                 color: Style.textGreyColor,

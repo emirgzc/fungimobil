@@ -70,13 +70,18 @@ class Routes {
             )));
         break;
       case blogPage:
-        page = const SafeArea(child: BlogPage());
+        page = ChangeNotifierProvider(
+          create: (_) => TableViewModel(),
+          child: const SafeArea(child: BlogPage()),
+        );
         break;
       case blogDetailPage:
-        page = SafeArea(
-          child: BlogDetailPage(
-            id: settings.arguments.toString(),
-          ),
+        page = ChangeNotifierProvider(
+          create: (_) => TableViewModel(),
+          child: SafeArea(
+              child: BlogDetailPage(
+            id: settings.arguments as String,
+          )),
         );
         break;
       case aboutPage:
@@ -92,7 +97,10 @@ class Routes {
         );
         break;
       case servicePage:
-        page = const SafeArea(child: ServicePage());
+        page = ChangeNotifierProvider(
+          create: (_) => TableViewModel(),
+          child: const SafeArea(child: ServicePage()),
+        );
         break;
       case activityPage:
         page = ChangeNotifierProvider(
@@ -100,7 +108,9 @@ class Routes {
             child: const SafeArea(child: ActivityPage()));
         break;
       case galeryPage:
-        page = const SafeArea(child: GaleryPage());
+        page = ChangeNotifierProvider(
+            create: (context) => TableViewModel(),
+            child: const SafeArea(child: GaleryPage()));
         break;
       case sponsorPage:
         page = const SafeArea(child: SponsorPage());
