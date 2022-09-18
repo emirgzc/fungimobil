@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/routes.dart';
@@ -12,6 +13,7 @@ import 'package:fungimobil/viewmodel/auth_viewmodel.dart';
 import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
 import 'package:fungimobil/widgets/loading_widget.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -85,6 +87,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       var column = createData!.values.toList()[index];
                       return CustomTextField(
                         hintText: column.display!,
+                        inputFormatters: _getInputFormatters(column),
                         onChanged: (value) {
                           if (value == null) {
                             data.remove(column.name);
@@ -108,6 +111,19 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
+  }
+
+  List<TextInputFormatter>? _getInputFormatters(table.Column column) {
+    if (column.name!.contains('phone')) {
+      return [
+        MaskTextInputFormatter(
+          mask: '+90(###)###-####',
+          filter: {"#": RegExp(r'[0-9]')},
+          type: MaskAutoCompletionType.lazy,
+        ),
+      ];
+    }
+    return null;
   }
 
   _register() {

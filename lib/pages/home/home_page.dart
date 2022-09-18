@@ -20,9 +20,14 @@ import 'package:provider/provider.dart';
 
 import '../../widgets/custom_network_image_widget.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>>? activityDataList, blogDataList;
 
   @override
@@ -46,7 +51,7 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             FutureBuilder(
-              future: Provider.of<AuthViewModel>(context, listen: false).getUserInfoFromLocale(),
+              future: _fetchUserInfo(context),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
                   var datas = snapshot.data as UserModel;
@@ -550,6 +555,19 @@ class HomePage extends StatelessWidget {
     } catch (e) {
       HandleExceptions.handle(exception: e, context: context);
     }
+  }
+
+  Future<UserModel?> _fetchUserInfo(BuildContext context) async {
+    try {
+      bool userExists = await Provider.of<AuthViewModel>(context, listen: false).isUserExists();
+      if (userExists && mounted) {
+        return await Provider.of<AuthViewModel>(context, listen: false).getUserInfoFromLocale();
+      }
+
+    } catch (e) {
+      HandleExceptions.handle(exception: e, context: context);
+    }
+    return null;
   }
 }
 
