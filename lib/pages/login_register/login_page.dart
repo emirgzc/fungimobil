@@ -113,26 +113,29 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget registerTitle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(right: 16.w),
-          child: Text(
-            "Üye değil misiniz?",
-            style: TextStyle(
-              fontSize: 40.sp,
+    return GestureDetector(
+      onTap: _navigateToRegister,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(right: 16.w),
+            child: Text(
+              "Üye değil misiniz?",
+              style: TextStyle(
+                fontSize: 40.sp,
+              ),
             ),
           ),
-        ),
-        Text(
-          "Şimdi Üye Olun",
-          style: TextStyle(
-            fontSize: 40.sp,
-            color: Colors.blue,
+          Text(
+            "Şimdi Üye Olun",
+            style: TextStyle(
+              fontSize: 40.sp,
+              color: Colors.blue,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -208,5 +211,9 @@ class _LoginPageState extends State<LoginPage> {
 
   _navigateHome(){
     Navigator.pushNamedAndRemoveUntil(context, Routes.homePage, (route) => false,);
+  }
+
+  _navigateToRegister() {
+    Navigator.pushNamed(context, Routes.registerPage);
   }
 }

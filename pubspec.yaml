@@ -47,6 +47,7 @@ dependencies:
   flutter_html: ^0.11.1
   flutter_widget_from_html: ^0.8.5
   loading_animation_widget: ^1.2.0+3
+  mask_text_input_formatter: ^2.4.0
 
 dev_dependencies:
   flutter_test:

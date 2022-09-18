@@ -8,6 +8,8 @@ import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/widgets/appbar.dart';
 import 'package:fungimobil/widgets/html_text_widget.dart';
 import 'package:fungimobil/widgets/paginable_list_widget.dart';
+import 'package:fungimobil/widgets/shimmer/shimmer.dart';
+import 'package:fungimobil/widgets/shimmer/shimmer_loading.dart';
 
 import '../../widgets/custom_network_image_widget.dart';
 
@@ -16,18 +18,22 @@ class ActivityPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Style.primaryColor,
-      appBar: getAppBar("Etkinlikler"),
-      body: PaginableList(
-          tableName: TableName.Activity.name,
-          itemBuilder: (context, data) {
-            return activityCard(data!, context);
-          }),
+    return Shimmer(
+      linearGradient: Style.shimmerGradient,
+      child: Scaffold(
+        backgroundColor: Style.primaryColor,
+        appBar: getAppBar("Etkinlikler"),
+        body: PaginableList(
+            tableName: TableName.Activity.name,
+            useShimmerEffectFormat: true,
+            itemBuilder: (context, data) {
+              return activityCard(data, context);
+            }),
+      ),
     );
   }
 
-  Widget activityCard(Map<String, dynamic> data, BuildContext context) {
+  Widget activityCard(Map<String, dynamic>? data, BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, Routes.activityDetailPage, arguments: data);
@@ -38,23 +44,31 @@ class ActivityPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            imageForActivity(context, Util.imageConvertUrl(imageName: data['image']), data),
-            title(data['title']),
-            desc(data['content']),
+            imageForActivity(context, data == null ? null : Util.imageConvertUrl(imageName: data['image']), data),
+            title(data?['title'], context),
+            desc(data?['content'], context),
             detailDateandDirector(
-                data['director'], data['last_record_date'].toString().toDateTime().toFormattedString()),
+                data?['director'], data?['last_record_date'].toString().toDateTime().toFormattedString(), context),
           ],
         ),
       ),
     );
   }
 
-  Widget desc(String content) {
-    return HtmlTextWidget(
-      content: content,
-      maxContentLength: 120,
-      color: Style.textGreyColor,
-      fontSize: Style.defaultTextSize * 0.9,
+  Widget desc(String? content, BuildContext context) {
+    return ShimmerLoading(
+      isLoading: content == null,
+      child: Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: HtmlTextWidget(
+          content: content,
+          isLoading: content == null,
+          loadingText: '*'*170,
+          maxContentLength: 120,
+          color: Style.textGreyColor,
+          fontSize: Style.defaultTextSize * 0.9,
+        ),
+      ),
     );
     // return Text(
     //   content,
@@ -66,38 +80,50 @@ class ActivityPage extends StatelessWidget {
     // );
   }
 
-  Widget title(String title) {
+  Widget title(String? title, BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: Style.bigTitleTextSize,
-          fontWeight: FontWeight.w600,
+      child: ShimmerLoading(
+        isLoading: title == null,
+        child: Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: Text(
+            title ?? '*'*20,
+            style: TextStyle(
+              fontSize: Style.bigTitleTextSize,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget imageForActivity(BuildContext context, String imageUrl, Map<String, dynamic> data) {
-    return Stack(
-      children: [
-        SizedBox(
-          height: 550.h,
-          width: double.infinity,
-          child: CustomNetworkImageWidget(imageUrl: imageUrl),
+  Widget imageForActivity(BuildContext context, String? imageUrl, Map<String, dynamic>? data) {
+    return ShimmerLoading(
+      isLoading: data == null,
+      child: Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: Stack(
+          children: [
+            SizedBox(
+              height: 550.h,
+              width: double.infinity,
+              child: CustomNetworkImageWidget(imageUrl: imageUrl ?? ''),
+            ),
+            buttonForContinue(context, data),
+          ],
         ),
-        buttonForContinue(context, data),
-      ],
+      ),
     );
   }
 
-  Widget buttonForContinue(BuildContext context, Map<String, dynamic> data) {
+  Widget buttonForContinue(BuildContext context, Map<String, dynamic>? data) {
     return Positioned(
       bottom: Style.defautlVerticalPadding / 2,
       right: Style.defautlHorizontalPadding / 2,
       child: GestureDetector(
-        onTap: () {
+        onTap: data == null ? null :  () {
           Navigator.pushNamed(context, Routes.activityDetailPage, arguments: data);
         },
         child: Container(
@@ -123,7 +149,7 @@ class ActivityPage extends StatelessWidget {
     );
   }
 
-  Widget detailDateandDirector(String creatorName, String lastRecordDate) {
+  Widget detailDateandDirector(String? creatorName, String? lastRecordDate, BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding / 2),
       child: Row(
@@ -139,21 +165,33 @@ class ActivityPage extends StatelessWidget {
               ),
               Padding(
                 padding: EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
-                child: Text(
-                  creatorName,
-                  style: TextStyle(
-                    overflow: TextOverflow.ellipsis,
-                    color: Style.textGreyColor,
+                child: ShimmerLoading(
+                  isLoading: creatorName == null,
+                  child: Container(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    child: Text(
+                      creatorName ?? '*'*20,
+                      style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        color: Style.textGreyColor,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ],
           ),
-          Text(
-            "Son Kayıt : $lastRecordDate",
-            style: const TextStyle(
-              overflow: TextOverflow.ellipsis,
-              color: Style.dangerColor,
+          ShimmerLoading(
+            isLoading: lastRecordDate == null,
+            child: Container(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: Text(
+                "Son Kayıt : ${lastRecordDate ?? '*'*15}",
+                style: const TextStyle(
+                  overflow: TextOverflow.ellipsis,
+                  color: Style.dangerColor,
+                ),
+              ),
             ),
           ),
         ],

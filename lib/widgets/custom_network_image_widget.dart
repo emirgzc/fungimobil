@@ -23,8 +23,8 @@ class CustomNetworkImageWidget extends StatelessWidget {
       borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
       child: CachedNetworkImage(
         imageUrl: imageUrl,
-        height: height,
-        width: width,
+        height: width != null && height == null ? double.infinity : height,
+        width: height != null && width == null ? double.infinity : width,
         fit: fit,
         placeholder: (context, url) {
           return const LoadingWidget(

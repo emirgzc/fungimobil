@@ -77,7 +77,7 @@ class _PaginableListState extends State<PaginableList> {
                       key: const PageStorageKey(0),
                       controller: widget.scrollController == null ? _scrollController : null,
                       shrinkWrap: widget.scrollController == null,
-                      physics: widget.scrollController != null ? const NeverScrollableScrollPhysics() : null,
+                      physics: widget.scrollController != null || (widget.useShimmerEffectFormat && _tableModel == null) ? const NeverScrollableScrollPhysics() : null,
                       itemCount: _tableModel?.data?.length ??
                           (widget.useShimmerEffectFormat ? widget.shimmerLoadingLength : 0),
                       padding: Style.defaultPagePadding,

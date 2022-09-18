@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fungimobil/constants/style.dart';
 
@@ -12,6 +13,7 @@ class CustomTextField extends StatelessWidget {
     this.controller,
     this.validator,
     this.onChanged,
+    this.inputFormatters,
   }) : super(key: key);
 
   final String hintText;
@@ -21,6 +23,7 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
   final FormFieldValidator<String>? validator;
   final void Function(String?)? onChanged;
+  final List<TextInputFormatter>?  inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +38,7 @@ class CustomTextField extends StatelessWidget {
         validator: validator,
         onChanged: onChanged,
         initialValue: initialValue,
+        inputFormatters: inputFormatters,
         decoration: InputDecoration(
           prefixIcon: prefixIcon,
           suffixIcon: suffixIcon,
