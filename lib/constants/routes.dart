@@ -72,8 +72,11 @@ class Routes {
             child: const BlogPage());
         break;
       case blogDetailPage:
-        page = BlogDetailPage(
-          id: settings.arguments.toString(),
+        page = ChangeNotifierProvider(
+          create: (_) => TableViewModel(),
+          child: BlogDetailPage(
+            id: settings.arguments.toString(),
+          ),
         );
         break;
       case aboutPage:

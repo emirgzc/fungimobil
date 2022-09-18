@@ -10,6 +10,7 @@ import 'package:fungimobil/pages/login_register/components/button_login.dart';
 import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/card_for_social_media.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
+import 'package:fungimobil/widgets/html_text_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../widgets/comment/comment_list_widget.dart';
@@ -25,8 +26,7 @@ class ActivityDetailPage extends StatefulWidget {
   State<ActivityDetailPage> createState() => _ActivityDetailPageState();
 }
 
-class _ActivityDetailPageState extends State<ActivityDetailPage>
-    with TickerProviderStateMixin {
+class _ActivityDetailPageState extends State<ActivityDetailPage> with TickerProviderStateMixin {
   AnimationController? controller;
   SingleRecordModel? recordModel;
   List<Map<String, dynamic>>? commentlist;
@@ -41,9 +41,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Shimmer(
-          linearGradient: Style.shimmerDarkGradient,
-          child: activityDetailBody(context)),
+      body: Shimmer(linearGradient: Style.shimmerDarkGradient, child: activityDetailBody(context)),
     );
   }
 
@@ -91,25 +89,20 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                       }),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: Style.defautlVerticalPadding),
+                  padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
                   child: titleForActivity("Etkinlik Bilgisi"),
                 ),
                 Padding(
-                  padding:
-                      EdgeInsets.only(bottom: Style.defautlVerticalPadding),
+                  padding: EdgeInsets.only(bottom: Style.defautlVerticalPadding),
                   child: infoActivity(),
                 ),
                 titleForActivity("Konum Bilgisi"),
                 Padding(
-                  padding: EdgeInsets.only(
-                      top: Style.defautlVerticalPadding,
-                      bottom: Style.defautlVerticalPadding / 2),
+                  padding: EdgeInsets.only(top: Style.defautlVerticalPadding, bottom: Style.defautlVerticalPadding / 2),
                   child: map(),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: Style.defautlVerticalPadding),
+                  padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
                   child: commentTitle(context),
                 ),
                 // commentForActivity(),
@@ -130,8 +123,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
         future: _fetchComment(),
         builder: (context, snapshot) {
           if (snapshot.hasError && snapshot.error != null) {
-            HandleExceptions.handle(
-                exception: snapshot.error, context: context);
+            HandleExceptions.handle(exception: snapshot.error, context: context);
           }
           return CommentListWidget(
             tableName: TableName.ActivityComment.name,
@@ -208,10 +200,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                 ),
               ),
               Expanded(
-                child: Text(widget.data['finish_date']
-                    .toString()
-                    .toDateTime()
-                    .toFormattedString()),
+                child: Text(widget.data['finish_date'].toString().toDateTime().toFormattedString()),
               ),
             ],
           ),
@@ -266,10 +255,9 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
       text = content;
     } else {
       String minimalContent = widget.data['content'].toString();
-      text = minimalContent.endsWith('...')
-          ? minimalContent.substring(0, minimalContent.length - 3)
-          : minimalContent;
+      text = minimalContent.endsWith('...') ? minimalContent.substring(0, minimalContent.length - 3) : minimalContent;
     }
+
     return Column(
       children: [
         /*ShimmerLoading(
@@ -284,13 +272,14 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
               ]
           )),
         ),*/
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: Style.defaultTextSize,
-            color: Style.textColor.withOpacity(0.6),
-          ),
-        ),
+        HtmlTextWidget(content: text, color: Style.textColor.withOpacity(0.6)),
+        // Text(
+        //   text,
+        //   style: TextStyle(
+        //     fontSize: Style.defaultTextSize,
+        //     color: Style.textColor.withOpacity(0.6),
+        //   ),
+        // ),
         /*if (content == null) SizedBox(width: 0.4.sw, child: const LinearProgressIndicator(color: Style.secondaryColor, backgroundColor: Colors.transparent,)),*/
         // if (content == null) const CircularProgressIndicator(color: Style.secondaryColor,),
         if (content == null)
@@ -339,8 +328,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                   size: 60.r,
                 ),
                 Padding(
-                  padding:
-                      EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
+                  padding: EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
                   child: Text(
                     location,
                     style: TextStyle(
@@ -460,13 +448,9 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                 size: 60.r,
               ),
               Padding(
-                padding:
-                    EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
+                padding: EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
                 child: Text(
-                  widget.data['start_date']
-                      .toString()
-                      .toDateTime()
-                      .toFormattedString(),
+                  widget.data['start_date'].toString().toDateTime().toFormattedString(),
                   style: TextStyle(
                     fontSize: 40.sp,
                     color: Style.textColor.withOpacity(0.4),
@@ -511,8 +495,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
         onTap: () => recordPop(context),
         child: Container(
           padding: EdgeInsets.symmetric(
-              vertical: Style.defautlVerticalPadding / 4,
-              horizontal: Style.defautlHorizontalPadding / 2),
+              vertical: Style.defautlVerticalPadding / 4, horizontal: Style.defautlHorizontalPadding / 2),
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(
@@ -647,9 +630,8 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(
-                          left: Style.defautlHorizontalPadding,
-                          top: Style.defautlVerticalPadding * 2),
+                      padding:
+                          EdgeInsets.only(left: Style.defautlHorizontalPadding, top: Style.defautlVerticalPadding * 2),
                       child: Row(
                         children: [
                           Text(
@@ -670,13 +652,11 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                         return ListTile(
                           minLeadingWidth: 0,
                           dense: true,
-                          leading:
-                              const Icon(Icons.supervised_user_circle_outlined),
+                          leading: const Icon(Icons.supervised_user_circle_outlined),
                           title: Row(
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(
-                                    right: Style.defautlHorizontalPadding / 2),
+                                padding: EdgeInsets.only(right: Style.defautlHorizontalPadding / 2),
                                 child: Text(
                                   "Emir Gözcü",
                                   style: TextStyle(
@@ -733,9 +713,8 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
       ),
       builder: (context) {
         return Padding(
-          padding: EdgeInsets.symmetric(
-              vertical: Style.defautlVerticalPadding,
-              horizontal: Style.defautlHorizontalPadding),
+          padding:
+              EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding, horizontal: Style.defautlHorizontalPadding),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -750,12 +729,10 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: Style.defautlVerticalPadding),
+                padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
                 child: Text(
                   "Etkinlik Kayıt",
-                  style:
-                      TextStyle(fontSize: 62.sp, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 62.sp, fontWeight: FontWeight.bold),
                 ),
               ),
               CustomTextField(hintText: "Kişi Sayısı"),
@@ -783,8 +760,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                           title: const Text("Açık Rıza Metni"),
                           contentPadding: EdgeInsets.all(60.r),
                           content: Text(
-                            "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s," *
-                                5,
+                            "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s," * 5,
                           ),
                         ),
                       );
@@ -817,8 +793,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
 
   Future _fetchComment() async {
     try {
-      var commentTable =
-          await Provider.of<TableViewModel>(context, listen: false).fetchTable(
+      var commentTable = await Provider.of<TableViewModel>(context, listen: false).fetchTable(
         tableName: TableName.ActivityComment.name,
         page: 1,
         limit: 5,

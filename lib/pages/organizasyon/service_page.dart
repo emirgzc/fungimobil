@@ -8,6 +8,8 @@ import 'package:fungimobil/data/api_client.dart';
 import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/widgets/appbar.dart';
 
+import '../../widgets/html_text_widget.dart';
+
 class ServicePage extends StatelessWidget {
   const ServicePage({Key? key}) : super(key: key);
 
@@ -27,9 +29,7 @@ class ServicePage extends StatelessWidget {
               filter: {},
             ),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.hasData &&
-                  snapshot.data != null) {
+              if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
                 var datas = (snapshot.data as tableModel.TableModel).data;
                 debugPrint(datas?.length.toString());
                 return Column(
@@ -58,8 +58,7 @@ class ServicePage extends StatelessWidget {
     );
   }
 
-  Widget serviceCard(
-      BuildContext context, List<Map<String, dynamic>>? datas, int index) {
+  Widget serviceCard(BuildContext context, List<Map<String, dynamic>>? datas, int index) {
     return Container(
       margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding),
       width: double.infinity,
@@ -67,7 +66,7 @@ class ServicePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: () => detailPop(context, datas, index),
+            onTap: datas == null ? null : () => detailPop(context, datas, index),
             child: Stack(
               children: [
                 ClipRRect(
@@ -87,8 +86,7 @@ class ServicePage extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: Style.secondaryColor.withOpacity(0.9),
-                      borderRadius:
-                          BorderRadius.circular(Style.defaultRadiusSize),
+                      borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
                     ),
                     child: Text(
                       "Devamını Oku...",
@@ -103,8 +101,7 @@ class ServicePage extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: Style.defautlVerticalPadding / 2),
+            padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding / 2),
             child: Text(
               datas[index]["title"],
               style: TextStyle(
@@ -115,18 +112,23 @@ class ServicePage extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.only(bottom: Style.defautlVerticalPadding / 2),
-            child: Text(
+            child: HtmlTextWidget(
+                content: datas[index]["content"],
+                maxContentLength: 120,
+                color: Style.textGreyColor,
+                fontSize: Style.defaultTextSize * 0.8),
+
+            /*Text(
               datas[index]["content"],
               maxLines: 2,
               style: TextStyle(
                 overflow: TextOverflow.ellipsis,
                 color: Style.textGreyColor,
               ),
-            ),
+            ),*/
           ),
           Container(
-            margin:
-                const EdgeInsets.symmetric(vertical: Style.defaultPadding / 3),
+            margin: const EdgeInsets.symmetric(vertical: Style.defaultPadding / 3),
             height: 1,
             width: double.infinity,
             color: Style.secondaryColor.withOpacity(0.2),
@@ -136,8 +138,7 @@ class ServicePage extends StatelessWidget {
     );
   }
 
-  Future detailPop(
-      BuildContext context, List<Map<String, dynamic>>? datas, int index) {
+  Future detailPop(BuildContext context, List<Map<String, dynamic>> datas, int index) {
     return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -168,10 +169,9 @@ class ServicePage extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: Style.defautlVerticalPadding),
+                padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
                 child: Text(
-                  datas?[index]["title"] ?? "",
+                  datas[index]["title"] ?? "",
                   style: TextStyle(
                     fontSize: Style.bigTitleTextSize,
                     fontWeight: FontWeight.bold,
@@ -179,9 +179,11 @@ class ServicePage extends StatelessWidget {
                   ),
                 ),
               ),
-              Text(
-                datas?[index]["content"] ?? "",
-              ),
+              HtmlTextWidget(
+                  content: datas[index]["content"],
+                  maxContentLength: 120,
+                  color: Style.textGreyColor,
+                  fontSize: Style.defaultTextSize * 0.8),
             ],
           ),
         );

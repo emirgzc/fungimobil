@@ -6,6 +6,7 @@ import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/widgets/appbar.dart';
+import 'package:fungimobil/widgets/html_text_widget.dart';
 import 'package:fungimobil/widgets/paginable_list_widget.dart';
 
 class ActivityPage extends StatelessWidget {
@@ -48,14 +49,15 @@ class ActivityPage extends StatelessWidget {
   }
 
   Widget desc(String content) {
-    return Text(
-      content,
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-        color: Style.textGreyColor,
-      ),
-    );
+    return HtmlTextWidget(content: content, maxContentLength: 120, color: Style.textGreyColor, fontSize: Style.defaultTextSize*0.9,);
+    // return Text(
+    //   content,
+    //   maxLines: 3,
+    //   overflow: TextOverflow.ellipsis,
+    //   style: TextStyle(
+    //     color: Style.textGreyColor,
+    //   ),
+    // );
   }
 
   Widget title(String title) {

@@ -6,10 +6,14 @@ import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/data/api_client.dart';
-import 'package:fungimobil/model/single_record_model.dart' as tableModel;
-import 'package:fungimobil/model/table_model.dart' as tableModelss;
+import 'package:fungimobil/model/single_record_model.dart';
 import 'package:fungimobil/widgets/card_for_social_media.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
+import 'package:fungimobil/widgets/html_text_widget.dart';
+import 'package:provider/provider.dart';
+
+import '../../model/table_model.dart' as table;
+import '../../viewmodel/table_view_model.dart';
 
 class BlogDetailPage extends StatelessWidget {
   const BlogDetailPage({Key? key, required this.id}) : super(key: key);
@@ -19,18 +23,14 @@ class BlogDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: FutureBuilder(
-          future: ApiClient().fetchRecord(
-              tableName: TableName.Blog.name, id: int.parse(id), token: ""),
+        child: FutureBuilder<SingleRecordModel>(
+          future: Provider.of<TableViewModel>(context, listen: false)
+              .fetchRecord(tableName: TableName.Blog.name, id: int.parse(id)),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData &&
-                snapshot.data != null) {
-              var datas = (snapshot.data as tableModel.SingleRecordModel).data;
-              debugPrint("asdasasdadasds ----${datas!.length}");
+            if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
               return Column(
                 children: [
-                  blogBody(context, datas),
+                  blogBody(context, snapshot.data!.data),
                 ],
               );
             } else if (snapshot.hasError && snapshot.error != null) {
@@ -128,14 +128,11 @@ class BlogDetailPage extends StatelessWidget {
             },
           ),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData &&
-                snapshot.data != null) {
-              var datas = (snapshot.data as tableModelss.TableModel).data;
+            if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
+              var datas = (snapshot.data as table.TableModel).data;
               debugPrint(datas?.length.toString());
               return Padding(
-                padding:
-                    EdgeInsets.only(left: Style.defautlHorizontalPadding / 2),
+                padding: EdgeInsets.only(left: Style.defautlHorizontalPadding / 2),
                 child: Text(
                   "Toplam ${datas?.length} Yorum",
                   style: TextStyle(
@@ -183,13 +180,14 @@ class BlogDetailPage extends StatelessWidget {
   }
 
   Widget desc(String content) {
-    return Text(
-      content,
-      style: TextStyle(
-        fontSize: Style.defaultTextSize,
-        color: Style.textGreyColor,
-      ),
-    );
+    return HtmlTextWidget(content: content, color: Style.textGreyColor);
+    // return Text(
+    //   content,
+    //   style: TextStyle(
+    //     fontSize: Style.defaultTextSize,
+    //     color: Style.textGreyColor,
+    //   ),
+    // );
   }
 
   Widget bigTitle(String title) {
@@ -206,8 +204,7 @@ class BlogDetailPage extends StatelessWidget {
     return Row(
       children: [
         Container(
-          margin:
-              EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding / 2),
+          margin: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding / 2),
           width: 800.w,
           child: TextFormField(
             decoration: InputDecoration(
@@ -358,8 +355,7 @@ class BlogDetailPage extends StatelessWidget {
               controller: scrollController,
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                    vertical: Style.defautlVerticalPadding / 2,
-                    horizontal: Style.defautlHorizontalPadding / 2),
+                    vertical: Style.defautlVerticalPadding / 2, horizontal: Style.defautlHorizontalPadding / 2),
                 child: FutureBuilder(
                   future: ApiClient().fetchTable(
                     tableName: TableName.BlogComment.name,
@@ -372,11 +368,8 @@ class BlogDetailPage extends StatelessWidget {
                     },
                   ),
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done &&
-                        snapshot.hasData &&
-                        snapshot.data != null) {
-                      var datas =
-                          (snapshot.data as tableModelss.TableModel).data;
+                    if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
+                      var datas = (snapshot.data as table.TableModel).data;
                       debugPrint(datas?.length.toString());
                       return Column(
                         mainAxisSize: MainAxisSize.min,
@@ -406,8 +399,7 @@ class BlogDetailPage extends StatelessWidget {
                                       },
                                       child: const Text(
                                         "İptal",
-                                        style: TextStyle(
-                                            color: Style.primaryColor),
+                                        style: TextStyle(color: Style.primaryColor),
                                       ),
                                     ),
                                   ],
@@ -439,8 +431,7 @@ class BlogDetailPage extends StatelessWidget {
                           ),
                           Padding(
                             padding: EdgeInsets.only(
-                                left: Style.defautlHorizontalPadding,
-                                top: Style.defautlVerticalPadding * 2),
+                                left: Style.defautlHorizontalPadding, top: Style.defautlVerticalPadding * 2),
                             child: Row(
                               children: [
                                 Text(
@@ -461,19 +452,13 @@ class BlogDetailPage extends StatelessWidget {
                               return ListTile(
                                 minLeadingWidth: 0,
                                 dense: true,
-                                leading: const Icon(
-                                    Icons.supervised_user_circle_outlined),
+                                leading: const Icon(Icons.supervised_user_circle_outlined),
                                 title: Row(
                                   children: [
                                     Padding(
-                                      padding: EdgeInsets.only(
-                                          right:
-                                              Style.defautlHorizontalPadding /
-                                                  2),
+                                      padding: EdgeInsets.only(right: Style.defautlHorizontalPadding / 2),
                                       child: Text(
-                                        (datas?[index]["name"] ?? "") +
-                                            " " +
-                                            (datas?[index]["surname"] ?? ""),
+                                        (datas?[index]["name"] ?? "") + " " + (datas?[index]["surname"] ?? ""),
                                         style: TextStyle(
                                           fontSize: Style.defaultTextSize,
                                           fontWeight: FontWeight.bold,
@@ -481,8 +466,7 @@ class BlogDetailPage extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      datas?[index]["added_date"].toString() ??
-                                          "",
+                                      datas?[index]["added_date"].toString() ?? "",
                                       style: TextStyle(
                                         fontSize: 40.sp,
                                       ),

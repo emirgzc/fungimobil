@@ -6,6 +6,7 @@ import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/widgets/appbar.dart';
+import 'package:fungimobil/widgets/html_text_widget.dart';
 import 'package:fungimobil/widgets/paginable_list_widget.dart';
 
 class BlogPage extends StatelessWidget {
@@ -86,12 +87,13 @@ class BlogPage extends StatelessWidget {
               ),
             ),
           ),
-          Text(
-            data["content"],
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: Style.textGreyColor),
-          ),
+          HtmlTextWidget(content: data['content'], maxContentLength: 120, color: Style.textGreyColor),
+          // Text(
+          //   data["content"],
+          //   maxLines: 2,
+          //   overflow: TextOverflow.ellipsis,
+          //   style: TextStyle(color: Style.textGreyColor),
+          // ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding / 2),
             child: Row(
