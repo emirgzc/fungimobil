@@ -8,6 +8,7 @@ import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/appbar.dart';
 import 'package:fungimobil/widgets/custom_network_image_widget.dart';
+import 'package:provider/provider.dart';
 
 import '../../widgets/html_text_widget.dart';
 
