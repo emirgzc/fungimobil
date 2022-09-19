@@ -117,7 +117,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (column.name!.contains('phone')) {
       return [
         MaskTextInputFormatter(
-          mask: '+90(###)###-####',
+          mask: '+90(###) ### ## ##',
           filter: {"#": RegExp(r'[0-9]')},
           type: MaskAutoCompletionType.lazy,
         ),

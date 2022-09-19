@@ -4,7 +4,7 @@ import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/widgets/loading_widget.dart';
 
 class CustomNetworkImageWidget extends StatelessWidget {
-  const CustomNetworkImageWidget({
+  CustomNetworkImageWidget({
     Key? key,
     required this.imageUrl,
     this.height,
@@ -12,19 +12,24 @@ class CustomNetworkImageWidget extends StatelessWidget {
     this.fit = BoxFit.cover,
   }) : super(key: key);
 
-  final String imageUrl;
-  final double? height;
-  final double? width;
+  final String? imageUrl;
+  double? height;
+  double? width;
   final BoxFit fit;
 
   @override
   Widget build(BuildContext context) {
+    height = width != null && height == null ? double.infinity : height;
+    width = height != null && width == null ? double.infinity : width;
     return ClipRRect(
       borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-      child: CachedNetworkImage(
-        imageUrl: imageUrl,
-        height: width != null && height == null ? double.infinity : height,
-        width: height != null && width == null ? double.infinity : width,
+      child: imageUrl == null ? SizedBox(
+        height: height,
+          width: width,
+      ) : CachedNetworkImage(
+        imageUrl: imageUrl!,
+        height: height,
+        width: width,
         fit: fit,
         placeholder: (context, url) {
           return const LoadingWidget(
