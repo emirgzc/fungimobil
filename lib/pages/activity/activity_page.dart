@@ -36,7 +36,8 @@ class ActivityPage extends StatelessWidget {
   Widget activityCard(Map<String, dynamic>? data, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, Routes.activityDetailPage, arguments: data);
+        Navigator.pushNamed(context, Routes.activityDetailPage,
+            arguments: data);
       },
       child: Container(
         margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding),
@@ -44,11 +45,21 @@ class ActivityPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            imageForActivity(context, data == null ? null : Util.imageConvertUrl(imageName: data['image']), data),
+            imageForActivity(
+                context,
+                data == null
+                    ? null
+                    : Util.imageConvertUrl(imageName: data['image']),
+                data),
             title(data?['title'], context),
             desc(data?['content'], context),
             detailDateandDirector(
-                data?['director'], data?['last_record_date'].toString().toDateTime().toFormattedString(), context),
+                data?['director'],
+                data?['last_record_date']
+                    .toString()
+                    .toDateTime()
+                    .toFormattedString(),
+                context),
           ],
         ),
       ),
@@ -63,7 +74,7 @@ class ActivityPage extends StatelessWidget {
         child: HtmlTextWidget(
           content: content,
           isLoading: content == null,
-          loadingText: '*'*170,
+          loadingText: '*' * 170,
           maxContentLength: 120,
           color: Style.textGreyColor,
           fontSize: Style.defaultTextSize * 0.9,
@@ -88,7 +99,7 @@ class ActivityPage extends StatelessWidget {
         child: Container(
           color: Theme.of(context).scaffoldBackgroundColor,
           child: Text(
-            title ?? '*'*20,
+            title ?? '*' * 20,
             style: TextStyle(
               fontSize: Style.bigTitleTextSize,
               fontWeight: FontWeight.w600,
@@ -99,7 +110,8 @@ class ActivityPage extends StatelessWidget {
     );
   }
 
-  Widget imageForActivity(BuildContext context, String? imageUrl, Map<String, dynamic>? data) {
+  Widget imageForActivity(
+      BuildContext context, String? imageUrl, Map<String, dynamic>? data) {
     return ShimmerLoading(
       isLoading: data == null,
       child: Container(
@@ -109,7 +121,9 @@ class ActivityPage extends StatelessWidget {
             SizedBox(
               height: 550.h,
               width: double.infinity,
-              child: CustomNetworkImageWidget(imageUrl: imageUrl ?? ''),
+              child: CustomNetworkImageWidget(
+                  imageUrl: imageUrl ??
+                      'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png'),
             ),
             buttonForContinue(context, data),
           ],
@@ -123,9 +137,12 @@ class ActivityPage extends StatelessWidget {
       bottom: Style.defautlVerticalPadding / 2,
       right: Style.defautlHorizontalPadding / 2,
       child: GestureDetector(
-        onTap: data == null ? null :  () {
-          Navigator.pushNamed(context, Routes.activityDetailPage, arguments: data);
-        },
+        onTap: data == null
+            ? null
+            : () {
+                Navigator.pushNamed(context, Routes.activityDetailPage,
+                    arguments: data);
+              },
         child: Container(
           padding: EdgeInsets.symmetric(
             vertical: Style.defautlVerticalPadding / 4,
@@ -149,44 +166,44 @@ class ActivityPage extends StatelessWidget {
     );
   }
 
-  Widget detailDateandDirector(String? creatorName, String? lastRecordDate, BuildContext context) {
+  Widget detailDateandDirector(
+      String? creatorName, String? lastRecordDate, BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding / 2),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Icon(
-                Icons.people_alt_outlined,
-                size: Style.defautlVerticalPadding,
-                color: Style.textGreyColor,
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
-                child: ShimmerLoading(
-                  isLoading: creatorName == null,
-                  child: Container(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    child: Text(
-                      creatorName ?? '*'*20,
-                      style: TextStyle(
-                        overflow: TextOverflow.ellipsis,
-                        color: Style.textGreyColor,
-                      ),
+          Icon(
+            Icons.people_alt_outlined,
+            size: Style.defautlVerticalPadding,
+            color: Style.textGreyColor,
+          ),
+          Expanded(
+            child: Padding(
+              padding:
+                  EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
+              child: ShimmerLoading(
+                isLoading: creatorName == null,
+                child: Container(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  child: Text(
+                    creatorName ?? '*' * 20,
+                    style: TextStyle(
+                      overflow: TextOverflow.ellipsis,
+                      color: Style.textGreyColor,
                     ),
                   ),
                 ),
               ),
-            ],
+            ),
           ),
+          const Spacer(),
           ShimmerLoading(
             isLoading: lastRecordDate == null,
             child: Container(
               color: Theme.of(context).scaffoldBackgroundColor,
               child: Text(
-                "Son Kayıt : ${lastRecordDate ?? '*'*15}",
+                "Son Kayıt : ${lastRecordDate ?? '*' * 15}",
                 style: const TextStyle(
                   overflow: TextOverflow.ellipsis,
                   color: Style.dangerColor,

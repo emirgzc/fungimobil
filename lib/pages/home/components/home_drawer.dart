@@ -113,7 +113,9 @@ class HomeDrawer extends StatelessWidget {
     );
   }
 
-  Column drawerItem(BuildContext context, String title, String routes, IconData icon, {VoidCallback? onTap}) {
+  Column drawerItem(
+      BuildContext context, String title, String routes, IconData icon,
+      {VoidCallback? onTap}) {
     return Column(
       children: [
         ListTile(

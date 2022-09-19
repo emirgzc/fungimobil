@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fungimobil/constants/extension.dart';
+import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
+import 'package:fungimobil/model/single_record_model.dart';
+import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/appbar.dart';
 import 'package:fungimobil/widgets/html_text_widget.dart';
 import 'package:fungimobil/widgets/paginable_list_widget.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer_loading.dart';
+import 'package:provider/provider.dart';
 
 import '../../widgets/custom_network_image_widget.dart';
 
@@ -144,10 +148,43 @@ class BlogPage extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          data?["own_id"] ?? ('*' * 15),
-                          style: TextStyle(color: Style.textGreyColor),
-                        ),
+                        (data == null)
+                            ? Container()
+                            : FutureBuilder<SingleRecordModel>(
+                                future: Provider.of<TableViewModel>(context,
+                                        listen: false)
+                                    .fetchRecord(
+                                  tableName: TableName.users.name,
+                                  id: int.parse(data["own_id"]),
+                                  isUserDb: true,
+                                ),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                          ConnectionState.done &&
+                                      snapshot.hasData &&
+                                      snapshot.data != null) {
+                                    var datas = snapshot.data!.data;
+                                    debugPrint(datas?.length.toString());
+                                    return Text(
+                                      (datas?["name"] ?? "asdasd") +
+                                              " " +
+                                              (datas?["surname"] ?? "asdasd") ??
+                                          ('*' * 15),
+                                      style:
+                                          TextStyle(color: Style.textGreyColor),
+                                    );
+                                  } else if (snapshot.hasError &&
+                                      snapshot.error != null) {
+                                    HandleExceptions.handle(
+                                      exception: snapshot.error,
+                                      context: context,
+                                    );
+                                    return Container();
+                                  } else {
+                                    return Container();
+                                  }
+                                },
+                              ),
                         const Text(
                           " . ",
                           style: TextStyle(),

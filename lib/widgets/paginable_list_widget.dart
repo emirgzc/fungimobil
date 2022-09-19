@@ -69,24 +69,35 @@ class _PaginableListState extends State<PaginableList> {
         : FutureBuilder<table.TableModel?>(
             future: _listenTable(context),
             builder: (context, snapshot) {
-              if ((snapshot.hasData && snapshot.data != null) || widget.useShimmerEffectFormat) {
+              if ((snapshot.hasData && snapshot.data != null) ||
+                  widget.useShimmerEffectFormat) {
                 _tableModel = snapshot.data;
                 return Stack(
                   children: [
                     ListView.separated(
                       key: const PageStorageKey(0),
-                      controller: widget.scrollController == null ? _scrollController : null,
+                      controller: widget.scrollController == null
+                          ? _scrollController
+                          : null,
                       shrinkWrap: widget.scrollController == null,
-                      physics: widget.scrollController != null || (widget.useShimmerEffectFormat && _tableModel == null) ? const NeverScrollableScrollPhysics() : null,
+                      physics: widget.scrollController != null ||
+                              (widget.useShimmerEffectFormat &&
+                                  _tableModel == null)
+                          ? const NeverScrollableScrollPhysics()
+                          : null,
                       itemCount: _tableModel?.data?.length ??
-                          (widget.useShimmerEffectFormat ? widget.shimmerLoadingLength : 0),
+                          (widget.useShimmerEffectFormat
+                              ? widget.shimmerLoadingLength
+                              : 0),
                       padding: Style.defaultPagePadding,
                       itemBuilder: (context, index) {
-                        return widget.itemBuilder(context, _tableModel?.data?[index]);
+                        return widget.itemBuilder(
+                            context, _tableModel?.data?[index]);
                       },
                       separatorBuilder: (context, index) {
                         return Container(
-                          margin: const EdgeInsets.symmetric(vertical: Style.defaultPadding / 3),
+                          margin: const EdgeInsets.only(
+                              bottom: Style.defaultPadding),
                           height: 1,
                           width: double.infinity,
                           color: Style.secondaryColor.withOpacity(0.2),
@@ -97,7 +108,8 @@ class _PaginableListState extends State<PaginableList> {
                   ],
                 );
               } else if (snapshot.hasError && snapshot.error != null) {
-                HandleExceptions.handle(exception: snapshot.error, context: context);
+                HandleExceptions.handle(
+                    exception: snapshot.error, context: context);
               }
 
               return const LoadingWidget();
@@ -112,15 +124,20 @@ class _PaginableListState extends State<PaginableList> {
         width: double.infinity,
         decoration: BoxDecoration(
             // color: Colors.red,
-            gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [
-          Theme.of(context).scaffoldBackgroundColor,
-          Theme.of(context).scaffoldBackgroundColor.withOpacity(0)
-        ])),
+            gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [
+              Theme.of(context).scaffoldBackgroundColor,
+              Theme.of(context).scaffoldBackgroundColor.withOpacity(0)
+            ])),
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Style.defaultPadding * 2),
+            padding: const EdgeInsets.symmetric(
+                horizontal: Style.defaultPadding * 2),
             child: LinearProgressIndicator(
-                color: Style.secondaryColor, backgroundColor: Style.secondaryColor.withOpacity(0.1)),
+                color: Style.secondaryColor,
+                backgroundColor: Style.secondaryColor.withOpacity(0.1)),
           ),
         ),
       ),
@@ -128,7 +145,8 @@ class _PaginableListState extends State<PaginableList> {
   }
 
   Future<table.TableModel> _fetchData(BuildContext context) async {
-    _tableModel = await Provider.of<TableViewModel>(context, listen: false).fetchTable(
+    _tableModel =
+        await Provider.of<TableViewModel>(context, listen: false).fetchTable(
       tableName: widget.tableName,
       page: 1,
       limit: widget.pageLimit,
@@ -145,12 +163,16 @@ class _PaginableListState extends State<PaginableList> {
     if (_tableModel == null) {
       return;
     }
-    int currentPage = (_tableModel!.data!.length.toDouble() / widget.pageLimit.toDouble()).ceil();
+    int currentPage =
+        (_tableModel!.data!.length.toDouble() / widget.pageLimit.toDouble())
+            .ceil();
     bool hasMore = _tableModel!.count! > _tableModel!.data!.length;
 
     bool isMaxScroll = widget.scrollController == null
-        ? (_scrollController!.position.pixels == _scrollController!.position.maxScrollExtent)
-        : (widget.scrollController!.position.pixels == widget.scrollController!.position.maxScrollExtent);
+        ? (_scrollController!.position.pixels ==
+            _scrollController!.position.maxScrollExtent)
+        : (widget.scrollController!.position.pixels ==
+            widget.scrollController!.position.maxScrollExtent);
 
     if (isMaxScroll && _tableModel != null && hasMore) {
       _changePageTableData(currentPage);
@@ -163,7 +185,10 @@ class _PaginableListState extends State<PaginableList> {
     });
     return await Provider.of<TableViewModel>(context, listen: false)
         .changePageTableData(
-            tableName: widget.tableName, page: currentPage + 1, limit: widget.pageLimit, filter: widget.filter)
+            tableName: widget.tableName,
+            page: currentPage + 1,
+            limit: widget.pageLimit,
+            filter: widget.filter)
         .then((value) {
       setState(() {
         isPaginationLoading = false;

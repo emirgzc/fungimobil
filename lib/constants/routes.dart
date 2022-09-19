@@ -64,12 +64,13 @@ class Routes {
       case activityDetailPage:
         page = ChangeNotifierProvider(
             create: (_) => TableViewModel(),
-            child: ActivityDetailPage(data: settings.arguments as Map<String, dynamic>,));
+            child: ActivityDetailPage(
+              data: settings.arguments as Map<String, dynamic>,
+            ));
         break;
       case blogPage:
         page = ChangeNotifierProvider(
-            create: (_) => TableViewModel(),
-            child: const BlogPage());
+            create: (_) => TableViewModel(), child: const BlogPage());
         break;
       case blogDetailPage:
         page = ChangeNotifierProvider(
@@ -88,34 +89,50 @@ class Routes {
       case teamPage:
         page = ChangeNotifierProvider(
           create: (_) => TableViewModel(),
-          child: TeamPage(),
+          child: const TeamPage(),
         );
         break;
       case servicePage:
-        page = const ServicePage();
+        page = ChangeNotifierProvider(
+          create: (_) => TableViewModel(),
+          child: const ServicePage(),
+        );
         break;
       case activityPage:
         page = ChangeNotifierProvider(
-            create: (context) => TableViewModel(),
-            child: const ActivityPage());
+          create: (context) => TableViewModel(),
+          child: const ActivityPage(),
+        );
         break;
       case galeryPage:
-        page = const GaleryPage();
+        page = ChangeNotifierProvider(
+          create: (_) => TableViewModel(),
+          child: const GaleryPage(),
+        );
         break;
       case sponsorPage:
-        page = const SponsorPage();
+        page = ChangeNotifierProvider(
+          create: (_) => TableViewModel(),
+          child: const SponsorPage(),
+        );
         break;
       case contactPage:
-        page = const ContactPage();
+        page = ChangeNotifierProvider(
+          create: (_) => TableViewModel(),
+          child: const ContactPage(),
+        );
         break;
       case homePage:
         page = ChangeNotifierProvider(
-            create: (_) => TableViewModel(), child: HomePage());
+          create: (_) => TableViewModel(),
+          child: const HomePage(),
+        );
         break;
       case profilePage:
         page = ChangeNotifierProvider(
-            create: (_) => TableViewModel(),
-            child: const ProfilePage());
+          create: (_) => TableViewModel(),
+          child: const ProfilePage(),
+        );
         break;
       case blogCommentPage:
         page = const BlogCommentList();

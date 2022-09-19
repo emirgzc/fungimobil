@@ -21,7 +21,7 @@ import 'package:provider/provider.dart';
 import '../../widgets/custom_network_image_widget.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -75,7 +75,17 @@ class _HomePageState extends State<HomePage> {
                   );
                   return Container();
                 } else {
-                  return Container();
+                  return Padding(
+                    padding: EdgeInsets.only(top: 24.h, bottom: 12.h),
+                    child: Text(
+                      "Hoşgeldiniz, Fungi Turkey hakkında detaylı bilgi almak, etkinliklere katılmak, yorum yapmak ve daha fazlası için kayıt olun ve giriş yapın.",
+                      style: TextStyle(
+                        fontSize: Style.bigTitleTextSize * 0.75,
+                        color: Style.textColor,
+                        // fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
                 }
               },
             ),
@@ -382,6 +392,7 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       data?['title']?.toString() ?? '*' * 20,
                       style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
                         fontSize: 56.sp,
                         fontWeight: FontWeight.bold,
                       ),
@@ -399,16 +410,19 @@ class _HomePageState extends State<HomePage> {
                       height: 36.r,
                     ),
                   ),
-                  ShimmerLoading(
-                    isLoading: data == null,
-                    child: Container(
-                      color: Colors.white.withOpacity(0.8),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        data?['location']?.toString() ?? '*' * 20,
-                        style: TextStyle(
-                          fontSize: 44.sp,
-                          fontWeight: FontWeight.w400,
+                  Expanded(
+                    child: ShimmerLoading(
+                      isLoading: data == null,
+                      child: Container(
+                        color: Colors.white.withOpacity(0.8),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          data?['location']?.toString() ?? '*' * 20,
+                          style: TextStyle(
+                            overflow: TextOverflow.ellipsis,
+                            fontSize: 44.sp,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ),
                     ),

@@ -185,7 +185,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
     return Text(
       title,
       style: TextStyle(
-        fontSize: Style.bigTitleTextSize,
+        fontSize: title.length > 30 ? 60.sp : 80.sp,
         fontWeight: FontWeight.w500,
       ),
     );
