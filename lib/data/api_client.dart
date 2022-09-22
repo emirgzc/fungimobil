@@ -63,6 +63,7 @@ class ApiClient {
       debugPrint('data: $data');
 
       String url = '$_baseUrl/register';
+      debugPrint('ApiUrl: $url');
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
@@ -76,6 +77,80 @@ class ApiClient {
         debugPrint('ApiClient register RESPONSE ::: ${response.body}');
       } else {
         debugPrint('ApiClient register ERROR ::: ${response.body}');
+        throw ApiException();
+      }
+    } catch (e) {
+      if (e is SocketException) throw ApiException();
+      rethrow;
+    }
+  }
+
+  Future forgetPasswordSendOtp(String email) async {
+    try {
+      debugPrint('Api Client -- forgetPasswordSendOtp');
+      debugPrint('email: $email');
+
+      String url = '$_baseUrl/forget';
+      debugPrint('ApiUrl: $url');
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'token': '',
+        },
+        body: jsonEncode({
+          'email': email,
+        }),
+      );
+
+      Map<String, dynamic> json = jsonDecode(response.body);
+      if (_isRequestHaveMessage(json)) {
+        _throwError(json);
+      }
+
+      debugPrint('response : ${response.body}');
+      if (response.statusCode == 200) {
+        debugPrint('ApiClient forgetPasswordSendOtp RESPONSE ::: ${response.body}');
+      } else {
+        debugPrint('ApiClient forgetPasswordSendOtp ERROR ::: ${response.body}');
+        throw ApiException();
+      }
+    } catch (e) {
+      if (e is SocketException) throw ApiException();
+      rethrow;
+    }
+  }
+
+  Future changePassword(String email, String pin, String newPassword) async {
+    try {
+      debugPrint('Api Client -- changePassword');
+      debugPrint('email: $email | pin:$pin | newPassword:$newPassword');
+
+      String url = '$_baseUrl/forgetPassword';
+      debugPrint('ApiUrl: $url');
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'token': '',
+        },
+        body: jsonEncode({
+          'email': email,
+          'pin': pin,
+          'password': newPassword,
+        }),
+      );
+
+      Map<String, dynamic> json = jsonDecode(response.body);
+      if (_isRequestHaveMessage(json)) {
+        _throwError(json);
+      }
+
+      debugPrint('response : ${response.body}');
+      if (response.statusCode == 200) {
+        debugPrint('ApiClient changePassword RESPONSE ::: ${response.body}');
+      } else {
+        debugPrint('ApiClient changePassword ERROR ::: ${response.body}');
         throw ApiException();
       }
     } catch (e) {
@@ -149,7 +224,7 @@ class ApiClient {
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
+          // 'Content-Type': 'application/json; charset=UTF-8',
           'token': token,
         },
         body: jsonEncode(requestBody),
@@ -157,7 +232,7 @@ class ApiClient {
 
       debugPrint('Response ::: ${response.body}');
 
-      Map<String, dynamic> json = jsonDecode(response.body);
+      Map<String, dynamic> json = response.body.startsWith('{') ? jsonDecode(response.body) : jsonDecode('{${response.body.split('{')[1]}');
       if (_isRequestHaveMessage(json)) {
         _throwError(json);
       }

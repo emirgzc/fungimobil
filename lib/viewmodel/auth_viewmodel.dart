@@ -36,6 +36,32 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
+  Future forgetPasswordSendOtp(String email) async {
+    status = AuthVMStatus.busy;
+    notifyListeners();
+    try {
+      await _repository.forgetPasswordSendOtp(email);
+    } catch (e) {
+      rethrow;
+    } finally {
+      status = AuthVMStatus.free;
+      notifyListeners();
+    }
+  }
+
+  Future changePassword(String email, String pin, String newPassword) async {
+    status = AuthVMStatus.busy;
+    notifyListeners();
+    try {
+      await _repository.changePassword(email, pin, newPassword);
+    } catch (e) {
+      rethrow;
+    } finally {
+      status = AuthVMStatus.free;
+      notifyListeners();
+    }
+  }
+
   Future<bool> isUserExists() async {
     try {
       final result = await _repository.isUserExists();

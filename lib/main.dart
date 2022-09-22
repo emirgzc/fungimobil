@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fungimobil/constants/locator.dart';
 import 'package:fungimobil/constants/routes.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             // home: const DemoPage(),
             onGenerateRoute: Routes.onGenerateRoute,
+            builder: EasyLoading.init(),
           ),
         );
       },

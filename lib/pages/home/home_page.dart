@@ -13,7 +13,6 @@ import 'package:fungimobil/model/user_model.dart';
 import 'package:fungimobil/pages/home/components/home_drawer.dart';
 import 'package:fungimobil/viewmodel/auth_viewmodel.dart';
 import 'package:fungimobil/viewmodel/table_view_model.dart';
-import 'package:fungimobil/widgets/html_text_widget.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer_loading.dart';
 import 'package:provider/provider.dart';
@@ -53,9 +52,7 @@ class _HomePageState extends State<HomePage> {
             FutureBuilder(
               future: _fetchUserInfo(context),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done &&
-                    snapshot.hasData &&
-                    snapshot.data != null) {
+                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
                   var datas = snapshot.data as UserModel;
                   return Padding(
                     padding: EdgeInsets.only(top: 24.h, bottom: 12.h),
@@ -133,14 +130,8 @@ class _HomePageState extends State<HomePage> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (int i = 0;
-                          i < min(5, activityDataList?.length ?? 5);
-                          i++)
-                        actHomeCard(
-                            activityDataList == null
-                                ? null
-                                : activityDataList![i],
-                            context),
+                      for (int i = 0; i < min(5, activityDataList?.length ?? 5); i++)
+                        actHomeCard(activityDataList == null ? null : activityDataList![i], context),
                     ],
                   ),
                 );
@@ -162,9 +153,7 @@ class _HomePageState extends State<HomePage> {
                     itemCount: min(4, blogDataList?.length ?? 4),
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return blogCard(
-                          blogDataList == null ? null : blogDataList![index],
-                          context);
+                      return blogCard(blogDataList == null ? null : blogDataList![index], context);
                     },
                   );
                 }),
@@ -194,8 +183,7 @@ class _HomePageState extends State<HomePage> {
         ),
         child: Text(
           title,
-          style: TextStyle(
-              color: Style.textColor, fontSize: Style.defaultTextSize),
+          style: TextStyle(color: Style.textColor, fontSize: Style.defaultTextSize),
         ),
       ),
     );
@@ -204,8 +192,7 @@ class _HomePageState extends State<HomePage> {
   Widget blogCard(Map<String, dynamic>? data, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, Routes.blogDetailPage,
-            arguments: data!["id"]);
+        Navigator.pushNamed(context, Routes.blogDetailPage, arguments: data!["id"]);
       },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
@@ -258,7 +245,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  ShimmerLoading(
+                  /*ShimmerLoading(
                     isLoading: data == null,
                     child: Container(
                       color: Colors.white.withOpacity(0.8),
@@ -270,31 +257,27 @@ class _HomePageState extends State<HomePage> {
                         fontSize: Style.defaultTextSize * 0.75,
                       ),
 
-                      /*HtmlWidget(
+                      */ /*HtmlWidget(
                         '${data?['content'].toString().substring(0, min(35, data['content'].toString().length)) ?? '*' * 100}...',
                         textStyle: TextStyle(
                           fontSize: Style.defaultTextSize * 0.75,
                         ),
-                      ),*/ /*Text(
+                      ),*/ /* */ /*Text(
                         data?['content'].toString() ?? '*' * 100,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 3,
                         style: TextStyle(
                           fontSize: Style.defaultTextSize / (4 / 3),
                         ),
-                      ),*/
+                      ),*/ /*
                     ),
-                  ),
+                  ),*/
                   ShimmerLoading(
                     isLoading: data == null,
                     child: Container(
                       color: Colors.white.withOpacity(0.8),
                       child: Text(
-                        data?['added_date']
-                                ?.toString()
-                                .toDateTime()
-                                .toFormattedString() ??
-                            '1 Ocak 2000',
+                        data?['added_date']?.toString().toDateTime().toFormattedString() ?? '1 Ocak 2000',
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -311,8 +294,7 @@ class _HomePageState extends State<HomePage> {
   Widget actHomeCard(Map<String, dynamic>? data, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, Routes.activityDetailPage,
-            arguments: data);
+        Navigator.pushNamed(context, Routes.activityDetailPage, arguments: data);
       },
       child: Container(
         margin: EdgeInsets.only(top: 48.h, bottom: 48.h, right: 24.w),
@@ -345,9 +327,7 @@ class _HomePageState extends State<HomePage> {
                             )
                           : Hero(
                               tag: data['image'],
-                              child: CustomNetworkImageWidget(
-                                  imageUrl: Util.imageConvertUrl(
-                                      imageName: data['image'])),
+                              child: CustomNetworkImageWidget(imageUrl: Util.imageConvertUrl(imageName: data['image'])),
                             ),
                     ),
                   ),
@@ -496,8 +476,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future editPop(BuildContext context) async {
-    bool isUserExists =
-        await Provider.of<AuthViewModel>(context, listen: false).isUserExists();
+    bool isUserExists = await Provider.of<AuthViewModel>(context, listen: false).isUserExists();
     return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -531,19 +510,17 @@ class _HomePageState extends State<HomePage> {
                   "assets/icons/user.svg",
                   () => Navigator.pushNamed(context, Routes.loginPage),
                 ),
-              profileMenuCard(
-                context,
-                "Çıkış Yap",
-                "assets/icons/exit.svg",
-                () {
-                  Provider.of<AuthViewModel>(context, listen: false)
-                      .signOut()
-                      .then((value) {
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, Routes.homePage, (route) => false);
-                  });
-                },
-              ),
+              if (isUserExists)
+                profileMenuCard(
+                  context,
+                  "Çıkış Yap",
+                  "assets/icons/exit.svg",
+                  () {
+                    Provider.of<AuthViewModel>(context, listen: false).signOut().then((value) {
+                      Navigator.pushNamedAndRemoveUntil(context, Routes.homePage, (route) => false);
+                    });
+                  },
+                ),
             ],
           ),
         );
@@ -551,8 +528,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget profileMenuCard(
-      BuildContext context, String title, String icon, void Function()? onTap) {
+  Widget profileMenuCard(BuildContext context, String title, String icon, void Function()? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -578,10 +554,9 @@ class _HomePageState extends State<HomePage> {
   Future _fetchActivity(BuildContext context) async {
     try {
       // await Future.delayed(Duration(seconds: 5));
-      activityDataList =
-          (await Provider.of<TableViewModel>(context, listen: false).fetchTable(
-                  tableName: TableName.Activity.name, page: 1, limit: 5))
-              .data;
+      activityDataList = (await Provider.of<TableViewModel>(context, listen: false)
+              .fetchTable(tableName: TableName.Activity.name, page: 1, limit: 5))
+          .data;
     } catch (e) {
       HandleExceptions.handle(exception: e, context: context);
     }
@@ -600,11 +575,9 @@ class _HomePageState extends State<HomePage> {
 
   Future<UserModel?> _fetchUserInfo(BuildContext context) async {
     try {
-      bool userExists = await Provider.of<AuthViewModel>(context, listen: false)
-          .isUserExists();
+      bool userExists = await Provider.of<AuthViewModel>(context, listen: false).isUserExists();
       if (userExists && mounted) {
-        return await Provider.of<AuthViewModel>(context, listen: false)
-            .getUserInfoFromLocale();
+        return await Provider.of<AuthViewModel>(context, listen: false).getUserInfoFromLocale();
       }
     } catch (e) {
       HandleExceptions.handle(exception: e, context: context);
@@ -628,13 +601,10 @@ class Categories {
 List<Categories> categoriesItem = [
   Categories(title: "Hakkımızda", icon: "icon", routesWay: Routes.aboutPage),
   Categories(title: "Takımımız", icon: "icon", routesWay: Routes.teamPage),
-  Categories(
-      title: "Organizasyonumuz", icon: "icon", routesWay: Routes.servicePage),
+  Categories(title: "Organizasyonumuz", icon: "icon", routesWay: Routes.servicePage),
   Categories(title: "Galeri", icon: "icon", routesWay: Routes.galeryPage),
-  Categories(
-      title: "Etkinlikler", icon: "icon", routesWay: Routes.activityPage),
+  Categories(title: "Etkinlikler", icon: "icon", routesWay: Routes.activityPage),
   Categories(title: "Blog", icon: "icon", routesWay: Routes.blogPage),
-  Categories(
-      title: "Sponsorlarımız", icon: "icon", routesWay: Routes.sponsorPage),
+  Categories(title: "Sponsorlarımız", icon: "icon", routesWay: Routes.sponsorPage),
   Categories(title: "İletişim", icon: "icon", routesWay: Routes.contactPage),
 ];

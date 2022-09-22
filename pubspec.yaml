@@ -45,7 +45,10 @@ dependencies:
   shimmer: ^2.0.0
   loading_animation_widget: ^1.2.0+3
   mask_text_input_formatter: ^2.4.0
-  flutter_widget_from_html: ^0.8.5
+#  flutter_widget_from_html: ^0.8.5
+#  flutter_html: ^2.2.1
+  flutter_widget_from_html_core: ^0.8.5+3
+  flutter_easyloading: ^3.0.5
 
 dev_dependencies:
   flutter_test:

@@ -16,14 +16,14 @@ class CustomTextField extends StatelessWidget {
     this.inputFormatters,
   }) : super(key: key);
 
-  final String hintText;
-  final String? initialValue;
+  String hintText;
+  String? initialValue;
   Icon? prefixIcon;
   Icon? suffixIcon;
-  final TextEditingController? controller;
-  final FormFieldValidator<String>? validator;
-  final void Function(String?)? onChanged;
-  final List<TextInputFormatter>?  inputFormatters;
+  TextEditingController? controller;
+  FormFieldValidator<String>? validator;
+  void Function(String?)? onChanged;
+  List<TextInputFormatter>?  inputFormatters;
 
   @override
   Widget build(BuildContext context) {

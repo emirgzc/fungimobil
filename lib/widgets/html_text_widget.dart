@@ -1,7 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+// import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class HtmlTextWidget extends StatelessWidget {
   HtmlTextWidget({

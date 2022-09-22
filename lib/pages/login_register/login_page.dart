@@ -7,6 +7,7 @@ import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/pages/login_register/components/big_title.dart';
 import 'package:fungimobil/pages/login_register/components/button_login.dart';
 import 'package:fungimobil/pages/login_register/components/desc_title.dart';
+import 'package:fungimobil/pages/login_register/forgot_password.dart';
 import 'package:fungimobil/viewmodel/auth_viewmodel.dart';
 import 'package:fungimobil/widgets/appbar.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
@@ -189,12 +190,17 @@ class _LoginPageState extends State<LoginPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Text(
-          "Şifremi Unuttum?",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 40.sp,
-            fontWeight: FontWeight.w300,
+        GestureDetector(
+          onTap: () {
+            ForgotPassword.forgotPassword(context);
+          },
+          child: Text(
+            "Şifremi Unuttum?",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 40.sp,
+              fontWeight: FontWeight.w300,
+            ),
           ),
         ),
       ],
@@ -209,8 +215,12 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  _navigateHome(){
-    Navigator.pushNamedAndRemoveUntil(context, Routes.homePage, (route) => false,);
+  _navigateHome() {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      Routes.homePage,
+      (route) => false,
+    );
   }
 
   _navigateToRegister() {

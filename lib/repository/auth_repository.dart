@@ -34,6 +34,24 @@ class AuthRepository {
     }
   }
 
+  Future forgetPasswordSendOtp(String email) async {
+    try {
+      await _apiClient.forgetPasswordSendOtp(email);
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future changePassword(String email, String pin, String newPassword) async {
+    try {
+      await _apiClient.changePassword(email, pin, newPassword);
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<bool> isUserExists() async {
     try {
       String? token = await _preferencesHelper.getUserToken();
