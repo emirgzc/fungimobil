@@ -64,7 +64,7 @@ class ErrorDialog extends StatelessWidget {
                   onPressed: () {
                     //  close dialog
                     Navigator.pop(context);
-                    onDismiss(context);
+                    // onDismiss(context);
                   },
                 ),
               ],

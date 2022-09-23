@@ -176,7 +176,7 @@ class ApiClient {
       };
       String url = '$_baseUrlWithDb/$tableName';
       debugPrint('apiUrl ::: $url');
-      debugPrint('params : $requestBody');
+      debugPrint('params : ${requestBody.entries.map((e) => '${e.key}: (${e.value.runtimeType}) ${e.value}')}');
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{

@@ -16,7 +16,7 @@ class HandleExceptions {
     } catch (e) {
       debugPrint('FirebaseCrashlytics.recordError fail!!!');
     }
-    debugPrint('ERROR::: ' + exception.toString());
+    debugPrint('ERROR::: $exception');
     if (exception is SocketException) exception = ApiException(onDialogDismiss: (context) {});
     if (exception is! CustomException) {
       exception = UnknownException();

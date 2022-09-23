@@ -75,7 +75,7 @@ class ForgotPassword {
 
                             EasyLoading.showToast('Doğrulama kodu gönderildi');
 
-                            await _showForgotPass(context);
+                            await _showForgotPass(context).then((value) => Navigator.pop(context));
                             // Navigator.pop(context);
                           } catch (e) {
                             HandleExceptions.handle(exception: e, context: context);
@@ -166,12 +166,11 @@ class ForgotPassword {
 
                           try {
                             await _changePassword(context);
+                            Navigator.pop(context);
+                            EasyLoading.showSuccess('Parolanız değiştirildi!');
                           } catch (e) {
                             HandleExceptions.handle(exception: e, context: context);
                           }
-
-                          Navigator.pop(context);
-                          EasyLoading.showSuccess('Parolanız değiştirildi!');
                         },
                       )
                     ],
