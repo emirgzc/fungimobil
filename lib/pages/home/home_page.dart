@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,6 +10,7 @@ import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
+import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/model/user_model.dart';
 import 'package:fungimobil/pages/home/components/home_drawer.dart';
 import 'package:fungimobil/viewmodel/auth_viewmodel.dart';
@@ -16,6 +18,7 @@ import 'package:fungimobil/viewmodel/config_viewmodel.dart';
 import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer_loading.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 import '../../model/menu_model.dart';
@@ -51,21 +54,142 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            FutureBuilder(
-              future: _fetchUserInfo(context),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
-                  var datas = snapshot.data as UserModel;
-                  return Padding(
-                    padding: EdgeInsets.only(top: 24.h, bottom: 12.h),
-                    child: Text(
-                      "Hoşgeldin ${datas.name}" " ${datas.surname},",
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      "Fungi Turkey",
                       style: TextStyle(
-                        fontSize: Style.bigTitleTextSize,
+                        fontSize: 28,
                         color: Style.textColor,
                         fontWeight: FontWeight.bold,
+                        // fontWeight: FontWeight.bold,
                       ),
                     ),
+                    Lottie.asset(
+                      "assets/lottie/nature.json",
+                      repeat: true,
+                      height: 100.h,
+                      width: 200.w,
+                    ),
+                  ],
+                ),
+                FutureBuilder(
+                  future: _fetchUserInfo(context),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData &&
+                        snapshot.data != null) {
+                      var datas = snapshot.data as UserModel;
+                      return Padding(
+                        padding: EdgeInsets.only(top: 24.h, bottom: 12.h),
+                        child: Text(
+                          "Hoşgeldin ${datas.name}" " ${datas.surname},",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Style.textColor,
+                          ),
+                        ),
+                      );
+                    } else if (snapshot.hasError && snapshot.error != null) {
+                      HandleExceptions.handle(
+                        exception: snapshot.error,
+                        context: context,
+                      );
+                      return Container();
+                    } else {
+                      return Padding(
+                        padding: EdgeInsets.only(top: 24.h, bottom: 12.h),
+                        child: const Text(
+                          "Hoşgeldiniz, Fungi Turkey hakkında detaylı bilgi almak, etkinliklere katılmak, yorum yapmak ve daha fazlası için kayıt olun ve giriş yapın.",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Style.textColor,
+                            // fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            FutureBuilder(
+              future: Provider.of<TableViewModel>(context, listen: false)
+                  .fetchTable(
+                tableName: TableName.Slider.name,
+                page: 1,
+                limit: 100,
+              ),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.hasData &&
+                    snapshot.data != null) {
+                  var datas = (snapshot.data as tableModel.TableModel).data;
+                  debugPrint(datas?.length.toString());
+                  return CarouselSlider.builder(
+                    options: CarouselOptions(
+                      height: 160,
+                      enlargeCenterPage: true,
+                      autoPlayAnimationDuration: const Duration(
+                        milliseconds: 600,
+                      ),
+                      enlargeStrategy: CenterPageEnlargeStrategy.height,
+                      autoPlay: true,
+                      reverse: false,
+                    ),
+                    itemCount: datas?.length ?? 0,
+                    itemBuilder: (context, index, realIndex) {
+                      return Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(
+                              bottom: 16,
+                              right: 6,
+                              left: 6,
+                            ),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(
+                                Style.defaultRadiusSize,
+                              ),
+                            ),
+                            child: Opacity(
+                              opacity: 0.5,
+                              child: CustomNetworkImageWidget(
+                                imageUrl: Util.imageConvertUrl(
+                                  imageName: datas![index]["image"],
+                                ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  datas[index]["title"],
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   );
                 } else if (snapshot.hasError && snapshot.error != null) {
                   HandleExceptions.handle(
@@ -74,28 +198,11 @@ class _HomePageState extends State<HomePage> {
                   );
                   return Container();
                 } else {
-                  return Padding(
-                    padding: EdgeInsets.only(top: 24.h, bottom: 12.h),
-                    child: Text(
-                      "Hoşgeldiniz, Fungi Turkey hakkında detaylı bilgi almak, etkinliklere katılmak, yorum yapmak ve daha fazlası için kayıt olun ve giriş yapın.",
-                      style: TextStyle(
-                        fontSize: Style.bigTitleTextSize * 0.75,
-                        color: Style.textColor,
-                        // fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  );
+                  return Container();
                 }
               },
             ),
-            Text(
-              "Fungi Turkey ©",
-              style: TextStyle(
-                fontSize: Style.bigTitleTextSize,
-                color: Style.textColor,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
+            const SizedBox(height: Style.defaultPadding/2,),
             FutureBuilder<List<MenuModel>?>(
               future: _getMenuList(context),
               builder: (context, snapshot) {
@@ -106,10 +213,30 @@ class _HomePageState extends State<HomePage> {
                 return _buildCategories(context, snapshot.data);
               },
             ),
-            titleForRow(
-              "Etkinlikler",
-              "Tümünü Göster",
-              () => Navigator.pushNamed(context, Routes.activityPage),
+            /* Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: SizedBox(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    for (int i = 0; i <= categoriesItem.length - 1; i++)
+                      sliderCardItem(
+                        categoriesItem[i].title.toString(),
+                        context,
+                        categoriesItem[i].routesWay.toString(),
+                        categoriesItem[i].icon!,
+                      ),
+                  ],
+                ),
+              ),
+            ), */
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: titleForRow(
+                "Son Kayıtlar!",
+                "Tümünü Göster",
+                () => Navigator.pushNamed(context, Routes.activityPage),
+              ),
             ),
             FutureBuilder(
               future: activityDataList == null ? _fetchActivity(context) : null,
@@ -123,8 +250,14 @@ class _HomePageState extends State<HomePage> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (int i = 0; i < min(5, activityDataList?.length ?? 5); i++)
-                        actHomeCard(activityDataList == null ? null : activityDataList![i], context),
+                      for (int i = 0;
+                          i < min(5, activityDataList?.length ?? 5);
+                          i++)
+                        actHomeCard(
+                            activityDataList == null
+                                ? null
+                                : activityDataList![i],
+                            context),
                     ],
                   ),
                 );
@@ -146,7 +279,9 @@ class _HomePageState extends State<HomePage> {
                     itemCount: min(4, blogDataList?.length ?? 4),
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return blogCard(blogDataList == null ? null : blogDataList![index], context);
+                      return blogCard(
+                          blogDataList == null ? null : blogDataList![index],
+                          context);
                     },
                   );
                 }),
@@ -178,32 +313,39 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget sliderCardItem(String? title, BuildContext context, String? routeName) {
+  Widget sliderCardItem(String title, BuildContext context, String routeName, IconData icon) {
     return GestureDetector(
-      onTap: routeName == null
+      onTap:routeName == null
           ? null
-          : () {
-              Navigator.pushNamed(context, routeName);
-            },
+          :  () {
+        Navigator.pushNamed(context, routeName);
+      },
       child: ShimmerLoading(
         isLoading: title == null,
-        child: Container(
-          margin: const EdgeInsets.only(right: 8),
-          padding: const EdgeInsets.symmetric(
-            vertical: 8,
-            horizontal: 8,
-          ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(
-              Style.defaultRadiusSize,
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(right: 8, left: 4, bottom: 8),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Style.secondaryColor.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(
+                  Style.defaultRadiusSize,
+                ),
+              ),
+              child: Icon(
+                icon,
+                size: 32,
+              ),
             ),
-            boxShadow: [Style.defaultShadow],
-          ),
-          child: Text(
-            title ?? '*' * 10,
-            style: TextStyle(color: Style.textColor, fontSize: Style.defaultTextSize),
-          ),
+            Text(
+              title,
+              style: const TextStyle(
+                color: Style.textColor,
+                fontSize: 13,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -212,16 +354,16 @@ class _HomePageState extends State<HomePage> {
   Widget blogCard(Map<String, dynamic>? data, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, Routes.blogDetailPage, arguments: data!["id"]);
+        Navigator.pushNamed(context, Routes.blogDetailPage,
+            arguments: data!["id"]);
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
-        margin: EdgeInsets.only(bottom: 20.h),
-        height: 330.h,
+        margin: EdgeInsets.only(bottom: 32.h),
+        height: 240.h,
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.8),
-          borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
+          borderRadius: BorderRadius.circular(Style.defaultRadiusSize / 2),
           boxShadow: [Style.defaultShadow],
         ),
         child: Row(
@@ -231,8 +373,8 @@ class _HomePageState extends State<HomePage> {
               child: ShimmerLoading(
                 isLoading: data == null,
                 child: SizedBox(
-                  width: 420.w,
-                  height: 300.h,
+                  width: 360.w,
+                  height: double.infinity,
                   child: data == null
                       ? Container(
                           color: Colors.white.withOpacity(0.8),
@@ -246,63 +388,89 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ShimmerLoading(
-                    isLoading: data == null,
-                    child: Container(
-                      color: Colors.white.withOpacity(0.8),
-                      child: Text(
-                        data?['title'] ?? 'Blog başlığı',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 48.sp,
-                          fontWeight: FontWeight.bold,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ShimmerLoading(
+                      isLoading: data == null,
+                      child: Container(
+                        color: Colors.white.withOpacity(0.8),
+                        child: Text(
+                          data?['title'] ?? 'Blog başlığı',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 40.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  /*ShimmerLoading(
-                    isLoading: data == null,
-                    child: Container(
-                      color: Colors.white.withOpacity(0.8),
-                      child: HtmlTextWidget(
-                        content: data?['content'],
-                        maxContentLength: 35,
-                        isLoading: data == null,
-                        loadingText: '*' * 100,
-                        fontSize: Style.defaultTextSize * 0.75,
-                      ),
-
-                      */ /*HtmlWidget(
-                        '${data?['content'].toString().substring(0, min(35, data['content'].toString().length)) ?? '*' * 100}...',
-                        textStyle: TextStyle(
+                    /*ShimmerLoading(
+                      isLoading: data == null,
+                      child: Container(
+                        color: Colors.white.withOpacity(0.8),
+                        child: HtmlTextWidget(
+                          content: data?['content'],
+                          maxContentLength: 35,
+                          isLoading: data == null,
+                          loadingText: '*' * 100,
                           fontSize: Style.defaultTextSize * 0.75,
                         ),
-                      ),*/ /* */ /*Text(
-                        data?['content'].toString() ?? '*' * 100,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 3,
-                        style: TextStyle(
-                          fontSize: Style.defaultTextSize / (4 / 3),
+
+                        */ /*HtmlWidget(
+                          '${data?['content'].toString().substring(0, min(35, data['content'].toString().length)) ?? '*' * 100}...',
+                          textStyle: TextStyle(
+                            fontSize: Style.defaultTextSize * 0.75,
+                          ),
+                        ),*/ /* */ /*Text(
+                          data?['content'].toString() ?? '*' * 100,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
+                          style: TextStyle(
+                            fontSize: Style.defaultTextSize / (4 / 3),
+                          ),
+                        ),*/ /*
+                      ),
+                    ),*/
+                    ShimmerLoading(
+                      isLoading: data == null,
+                      child: Container(
+                        color: Colors.white.withOpacity(0.8),
+                        child: Text(
+                          "Ömer Üngör!!",
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 36.sp,
+                          ),
                         ),
-                      ),*/ /*
-                    ),
-                  ),*/
-                  ShimmerLoading(
-                    isLoading: data == null,
-                    child: Container(
-                      color: Colors.white.withOpacity(0.8),
-                      child: Text(
-                        data?['added_date']?.toString().toDateTime().toFormattedString() ?? '1 Ocak 2000',
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                  ),
-                ],
+                    ShimmerLoading(
+                      isLoading: data == null,
+                      child: Container(
+                        color: Colors.white.withOpacity(0.8),
+                        child: Text(
+                          data?['added_date']
+                                  ?.toString()
+                                  .toDateTime()
+                                  .toFormattedString() ??
+                              '1 Ocak 2000',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Style.textColor.withOpacity(0.65),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -314,23 +482,20 @@ class _HomePageState extends State<HomePage> {
   Widget actHomeCard(Map<String, dynamic>? data, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, Routes.activityDetailPage, arguments: data);
+        Navigator.pushNamed(context, Routes.activityDetailPage,
+            arguments: data);
       },
       child: Container(
-        margin: EdgeInsets.only(top: 48.h, bottom: 48.h, right: 24.w),
+        margin:
+            EdgeInsets.only(top: 48.h, bottom: 48.h, right: 24.w, left: 12.w),
         width: 660.w,
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.8),
-          borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
+          borderRadius: BorderRadius.circular(Style.defaultRadiusSize / 2),
           boxShadow: [Style.defaultShadow],
         ),
         child: Padding(
-          padding: EdgeInsets.only(
-            top: 18.h,
-            bottom: 40.h,
-            right: 18.w,
-            left: 18.w,
-          ),
+          padding: EdgeInsets.zero,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -339,7 +504,7 @@ class _HomePageState extends State<HomePage> {
                   ShimmerLoading(
                     isLoading: data == null,
                     child: SizedBox(
-                      width: 0.6.sw,
+                      width: double.infinity,
                       height: 0.2.sh,
                       child: data == null
                           ? Container(
@@ -347,7 +512,11 @@ class _HomePageState extends State<HomePage> {
                             )
                           : Hero(
                               tag: data['image'],
-                              child: CustomNetworkImageWidget(imageUrl: Util.imageConvertUrl(imageName: data['image'])),
+                              child: CustomNetworkImageWidget(
+                                imageUrl: Util.imageConvertUrl(
+                                  imageName: data['image'],
+                                ),
+                              ),
                             ),
                     ),
                   ),
@@ -373,7 +542,7 @@ class _HomePageState extends State<HomePage> {
                         child: Text(
                           "Son Kayıt : ${data['last_record_date']?.toString().toDateTime().toFormattedString() ?? '1 Ocak 2000'}",
                           style: TextStyle(
-                            fontSize: 36.sp,
+                            fontSize: 32.sp,
                             fontWeight: FontWeight.w500,
                             color: Style.primaryColor,
                           ),
@@ -383,7 +552,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 24.h),
+                padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 8),
                 child: ShimmerLoading(
                   isLoading: data == null,
                   child: Container(
@@ -392,42 +561,49 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       data?['title']?.toString() ?? '*' * 20,
                       style: TextStyle(
-                        overflow: TextOverflow.ellipsis,
-                        fontSize: 56.sp,
+                        overflow: TextOverflow.fade,
+                        fontSize: 44.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(right: 8.w),
-                    child: SvgPicture.asset(
-                      "assets/icons/locations.svg",
-                      height: 36.r,
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 8,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: 8.w),
+                      child: SvgPicture.asset(
+                        "assets/icons/locations.svg",
+                        height: 28.r,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: ShimmerLoading(
-                      isLoading: data == null,
-                      child: Container(
-                        color: Colors.white.withOpacity(0.8),
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          data?['location']?.toString() ?? '*' * 20,
-                          style: TextStyle(
-                            overflow: TextOverflow.ellipsis,
-                            fontSize: 44.sp,
-                            fontWeight: FontWeight.w400,
+                    Expanded(
+                      child: ShimmerLoading(
+                        isLoading: data == null,
+                        child: Container(
+                          color: Colors.white.withOpacity(0.8),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            data?['location']?.toString() ?? '*' * 20,
+                            style: TextStyle(
+                              overflow: TextOverflow.ellipsis,
+                              fontSize: 34.sp,
+                              color: Style.textColor.withOpacity(0.65),
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -438,13 +614,13 @@ class _HomePageState extends State<HomePage> {
 
   Widget titleForRow(String titleOne, String titleTwo, void Function()? onTap) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           titleOne,
-          style: TextStyle(
-            fontSize: Style.bigTitleTextSize,
+          style: const TextStyle(
+            fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -452,9 +628,9 @@ class _HomePageState extends State<HomePage> {
           onTap: onTap,
           child: Text(
             titleTwo,
-            style: TextStyle(
+            style: const TextStyle(
               decoration: TextDecoration.underline,
-              fontSize: Style.bigTitleTextSize * (2 / 3),
+              fontSize: 12,
               fontWeight: FontWeight.w400,
             ),
           ),
@@ -496,7 +672,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future editPop(BuildContext context) async {
-    bool isUserExists = await Provider.of<AuthViewModel>(context, listen: false).isUserExists();
+    bool isUserExists =
+        await Provider.of<AuthViewModel>(context, listen: false).isUserExists();
     return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -536,8 +713,11 @@ class _HomePageState extends State<HomePage> {
                   "Çıkış Yap",
                   "assets/icons/exit.svg",
                   () {
-                    Provider.of<AuthViewModel>(context, listen: false).signOut().then((value) {
-                      Navigator.pushNamedAndRemoveUntil(context, Routes.homePage, (route) => false);
+                    Provider.of<AuthViewModel>(context, listen: false)
+                        .signOut()
+                        .then((value) {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, Routes.homePage, (route) => false);
                     });
                   },
                 ),
@@ -548,7 +728,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget profileMenuCard(BuildContext context, String title, String icon, void Function()? onTap) {
+  Widget profileMenuCard(
+      BuildContext context, String title, String icon, void Function()? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -574,9 +755,10 @@ class _HomePageState extends State<HomePage> {
   Future _fetchActivity(BuildContext context) async {
     try {
       // await Future.delayed(Duration(seconds: 5));
-      activityDataList = (await Provider.of<TableViewModel>(context, listen: false)
-              .fetchTable(tableName: TableName.Activity.name, page: 1, limit: 5))
-          .data;
+      activityDataList =
+          (await Provider.of<TableViewModel>(context, listen: false).fetchTable(
+                  tableName: TableName.Activity.name, page: 1, limit: 5))
+              .data;
     } catch (e) {
       HandleExceptions.handle(exception: e, context: context);
     }
@@ -595,9 +777,11 @@ class _HomePageState extends State<HomePage> {
 
   Future<UserModel?> _fetchUserInfo(BuildContext context) async {
     try {
-      bool userExists = await Provider.of<AuthViewModel>(context, listen: false).isUserExists();
+      bool userExists = await Provider.of<AuthViewModel>(context, listen: false)
+          .isUserExists();
       if (userExists && mounted) {
-        return await Provider.of<AuthViewModel>(context, listen: false).getUserInfoFromLocale();
+        return await Provider.of<AuthViewModel>(context, listen: false)
+            .getUserInfoFromLocale();
       }
     } catch (e) {
       HandleExceptions.handle(exception: e, context: context);
@@ -617,7 +801,7 @@ class _HomePageState extends State<HomePage> {
 
 class Categories {
   String? title;
-  String? icon;
+  IconData? icon;
   String? routesWay;
 
   Categories({

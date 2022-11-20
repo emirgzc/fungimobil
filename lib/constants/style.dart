@@ -23,7 +23,8 @@ class Style {
   static BoxShadow defaultShadow = BoxShadow(
     blurRadius: 10,
     spreadRadius: 6,
-    color: Colors.black.withOpacity(0.03),
+    offset: const Offset(5, 5),
+    color: Colors.black.withOpacity(0.06),
   );
 
   static const shimmerGradient = LinearGradient(
