@@ -302,9 +302,10 @@ class _HomePageState extends State<HomePage> {
             children: [
               for (int i = 0; i < (menuList?.length ?? 7); i++)
                 sliderCardItem(
-                  menuList?[i].displayName,
+                  menuList?[i].displayName ?? '',
                   context,
-                  menuList?[i].tableName?.replaceAll('/', ''),
+                  menuList?[i].tableName?.replaceAll('/', '') ?? '',
+                  Icons.add,
                 ),
             ],
           ),
