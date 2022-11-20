@@ -13,6 +13,7 @@ class HtmlTextWidget extends StatelessWidget {
     this.color,
     this.loadingText,
     this.isLoading = false,
+    this.overflow = TextOverflow.visible,
   }) : super(key: key);
 
   String? content;
@@ -21,6 +22,7 @@ class HtmlTextWidget extends StatelessWidget {
   final Color? color;
   final String? loadingText;
   bool isLoading;
+  TextOverflow? overflow;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,7 @@ class HtmlTextWidget extends StatelessWidget {
       textStyle: TextStyle(
         fontSize: fontSize,
         color: color,
+        overflow: overflow,
       ),
     );
   }

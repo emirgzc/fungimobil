@@ -280,7 +280,9 @@ class _HomePageState extends State<HomePage> {
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       return blogCard(
-                          blogDataList == null ? null : blogDataList![index],
+                          blogDataList == null
+                              ? null
+                              : blogDataList?.reversed.toList()[index],
                           context);
                     },
                   );
