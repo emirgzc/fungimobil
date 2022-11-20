@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/widgets/loading_widget.dart';
 
 class CustomNetworkImageWidget extends StatelessWidget {
@@ -21,22 +20,21 @@ class CustomNetworkImageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     height = width != null && height == null ? double.infinity : height;
     width = height != null && width == null ? double.infinity : width;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-      child: imageUrl == null ? SizedBox(
-        height: height,
-          width: width,
-      ) : CachedNetworkImage(
-        imageUrl: imageUrl!,
-        height: height,
-        width: width,
-        fit: fit,
-        placeholder: (context, url) {
-          return const LoadingWidget(
-            isMinimal: true,
+    return imageUrl == null
+        ? SizedBox(
+            height: height,
+            width: width,
+          )
+        : CachedNetworkImage(
+            imageUrl: imageUrl!,
+            height: height,
+            width: width,
+            fit: fit,
+            placeholder: (context, url) {
+              return const LoadingWidget(
+                isMinimal: true,
+              );
+            },
           );
-        },
-      ),
-    );
   }
 }

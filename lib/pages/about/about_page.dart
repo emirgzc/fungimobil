@@ -29,7 +29,9 @@ class AboutPage extends StatelessWidget {
             limit: 100,
           ),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData &&
+                snapshot.data != null) {
               var datas = (snapshot.data as tableModel.TableModel).data;
               debugPrint(datas?.length.toString());
               return aboutBody(context, datas);
@@ -77,7 +79,11 @@ class AboutPage extends StatelessWidget {
       children: [
         ShimmerLoading(
           isLoading: dataMap == null,
-          child: CustomNetworkImageWidget(imageUrl: Util.imageConvertUrl(imageName: dataMap?[index]["image"])),
+          child: CustomNetworkImageWidget(
+            imageUrl: Util.imageConvertUrl(
+              imageName: dataMap?[index]["image"],
+            ),
+          ),
         ),
         Padding(
           padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),

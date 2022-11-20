@@ -101,7 +101,7 @@ class ActivityPage extends StatelessWidget {
           child: Text(
             title ?? '*' * 20,
             style: TextStyle(
-              fontSize: Style.bigTitleTextSize,
+              fontSize: (title?.length ?? 0) > 30 ? 54.sp : 80.sp,
               fontWeight: FontWeight.w600,
             ),
           ),

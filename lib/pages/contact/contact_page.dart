@@ -18,40 +18,42 @@ class ContactPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: getAppBar("İletişim"),
-      body: FutureBuilder(
-        future: ApiClient().fetchTable(
-          tableName: TableName.Contact.name,
-          token: "",
-          page: 1,
-          limit: 10,
-          filter: {},
+      body: SingleChildScrollView(
+        child: FutureBuilder(
+          future: ApiClient().fetchTable(
+            tableName: TableName.Contact.name,
+            token: "",
+            page: 1,
+            limit: 10,
+            filter: {},
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData &&
+                snapshot.data != null) {
+              var datas = (snapshot.data as tableModel.TableModel).data;
+              debugPrint(datas?.length.toString());
+              return Column(
+                children: [
+                  ...List.generate(
+                    datas?.length ?? 0,
+                    (index) {
+                      return contactBody(datas, index);
+                    },
+                  ),
+                ],
+              );
+            } else if (snapshot.hasError && snapshot.error != null) {
+              HandleExceptions.handle(
+                exception: snapshot.error,
+                context: context,
+              );
+              return Container();
+            } else {
+              return Container();
+            }
+          },
         ),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done &&
-              snapshot.hasData &&
-              snapshot.data != null) {
-            var datas = (snapshot.data as tableModel.TableModel).data;
-            debugPrint(datas?.length.toString());
-            return Column(
-              children: [
-                ...List.generate(
-                  datas?.length ?? 0,
-                  (index) {
-                    return contactBody(datas, index);
-                  },
-                ),
-              ],
-            );
-          } else if (snapshot.hasError && snapshot.error != null) {
-            HandleExceptions.handle(
-              exception: snapshot.error,
-              context: context,
-            );
-            return Container();
-          } else {
-            return Container();
-          }
-        },
       ),
     );
   }

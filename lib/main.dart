@@ -31,11 +31,11 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               appBarTheme: const AppBarTheme(
                 centerTitle: true,
-                backgroundColor: Style.primaryColor,
+                backgroundColor: Colors.white,
                 elevation: 0,
                 foregroundColor: Style.textColor,
               ),
-              scaffoldBackgroundColor: Style.primaryColor,
+              scaffoldBackgroundColor: Colors.white,
             ),
             debugShowCheckedModeBanner: false,
             // home: const DemoPage(),

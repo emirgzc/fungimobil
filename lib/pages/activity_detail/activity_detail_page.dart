@@ -349,7 +349,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                     changeForStringFormat(location, size, 15),
                     style: TextStyle(
                       overflow: TextOverflow.ellipsis,
-                      fontSize: Style.defaultTextSize,
+                      fontSize: location.length > 20 ? 40.sp : 48.sp,
                       color: Style.textColor.withOpacity(0.5),
                     ),
                   ),
@@ -386,7 +386,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                 Text(
                   priceIntegerSection,
                   style: TextStyle(
-                    fontSize: priceIntegerSection.length > 3 ? 80.sp : 96.sp,
+                    fontSize: priceIntegerSection.length > 3 ? 64.sp : 72.sp,
                     fontWeight: FontWeight.w500,
                     color: Style.secondaryColor,
                   ),
@@ -394,7 +394,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                 Text(
                   ",$priceDecimalSection ₺",
                   style: TextStyle(
-                    fontSize: 60.sp,
+                    fontSize: 56.sp,
                     fontWeight: FontWeight.w500,
                     color: Style.secondaryColor,
                   ),
@@ -406,7 +406,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
               child: Text(
                 "/1 Kişi için",
                 style: TextStyle(
-                  fontSize: Style.defaultTextSize,
+                  fontSize: Style.defaultTextSize * 0.9,
                   color: Style.textColor.withOpacity(0.5),
                 ),
               ),
@@ -445,7 +445,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
           child: Text(
             widget.data['title'],
             style: TextStyle(
-              fontSize: widget.data['title'].length > 30 ? 60.sp : 80.sp,
+              fontSize: widget.data['title'].length > 30 ? 48.sp : 80.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -455,6 +455,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
             horizontal: Style.defautlHorizontalPadding / 2,
             vertical: Style.defautlVerticalPadding / 4,
           ),
+          margin: EdgeInsets.only(left: Style.defautlHorizontalPadding / 2),
           decoration: BoxDecoration(
             // color: Style.secondaryColor.withOpacity(0.3),
             boxShadow: [Style.defaultShadow],
