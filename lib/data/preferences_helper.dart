@@ -70,4 +70,22 @@ class PreferencesHelper {
       rethrow;
     }
   }
+
+  Future<String?> getStringData(String key) async {
+    try {
+      await _initPreferences();
+      return _preferences!.getString(key);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> setStringData(String key, String data) async {
+    try {
+      await _initPreferences();
+      return await _preferences!.setString(key, data);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

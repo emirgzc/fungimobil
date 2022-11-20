@@ -207,9 +207,9 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  _login() {
+  _login() async {
     try {
-      _authProvider!.login(email, password).then((value) => _navigateHome());
+      await _authProvider!.login(email, password).then((value) => _navigateHome());
     } catch (e) {
       HandleExceptions.handle(exception: e, context: context, onDismiss: (context) {});
     }

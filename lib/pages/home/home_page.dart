@@ -12,11 +12,13 @@ import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/model/user_model.dart';
 import 'package:fungimobil/pages/home/components/home_drawer.dart';
 import 'package:fungimobil/viewmodel/auth_viewmodel.dart';
+import 'package:fungimobil/viewmodel/config_viewmodel.dart';
 import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer_loading.dart';
 import 'package:provider/provider.dart';
 
+import '../../model/menu_model.dart';
 import '../../widgets/custom_network_image_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -94,24 +96,15 @@ class _HomePageState extends State<HomePage> {
                 fontWeight: FontWeight.w400,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SizedBox(
-                  height: 60,
-                  child: Row(
-                    children: [
-                      for (int i = 0; i <= categoriesItem.length - 1; i++)
-                        sliderCardItem(
-                          categoriesItem[i].title.toString(),
-                          context,
-                          categoriesItem[i].routesWay.toString(),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
+            FutureBuilder<List<MenuModel>?>(
+              future: _getMenuList(context),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  HandleExceptions.handle(exception: snapshot.error, context: context);
+                  return Container();
+                }
+                return _buildCategories(context, snapshot.data);
+              },
             ),
             titleForRow(
               "Etkinlikler",
@@ -163,27 +156,54 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget sliderCardItem(String title, BuildContext context, String routeName) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, routeName);
-      },
-      child: Container(
-        margin: const EdgeInsets.only(right: 8),
-        padding: const EdgeInsets.symmetric(
-          vertical: 8,
-          horizontal: 8,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(
-            Style.defaultRadiusSize,
+  Padding _buildCategories(BuildContext context, List<MenuModel>? menuList) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: SizedBox(
+          height: 60,
+          child: Row(
+            children: [
+              for (int i = 0; i < (menuList?.length ?? 7); i++)
+                sliderCardItem(
+                  menuList?[i].displayName,
+                  context,
+                  menuList?[i].tableName?.replaceAll('/', ''),
+                ),
+            ],
           ),
-          boxShadow: [Style.defaultShadow],
         ),
-        child: Text(
-          title,
-          style: TextStyle(color: Style.textColor, fontSize: Style.defaultTextSize),
+      ),
+    );
+  }
+
+  Widget sliderCardItem(String? title, BuildContext context, String? routeName) {
+    return GestureDetector(
+      onTap: routeName == null
+          ? null
+          : () {
+              Navigator.pushNamed(context, routeName);
+            },
+      child: ShimmerLoading(
+        isLoading: title == null,
+        child: Container(
+          margin: const EdgeInsets.only(right: 8),
+          padding: const EdgeInsets.symmetric(
+            vertical: 8,
+            horizontal: 8,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(
+              Style.defaultRadiusSize,
+            ),
+            boxShadow: [Style.defaultShadow],
+          ),
+          child: Text(
+            title ?? '*' * 10,
+            style: TextStyle(color: Style.textColor, fontSize: Style.defaultTextSize),
+          ),
         ),
       ),
     );
@@ -584,6 +604,15 @@ class _HomePageState extends State<HomePage> {
     }
     return null;
   }
+
+  Future<List<MenuModel>?> _getMenuList(BuildContext context) async {
+    try {
+      return await Provider.of<ConfigViewModel>(context, listen: false).getMenu();
+    } catch (e) {
+      HandleExceptions.handle(exception: e, context: context);
+    }
+    return null;
+  }
 }
 
 class Categories {
@@ -598,13 +627,13 @@ class Categories {
   });
 }
 
-List<Categories> categoriesItem = [
-  Categories(title: "Hakkımızda", icon: "icon", routesWay: Routes.aboutPage),
-  Categories(title: "Takımımız", icon: "icon", routesWay: Routes.teamPage),
-  Categories(title: "Organizasyonumuz", icon: "icon", routesWay: Routes.servicePage),
-  Categories(title: "Galeri", icon: "icon", routesWay: Routes.galeryPage),
-  Categories(title: "Etkinlikler", icon: "icon", routesWay: Routes.activityPage),
-  Categories(title: "Blog", icon: "icon", routesWay: Routes.blogPage),
-  Categories(title: "Sponsorlarımız", icon: "icon", routesWay: Routes.sponsorPage),
-  Categories(title: "İletişim", icon: "icon", routesWay: Routes.contactPage),
-];
+// List<Categories> categoriesItem = [
+//   Categories(title: "Hakkımızda", icon: "icon", routesWay: Routes.aboutPage),
+//   Categories(title: "Takımımız", icon: "icon", routesWay: Routes.teamPage),
+//   Categories(title: "Organizasyonumuz", icon: "icon", routesWay: Routes.servicePage),
+//   Categories(title: "Galeri", icon: "icon", routesWay: Routes.galeryPage),
+//   Categories(title: "Etkinlikler", icon: "icon", routesWay: Routes.activityPage),
+//   Categories(title: "Blog", icon: "icon", routesWay: Routes.blogPage),
+//   Categories(title: "Sponsorlarımız", icon: "icon", routesWay: Routes.sponsorPage),
+//   Categories(title: "İletişim", icon: "icon", routesWay: Routes.contactPage),
+// ];

@@ -10,7 +10,7 @@ enum TableName {
   Feedbacks,
   Galery,
   Team,
-
   Services,
   Sponsor,
+  Menu
 }

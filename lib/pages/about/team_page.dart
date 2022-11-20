@@ -61,7 +61,6 @@ class TeamPage extends StatelessWidget {
 
   Future<table.TableModel?>? _fetchData(BuildContext context) async {
     try {
-      await Future.delayed(Duration(seconds: 5));
       return await Provider.of<TableViewModel>(context, listen: false).fetchTable(
         tableName: TableName.Team.name,
         page: 1,

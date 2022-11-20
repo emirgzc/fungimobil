@@ -73,7 +73,7 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  Future<UserModel> getUserInfoFromLocale() async {
+  Future<UserModel?> getUserInfoFromLocale() async {
     try {
       final result = await _repository.getUserInfoFromLocale();
       return result;

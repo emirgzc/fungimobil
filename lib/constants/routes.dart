@@ -18,6 +18,7 @@ import 'package:fungimobil/pages/profile/blog_comment_list.dart';
 import 'package:fungimobil/pages/profile/profile_page.dart';
 import 'package:fungimobil/pages/profile/record_list.dart';
 import 'package:fungimobil/pages/sponsor/sponsor_page.dart';
+import 'package:fungimobil/viewmodel/config_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 import '../viewmodel/table_view_model.dart';
@@ -47,7 +48,9 @@ class Routes {
     late Widget page;
     switch (settings.name) {
       case '/':
-        page = const LandingPage();
+        page = ChangeNotifierProvider(
+            create: (_) => ConfigViewModel(),
+            child: const LandingPage());
         break;
       case loginPage:
         page = LoginPage();
@@ -123,8 +126,11 @@ class Routes {
         );
         break;
       case homePage:
-        page = ChangeNotifierProvider(
-          create: (_) => TableViewModel(),
+        page = MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => TableViewModel()),
+            ChangeNotifierProvider(create: (_) => ConfigViewModel()),
+          ],
           child: const HomePage(),
         );
         break;

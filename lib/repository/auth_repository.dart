@@ -76,12 +76,9 @@ class AuthRepository {
     }
   }
 
-  Future<UserModel> getUserInfoFromLocale() async {
+  Future<UserModel?> getUserInfoFromLocale() async {
     try {
       UserModel? userModel = await _preferencesHelper.getUserInfo();
-      if (userModel == null) {
-        throw CustomException.fromApiMessage('Kayıtlı kullanıcı verileri getirilemedi');
-      }
       return userModel;
     } catch (e) {
       rethrow;

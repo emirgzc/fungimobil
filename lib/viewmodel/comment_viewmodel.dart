@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fungimobil/constants/exceptions.dart';
 import 'package:fungimobil/constants/locator.dart';
 import 'package:fungimobil/model/user_model.dart';
 import 'package:fungimobil/repository/auth_repository.dart';
@@ -10,7 +11,11 @@ class CommentViewModel extends ChangeNotifier {
 
   Future storeComment(
       {required String comment, required String tableName, required Map<String, dynamic> filter}) async {
-    UserModel userInfo = await _authRepository.getUserInfoFromLocale();
+    UserModel? userInfo = await _authRepository.getUserInfoFromLocale();
+
+    if (userInfo == null) {
+      throw CustomException.fromApiMessage('Kayıtlı kullanıcı bulunamadı');
+    }
 
     Map<String, dynamic> data = {
       'name': userInfo.name,

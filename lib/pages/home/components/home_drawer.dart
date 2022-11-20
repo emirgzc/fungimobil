@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/style.dart';
+import 'package:fungimobil/model/menu_model.dart';
 import 'package:fungimobil/model/user_model.dart';
 import 'package:fungimobil/viewmodel/auth_viewmodel.dart';
+import 'package:fungimobil/viewmodel/config_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class HomeDrawer extends StatelessWidget {
@@ -12,6 +15,7 @@ class HomeDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<MenuModel>? menuList = Provider.of<ConfigViewModel>(context).menuList;
     return SafeArea(
       child: Container(
         color: Style.primaryColor,
@@ -40,16 +44,18 @@ class HomeDrawer extends StatelessWidget {
                   );
                 },
               ),
-              drawerItem(context, "Ana Sayfa", Routes.homePage, Icons.home),
-              drawerItem(context, "Hakkımızda", Routes.aboutPage, Icons.info),
-              drawerItem(context, "Takımımız", Routes.teamPage, Icons.people),
-              drawerItem(context, "Organizasyonumuz", Routes.servicePage, Icons.room_service_rounded),
-              drawerItem(context, "Galeri", Routes.galeryPage, Icons.photo_camera),
-              drawerItem(context, "Etkinlikler", Routes.activityPage, Icons.local_activity),
-              drawerItem(context, "Blog", Routes.blogPage, Icons.pending_actions_outlined),
-              drawerItem(context, "Sponsorlarımız", Routes.sponsorPage, Icons.sports_handball_rounded),
-              drawerItem(context, "İletişim", Routes.contactPage, Icons.contact_mail),
-              drawerItem(context, "Çıkış Yap", Routes.loginPage, Icons.logout_outlined, onTap: () async {
+              for (int i=0; menuList != null && i<menuList.length; i++)
+                drawerItem(context, menuList[i].displayName!, menuList[i].tableName!, menuList[i].icon!),
+              // drawerItem(context, "Ana Sayfa", Routes.homePage, Icons.home),
+              // drawerItem(context, "Hakkımızda", Routes.aboutPage, Icons.info),
+              // drawerItem(context, "Takımımız", Routes.teamPage, Icons.people),
+              // drawerItem(context, "Organizasyonumuz", Routes.servicePage, Icons.room_service_rounded),
+              // drawerItem(context, "Galeri", Routes.galeryPage, Icons.photo_camera),
+              // drawerItem(context, "Etkinlikler", Routes.activityPage, Icons.local_activity),
+              // drawerItem(context, "Blog", Routes.blogPage, Icons.pending_actions_outlined),
+              // drawerItem(context, "Sponsorlarımız", Routes.sponsorPage, Icons.sports_handball_rounded),
+              // drawerItem(context, "İletişim", Routes.contactPage, Icons.contact_mail),
+              drawerItem(context, "Çıkış Yap", Routes.loginPage, 'exit', onTap: () async {
                 Provider.of<AuthViewModel>(context, listen: false)
                     .signOut()
                     .then((value) => Navigator.pushNamedAndRemoveUntil(context, Routes.homePage, (route) => false));
@@ -107,11 +113,11 @@ class HomeDrawer extends StatelessWidget {
     );
   }
 
-  Column drawerItem(BuildContext context, String title, String routes, IconData icon, {VoidCallback? onTap}) {
+  Column drawerItem(BuildContext context, String title, String routes, String icon, {VoidCallback? onTap}) {
     return Column(
       children: [
         ListTile(
-          leading: Icon(icon),
+          leading: icon.isEmpty ? null : SvgPicture.asset('assets/icons/$icon'),
           dense: true,
           title: Text(title),
           onTap: onTap ??
