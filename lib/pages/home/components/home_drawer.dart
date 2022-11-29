@@ -25,9 +25,12 @@ class HomeDrawer extends StatelessWidget {
           child: Column(
             children: [
               FutureBuilder(
-                future: Provider.of<AuthViewModel>(context, listen: false).getUserInfoFromLocale(),
+                future: Provider.of<AuthViewModel>(context, listen: false)
+                    .getUserInfoFromLocale(),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
+                  if (snapshot.connectionState == ConnectionState.done &&
+                      snapshot.hasData &&
+                      snapshot.data != null) {
                     var datas = snapshot.data as UserModel;
                     debugPrint(datas.toString());
                     return drawerHeader(context, datas);
@@ -40,12 +43,14 @@ class HomeDrawer extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.all(Style.defaultPadding * 3),
                     child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 0.4.sw), child: Image.asset('assets/images/black.png')),
+                        constraints: BoxConstraints(maxWidth: 0.4.sw),
+                        child: Image.asset('assets/images/black.png')),
                   );
                 },
               ),
-              for (int i=0; menuList != null && i<menuList.length; i++)
-                drawerItem(context, menuList[i].displayName!, menuList[i].tableName!, menuList[i].icon!),
+              for (int i = 0; menuList != null && i < menuList.length; i++)
+                drawerItem(context, menuList[i].displayName!,
+                    menuList[i].tableName!, menuList[i].icon!),
               // drawerItem(context, "Ana Sayfa", Routes.homePage, Icons.home),
               // drawerItem(context, "Hakkımızda", Routes.aboutPage, Icons.info),
               // drawerItem(context, "Takımımız", Routes.teamPage, Icons.people),
@@ -55,10 +60,12 @@ class HomeDrawer extends StatelessWidget {
               // drawerItem(context, "Blog", Routes.blogPage, Icons.pending_actions_outlined),
               // drawerItem(context, "Sponsorlarımız", Routes.sponsorPage, Icons.sports_handball_rounded),
               // drawerItem(context, "İletişim", Routes.contactPage, Icons.contact_mail),
-              drawerItem(context, "Çıkış Yap", Routes.loginPage, 'exit', onTap: () async {
+              drawerItem(context, "Çıkış Yap", Routes.loginPage, 'exit.svg',
+                  onTap: () async {
                 Provider.of<AuthViewModel>(context, listen: false)
                     .signOut()
-                    .then((value) => Navigator.pushNamedAndRemoveUntil(context, Routes.homePage, (route) => false));
+                    .then((value) => Navigator.pushNamedAndRemoveUntil(
+                        context, Routes.homePage, (route) => false));
               }),
             ],
           ),
@@ -113,7 +120,9 @@ class HomeDrawer extends StatelessWidget {
     );
   }
 
-  Column drawerItem(BuildContext context, String title, String routes, String icon, {VoidCallback? onTap}) {
+  Column drawerItem(
+      BuildContext context, String title, String routes, String icon,
+      {VoidCallback? onTap}) {
     return Column(
       children: [
         ListTile(

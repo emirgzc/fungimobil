@@ -7,7 +7,6 @@ import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/data/api_client.dart';
 import 'package:fungimobil/model/single_record_model.dart';
-import 'package:fungimobil/widgets/card_for_social_media.dart';
 import 'package:fungimobil/widgets/comment/comment_list_widget.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
 import 'package:fungimobil/widgets/html_text_widget.dart';
@@ -88,25 +87,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               bigTitle(data["title"] ?? ""),
-              Padding(
-                padding: EdgeInsets.only(top: Style.defautlVerticalPadding),
-                child: Row(
-                  children: const [
-                    CardForSocialMedia(
-                      iconSvg: "assets/icons/twitter.svg",
-                    ),
-                    CardForSocialMedia(
-                      iconSvg: "assets/icons/instagram.svg",
-                    ),
-                    CardForSocialMedia(
-                      iconSvg: "assets/icons/facebook.svg",
-                    ),
-                    CardForSocialMedia(
-                      iconSvg: "assets/icons/whatsapp.svg",
-                    ),
-                  ],
-                ),
-              ),
+
               Padding(
                 padding: EdgeInsets.only(top: Style.defautlVerticalPadding),
                 child: desc(data["content"] ?? ""),

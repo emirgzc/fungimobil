@@ -8,7 +8,6 @@ import 'package:fungimobil/constants/util.dart';
 import 'package:fungimobil/model/single_record_model.dart';
 import 'package:fungimobil/pages/login_register/components/button_login.dart';
 import 'package:fungimobil/viewmodel/table_view_model.dart';
-import 'package:fungimobil/widgets/card_for_social_media.dart';
 import 'package:fungimobil/widgets/custom_network_image_widget.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
 import 'package:fungimobil/widgets/html_text_widget.dart';
@@ -40,6 +39,12 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
     commentFilter = {'activity_id': widget.data['id']};
   }
 
+  List<String> activityData = [
+    "Bitiş Tarihi",
+    "Yapımcı",
+    "Kontenjan",
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,74 +55,210 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
   }
 
   Widget activityDetailBody(BuildContext context) {
-    return SingleChildScrollView(
-      child: Stack(
-        children: [
-          SizedBox(
-            height: 900.h,
-            width: double.infinity,
-            child: Hero(
-              tag: widget.data['image'],
-              child: CustomNetworkImageWidget(
-                  imageUrl:
-                      Util.imageConvertUrl(imageName: widget.data['image'])),
+    double sizeWidht = MediaQuery.of(context).size.width;
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Stack(
+            children: [
+              SizedBox(
+                height: 900.h,
+                width: double.infinity,
+                child: Hero(
+                  tag: widget.data['image'],
+                  child: CustomNetworkImageWidget(
+                      imageUrl: Util.imageConvertUrl(
+                          imageName: widget.data['image'])),
+                ),
+              ),
+              arrowBack(),
+
+              // buttonForRecord(),
+              Container(
+                padding: Style.defaultPagePadding,
+                margin: EdgeInsets.only(top: 900.h),
+                color: Style.primaryColor,
+                // color: Colors.red,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    titleAndDate(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: Style.defaultPadding * (3 / 2),
+                      ),
+                      child: socialCardandPrice(),
+                    ),
+
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: Style.defautlVerticalPadding / 2),
+                      child: titleForActivity("Etkinlik Bilgisi"),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: Style.defautlVerticalPadding / 2),
+                      child: FutureBuilder(
+                          future: recordModel == null ? _fetchRecord() : null,
+                          builder: (context, snapshot) {
+                            return desc(recordModel?.data?['content']);
+                          }),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Wrap(
+                        children: [
+                          activityDataItem(
+                            activityData[0],
+                            widget.data['start_date']
+                                .toString()
+                                .toDateTime()
+                                .toFormattedString(),
+                          ),
+                          activityDataItem(activityData[1],
+                              widget.data['director'].toString()),
+                          activityDataItem(
+                            activityData[2],
+                            "${widget.data['quota']} Kişilik",
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: Style.defautlVerticalPadding),
+                      child: commentTitle(context),
+                    ),
+                    // commentForActivity(),
+                    SizedBox(
+                      height: 300.h,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          child: GestureDetector(
+            onTap: () => recordPop(context),
+            child: Container(
+              height: 64,
+              width: sizeWidht,
+              decoration: BoxDecoration(
+                color: Style.primaryColor,
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 10,
+                    spreadRadius: 6,
+                    offset: const Offset(5, 5),
+                    color: Colors.black.withOpacity(0.2),
+                  )
+                ],
+                borderRadius: BorderRadius.circular(
+                  Style.defaultRadiusSize,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    height: 64,
+                    width: sizeWidht * 0.55,
+                    decoration: BoxDecoration(
+                      color: Style.secondaryColor,
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 10,
+                          spreadRadius: 6,
+                          offset: const Offset(5, 5),
+                          color: Colors.black.withOpacity(0.2),
+                        )
+                      ],
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "Kayıt Ol",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: 64,
+                    width: sizeWidht * 0.45,
+                    decoration: BoxDecoration(
+                      color: Style.primaryColor.withOpacity(0.5),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Son kayıt Tarihi",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Style.dangerColor,
+                          ),
+                        ),
+                        Text(
+                          widget.data['last_record_date']
+                              .toString()
+                              .toDateTime()
+                              .toFormattedString(),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Style.dangerColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          arrowBack(),
+        ),
+      ],
+    );
+  }
 
-          buttonForRecord(),
-          // buttonForRecord(),
-          Container(
-            padding: Style.defaultPagePadding,
-            margin: EdgeInsets.only(top: 900.h),
-            color: Style.primaryColor,
-            // color: Colors.red,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                titleAndDate(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: Style.defaultPadding * (3 / 2),
-                  ),
-                  child: socialCardandPrice(),
-                ),
-                // bigTitle(),
-                Padding(
-                  padding: EdgeInsets.only(top: Style.defautlVerticalPadding),
-                  child: FutureBuilder(
-                      future: recordModel == null ? _fetchRecord() : null,
-                      builder: (context, snapshot) {
-                        return desc(recordModel?.data?['content']);
-                      }),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: Style.defautlVerticalPadding),
-                  child: titleForActivity("Etkinlik Bilgisi"),
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.only(bottom: Style.defautlVerticalPadding),
-                  child: infoActivity(),
-                ),
-                titleForActivity("Konum Bilgisi"),
-                Padding(
-                  padding: EdgeInsets.only(
-                      top: Style.defautlVerticalPadding,
-                      bottom: Style.defautlVerticalPadding / 2),
-                  child: map(),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: Style.defautlVerticalPadding),
-                  child: commentTitle(context),
-                ),
-                // commentForActivity(),
-                SizedBox(
-                  height: 300.h,
-                ),
-              ],
+  Widget activityDataItem(String title, String item) {
+    return Container(
+      margin: const EdgeInsets.only(right: 8, top: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: Style.primaryColor,
+        borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
+        boxShadow: [
+          Style.defaultShadow,
+        ],
+        border: Border.all(
+          width: 1,
+          color: Style.secondaryColor.withOpacity(0.5),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 13,
+            ),
+          ),
+          Text(
+            item,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
@@ -340,11 +481,11 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                 Icon(
                   Icons.location_on,
                   color: Style.secondaryColor,
-                  size: 60.r,
+                  size: 56.r,
                 ),
                 Padding(
                   padding:
-                      EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
+                      EdgeInsets.only(left: Style.defautlHorizontalPadding / 3),
                   child: Text(
                     changeForStringFormat(location, size, 15),
                     style: TextStyle(
@@ -356,25 +497,56 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                 ),
               ],
             ),
-            Padding(
-              padding: EdgeInsets.only(top: Style.defautlVerticalPadding),
+            Container(
+              margin: const EdgeInsets.only(top: 8),
+              decoration: const BoxDecoration(),
               child: Row(
-                children: const [
-                  CardForSocialMedia(
-                    iconSvg: "assets/icons/twitter.svg",
+                children: [
+                  Icon(
+                    Icons.timer_sharp,
+                    color: Style.secondaryColor,
+                    size: 56.r,
                   ),
-                  CardForSocialMedia(
-                    iconSvg: "assets/icons/instagram.svg",
-                  ),
-                  CardForSocialMedia(
-                    iconSvg: "assets/icons/facebook.svg",
-                  ),
-                  CardForSocialMedia(
-                    iconSvg: "assets/icons/whatsapp.svg",
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: Style.defautlHorizontalPadding / 3),
+                    child: Text(
+                      widget.data['start_date']
+                          .toString()
+                          .toDateTime()
+                          .toFormattedStringWithTime(),
+                      style: TextStyle(
+                        fontSize: 40.sp,
+                        color: Style.textColor.withOpacity(0.4),
+                      ),
+                    ),
                   ),
                 ],
               ),
-            ),
+            ), /* 
+            Padding(
+              padding: EdgeInsets.only(top: 12.h),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.people,
+                    color: Style.secondaryColor,
+                    size: 56.r,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: Style.defautlHorizontalPadding / 3),
+                    child: Text(
+                      "Kontenjan : ${widget.data['quota']} ",
+                      style: TextStyle(
+                        fontSize: 40.sp,
+                        color: Style.textColor.withOpacity(0.5),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ), */
           ],
         ),
         Column(
@@ -406,17 +578,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
               child: Text(
                 "/1 Kişi için",
                 style: TextStyle(
-                  fontSize: Style.defaultTextSize * 0.9,
-                  color: Style.textColor.withOpacity(0.5),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 12.h),
-              child: Text(
-                "Kontenjan : ${widget.data['quota']}",
-                style: TextStyle(
-                  fontSize: 40.sp,
+                  fontSize: Style.defaultTextSize * 0.7,
                   color: Style.textColor.withOpacity(0.5),
                 ),
               ),
@@ -439,7 +601,6 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
     // String titleAct = "Fungi Turkey Mantar Avcılığı Kampı Bolu";
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
           child: Text(
@@ -448,46 +609,6 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
               fontSize: widget.data['title'].length > 30 ? 48.sp : 80.sp,
               fontWeight: FontWeight.w500,
             ),
-          ),
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: Style.defautlHorizontalPadding / 2,
-            vertical: Style.defautlVerticalPadding / 4,
-          ),
-          margin: EdgeInsets.only(left: Style.defautlHorizontalPadding / 2),
-          decoration: BoxDecoration(
-            // color: Style.secondaryColor.withOpacity(0.3),
-            boxShadow: [Style.defaultShadow],
-            color: Colors.white,
-            // border: Border.all(
-            //   width: 1,
-            //   color: Style.secondaryColor.withOpacity(0.5),
-            // ),
-            borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.timer_sharp,
-                color: Style.secondaryColor,
-                size: 60.r,
-              ),
-              Padding(
-                padding:
-                    EdgeInsets.only(left: Style.defautlHorizontalPadding / 4),
-                child: Text(
-                  widget.data['start_date']
-                      .toString()
-                      .toDateTime()
-                      .toFormattedString(),
-                  style: TextStyle(
-                    fontSize: 40.sp,
-                    color: Style.textColor.withOpacity(0.4),
-                  ),
-                ),
-              ),
-            ],
           ),
         ),
       ],
@@ -516,48 +637,6 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
   //     ],
   //   );
   // }
-
-  Widget buttonForRecord() {
-    return Positioned(
-      top: 130.h,
-      right: 48.w,
-      child: GestureDetector(
-        onTap: () => recordPop(context),
-        child: Container(
-          padding: EdgeInsets.symmetric(
-              vertical: Style.defautlVerticalPadding / 4,
-              horizontal: Style.defautlHorizontalPadding / 2),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(
-              width: 1,
-              color: Style.secondaryColor.withOpacity(0.4),
-            ),
-            borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                "Son Tarih : ${widget.data['last_record_date'].toString().toDateTime().toFormattedString()}",
-                style: const TextStyle(
-                  color: Style.dangerColor,
-                  fontSize: 13,
-                ),
-              ),
-              const Text(
-                "Kayıt için tıkla",
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.7,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget arrowBack() {
     return Positioned(
@@ -715,7 +794,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                             children: [
                               Icon(
                                 Icons.favorite_border,
-                                size: 64.r,
+                                size: 56.r,
                               ),
                               const Text("15"),
                             ],

@@ -202,17 +202,10 @@ class _HomePageState extends State<HomePage> {
                 }
               },
             ),
-            const SizedBox(height: Style.defaultPadding/2,),
-            FutureBuilder<List<MenuModel>?>(
-              future: _getMenuList(context),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  HandleExceptions.handle(exception: snapshot.error, context: context);
-                  return Container();
-                }
-                return _buildCategories(context, snapshot.data);
-              },
+            const SizedBox(
+              height: Style.defaultPadding / 2,
             ),
+
             /* Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: SizedBox(
@@ -316,13 +309,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget sliderCardItem(String title, BuildContext context, String routeName, IconData icon) {
+  Widget sliderCardItem(
+      String title, BuildContext context, String routeName, IconData icon) {
     return GestureDetector(
-      onTap:routeName == null
+      onTap: routeName == null
           ? null
-          :  () {
-        Navigator.pushNamed(context, routeName);
-      },
+          : () {
+              Navigator.pushNamed(context, routeName);
+            },
       child: ShimmerLoading(
         isLoading: title == null,
         child: Column(
@@ -794,7 +788,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<MenuModel>?> _getMenuList(BuildContext context) async {
     try {
-      return await Provider.of<ConfigViewModel>(context, listen: false).getMenu();
+      return await Provider.of<ConfigViewModel>(context, listen: false)
+          .getMenu();
     } catch (e) {
       HandleExceptions.handle(exception: e, context: context);
     }

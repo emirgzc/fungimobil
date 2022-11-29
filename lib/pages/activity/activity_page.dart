@@ -21,7 +21,6 @@ class ActivityPage extends StatelessWidget {
     return Shimmer(
       linearGradient: Style.shimmerGradient,
       child: Scaffold(
-        backgroundColor: Style.primaryColor,
         appBar: getAppBar("Etkinlikler"),
         body: PaginableList(
             tableName: TableName.Activity.name,
@@ -175,7 +174,7 @@ class ActivityPage extends StatelessWidget {
         children: [
           Icon(
             Icons.people_alt_outlined,
-            size: Style.defautlVerticalPadding,
+            size: Style.defautlVerticalPadding * 0.75,
             color: Style.textGreyColor,
           ),
           Expanded(
@@ -189,15 +188,15 @@ class ActivityPage extends StatelessWidget {
                   child: Text(
                     creatorName ?? '*' * 20,
                     style: TextStyle(
-                      overflow: TextOverflow.ellipsis,
                       color: Style.textGreyColor,
+                      overflow: TextOverflow.ellipsis,
+                      fontSize: 13,
                     ),
                   ),
                 ),
               ),
             ),
           ),
-          const Spacer(),
           ShimmerLoading(
             isLoading: lastRecordDate == null,
             child: Container(
