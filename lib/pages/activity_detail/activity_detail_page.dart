@@ -26,8 +26,7 @@ class ActivityDetailPage extends StatefulWidget {
   State<ActivityDetailPage> createState() => _ActivityDetailPageState();
 }
 
-class _ActivityDetailPageState extends State<ActivityDetailPage>
-    with TickerProviderStateMixin {
+class _ActivityDetailPageState extends State<ActivityDetailPage> with TickerProviderStateMixin {
   AnimationController? controller;
   SingleRecordModel? recordModel;
   List<Map<String, dynamic>>? commentlist;
@@ -48,9 +47,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Shimmer(
-          linearGradient: Style.shimmerDarkGradient,
-          child: activityDetailBody(context)),
+      body: Shimmer(linearGradient: Style.shimmerDarkGradient, child: activityDetailBody(context)),
     );
   }
 
@@ -66,9 +63,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                 width: double.infinity,
                 child: Hero(
                   tag: widget.data['image'],
-                  child: CustomNetworkImageWidget(
-                      imageUrl: Util.imageConvertUrl(
-                          imageName: widget.data['image'])),
+                  child: CustomNetworkImageWidget(imageUrl: Util.imageConvertUrl(imageName: widget.data['image'])),
                 ),
               ),
               arrowBack(),
@@ -91,13 +86,11 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                     ),
 
                     Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: Style.defautlVerticalPadding / 2),
+                      padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding / 2),
                       child: titleForActivity("Etkinlik Bilgisi"),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(
-                          top: Style.defautlVerticalPadding / 2),
+                      padding: EdgeInsets.only(top: Style.defautlVerticalPadding / 2),
                       child: FutureBuilder(
                           future: recordModel == null ? _fetchRecord() : null,
                           builder: (context, snapshot) {
@@ -110,13 +103,9 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                         children: [
                           activityDataItem(
                             activityData[0],
-                            widget.data['start_date']
-                                .toString()
-                                .toDateTime()
-                                .toFormattedString(),
+                            widget.data['start_date'].toString().toDateTime().toFormattedString(),
                           ),
-                          activityDataItem(activityData[1],
-                              widget.data['director'].toString()),
+                          activityDataItem(activityData[1], widget.data['director'].toString()),
                           activityDataItem(
                             activityData[2],
                             "${widget.data['quota']} Kişilik",
@@ -125,8 +114,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: Style.defautlVerticalPadding),
+                      padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
                       child: commentTitle(context),
                     ),
                     // commentForActivity(),
@@ -207,10 +195,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                           ),
                         ),
                         Text(
-                          widget.data['last_record_date']
-                              .toString()
-                              .toDateTime()
-                              .toFormattedString(),
+                          widget.data['last_record_date'].toString().toDateTime().toFormattedString(),
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 13,
@@ -272,8 +257,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
         future: _fetchComment(),
         builder: (context, snapshot) {
           if (snapshot.hasError && snapshot.error != null) {
-            HandleExceptions.handle(
-                exception: snapshot.error, context: context);
+            HandleExceptions.handle(exception: snapshot.error, context: context);
           }
           return CommentListWidget(
             tableName: TableName.ActivityComment.name,
@@ -350,10 +334,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                 ),
               ),
               Expanded(
-                child: Text(widget.data['finish_date']
-                    .toString()
-                    .toDateTime()
-                    .toFormattedString()),
+                child: Text(widget.data['finish_date'].toString().toDateTime().toFormattedString()),
               ),
             ],
           ),
@@ -408,9 +389,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
       text = content;
     } else {
       String minimalContent = widget.data['content'].toString();
-      text = minimalContent.endsWith('...')
-          ? minimalContent.substring(0, minimalContent.length - 3)
-          : minimalContent;
+      text = minimalContent.endsWith('...') ? minimalContent.substring(0, minimalContent.length - 3) : minimalContent;
     }
 
     return Column(
@@ -484,8 +463,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                   size: 56.r,
                 ),
                 Padding(
-                  padding:
-                      EdgeInsets.only(left: Style.defautlHorizontalPadding / 3),
+                  padding: EdgeInsets.only(left: Style.defautlHorizontalPadding / 3),
                   child: Text(
                     changeForStringFormat(location, size, 15),
                     style: TextStyle(
@@ -508,13 +486,9 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                     size: 56.r,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(
-                        left: Style.defautlHorizontalPadding / 3),
+                    padding: EdgeInsets.only(left: Style.defautlHorizontalPadding / 3),
                     child: Text(
-                      widget.data['start_date']
-                          .toString()
-                          .toDateTime()
-                          .toFormattedStringWithTime(),
+                      widget.data['start_date'].toString().toDateTime().toFormattedStringWithTime(),
                       style: TextStyle(
                         fontSize: 40.sp,
                         color: Style.textColor.withOpacity(0.4),
@@ -523,7 +497,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                   ),
                 ],
               ),
-            ), /* 
+            ), /*
             Padding(
               padding: EdgeInsets.only(top: 12.h),
               child: Row(
@@ -740,9 +714,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(
-                          left: Style.defautlHorizontalPadding,
-                          top: Style.defautlVerticalPadding * 2),
+                      padding: EdgeInsets.only(left: Style.defautlHorizontalPadding, top: Style.defautlVerticalPadding * 2),
                       child: Row(
                         children: [
                           Text(
@@ -763,13 +735,11 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                         return ListTile(
                           minLeadingWidth: 0,
                           dense: true,
-                          leading:
-                              const Icon(Icons.supervised_user_circle_outlined),
+                          leading: const Icon(Icons.supervised_user_circle_outlined),
                           title: Row(
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(
-                                    right: Style.defautlHorizontalPadding / 2),
+                                padding: EdgeInsets.only(right: Style.defautlHorizontalPadding / 2),
                                 child: Text(
                                   "Emir Gözcü",
                                   style: TextStyle(
@@ -826,9 +796,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
       ),
       builder: (context) {
         return Padding(
-          padding: EdgeInsets.symmetric(
-              vertical: Style.defautlVerticalPadding,
-              horizontal: Style.defautlHorizontalPadding),
+          padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding, horizontal: Style.defautlHorizontalPadding),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -843,12 +811,10 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: Style.defautlVerticalPadding),
+                padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
                 child: Text(
                   "Etkinlik Kayıt",
-                  style:
-                      TextStyle(fontSize: 62.sp, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 62.sp, fontWeight: FontWeight.bold),
                 ),
               ),
               CustomTextField(hintText: "Kişi Sayısı"),
@@ -876,8 +842,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
                           title: const Text("Açık Rıza Metni"),
                           contentPadding: EdgeInsets.all(60.r),
                           content: Text(
-                            "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s," *
-                                5,
+                            "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s," * 5,
                           ),
                         ),
                       );
@@ -901,8 +866,8 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
   Future _fetchRecord() async {
     try {
       int id = int.parse(widget.data['id'].toString());
-      recordModel = await Provider.of<TableViewModel>(context, listen: false)
-          .fetchRecord(tableName: TableName.Activity.name, id: id);
+      recordModel =
+          await Provider.of<TableViewModel>(context, listen: false).fetchRecord(tableName: TableName.Activity.name, id: id);
     } catch (e) {
       HandleExceptions.handle(exception: e, context: context);
     }
@@ -910,8 +875,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage>
 
   Future _fetchComment() async {
     try {
-      var commentTable =
-          await Provider.of<TableViewModel>(context, listen: false).fetchTable(
+      var commentTable = await Provider.of<TableViewModel>(context, listen: false).fetchTable(
         tableName: TableName.ActivityComment.name,
         page: 1,
         limit: 5,
