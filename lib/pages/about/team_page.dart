@@ -168,22 +168,27 @@ class TeamPage extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           title: Text(data?["name"] ?? ""),
-          content: SizedBox(
-            height: (((data?["description"].toString().length ?? 0) > 1000)
-                ? 400
-                : 250),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  HtmlTextWidget(
-                    content: data?["description"],
-                    isLoading: data == null,
-                    loadingText: '*' * Random().nextInt(200),
-                    fontSize: 40.sp,
-                    color: Style.textGreyColor,
-                  ),
-                ],
+          content: RawScrollbar(
+            thumbColor: Style.secondaryColor,
+            thumbVisibility: true,
+            thickness: 3,
+            child: SizedBox(
+              height: (((data?["description"].toString().length ?? 0) > 1000)
+                  ? 400
+                  : 250),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    HtmlTextWidget(
+                      content: data?["description"],
+                      isLoading: data == null,
+                      loadingText: '*' * Random().nextInt(200),
+                      fontSize: 40.sp,
+                      color: Style.textGreyColor,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

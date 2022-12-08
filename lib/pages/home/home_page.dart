@@ -77,7 +77,9 @@ class _HomePageState extends State<HomePage> {
                 FutureBuilder(
                   future: _fetchUserInfo(context),
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData &&
+                        snapshot.data != null) {
                       var datas = snapshot.data as UserModel;
                       return Padding(
                         padding: EdgeInsets.only(top: 24.h, bottom: 12.h),
@@ -116,13 +118,16 @@ class _HomePageState extends State<HomePage> {
               height: 30,
             ),
             FutureBuilder(
-              future: Provider.of<TableViewModel>(context, listen: false).fetchTable(
+              future: Provider.of<TableViewModel>(context, listen: false)
+                  .fetchTable(
                 tableName: TableName.Slider.name,
                 page: 1,
                 limit: 100,
               ),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
+                if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.hasData &&
+                    snapshot.data != null) {
                   var datas = (snapshot.data as tableModel.TableModel).data;
                   debugPrint(datas?.length.toString());
                   return CarouselSlider.builder(
@@ -155,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             child: Opacity(
-                              opacity: 0.5,
+                              opacity: 0.7,
                               child: CustomNetworkImageWidget(
                                 imageUrl: Util.imageConvertUrl(
                                   imageName: datas![index]["image"],
@@ -221,7 +226,7 @@ class _HomePageState extends State<HomePage> {
               child: titleForRow(
                 "Son Kayıtlar!",
                 "Tümünü Göster",
-                () => Navigator.pushNamed(context, Routes.activityPage),
+                () => Navigator.pushNamed(context, Routes.sponsorPage),
               ),
             ),
             FutureBuilder(
@@ -236,8 +241,14 @@ class _HomePageState extends State<HomePage> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (int i = 0; i < min(5, activityDataList?.length ?? 5); i++)
-                        actHomeCard(activityDataList == null ? null : activityDataList![i], context),
+                      for (int i = 0;
+                          i < min(5, activityDataList?.length ?? 5);
+                          i++)
+                        actHomeCard(
+                            activityDataList == null
+                                ? null
+                                : activityDataList![i],
+                            context),
                     ],
                   ),
                 );
@@ -259,7 +270,11 @@ class _HomePageState extends State<HomePage> {
                     itemCount: min(4, blogDataList?.length ?? 4),
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return blogCard(blogDataList == null ? null : blogDataList?.reversed.toList()[index], context);
+                      return blogCard(
+                          blogDataList == null
+                              ? null
+                              : blogDataList?.reversed.toList()[index],
+                          context);
                     },
                   );
                 }),
@@ -292,7 +307,8 @@ class _HomePageState extends State<HomePage> {
     );
   }*/
 
-  Widget sliderCardItem(String title, BuildContext context, String routeName, IconData icon) {
+  Widget sliderCardItem(
+      String title, BuildContext context, String routeName, IconData icon) {
     return GestureDetector(
       onTap: routeName == null
           ? null
@@ -333,7 +349,8 @@ class _HomePageState extends State<HomePage> {
   Widget blogCard(Map<String, dynamic>? data, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, Routes.blogDetailPage, arguments: data!["id"]);
+        Navigator.pushNamed(context, Routes.blogDetailPage,
+            arguments: data!["id"]);
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 32.h),
@@ -367,7 +384,8 @@ class _HomePageState extends State<HomePage> {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -433,7 +451,11 @@ class _HomePageState extends State<HomePage> {
                       child: Container(
                         color: Colors.white.withOpacity(0.8),
                         child: Text(
-                          data?['added_date']?.toString().toDateTime().toFormattedString() ?? '1 Ocak 2000',
+                          data?['added_date']
+                                  ?.toString()
+                                  .toDateTime()
+                                  .toFormattedString() ??
+                              '1 Ocak 2000',
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 11,
@@ -455,10 +477,12 @@ class _HomePageState extends State<HomePage> {
   Widget actHomeCard(Map<String, dynamic>? data, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, Routes.activityDetailPage, arguments: data);
+        Navigator.pushNamed(context, Routes.activityDetailPage,
+            arguments: data);
       },
       child: Container(
-        margin: EdgeInsets.only(top: 48.h, bottom: 48.h, right: 24.w, left: 12.w),
+        margin:
+            EdgeInsets.only(top: 48.h, bottom: 48.h, right: 24.w, left: 12.w),
         width: 660.w,
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.8),
@@ -643,7 +667,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future editPop(BuildContext context) async {
-    bool isUserExists = await Provider.of<AuthViewModel>(context, listen: false).isUserExists();
+    bool isUserExists =
+        await Provider.of<AuthViewModel>(context, listen: false).isUserExists();
     return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -683,8 +708,11 @@ class _HomePageState extends State<HomePage> {
                   "Çıkış Yap",
                   "assets/icons/exit.svg",
                   () {
-                    Provider.of<AuthViewModel>(context, listen: false).signOut().then((value) {
-                      Navigator.pushNamedAndRemoveUntil(context, Routes.homePage, (route) => false);
+                    Provider.of<AuthViewModel>(context, listen: false)
+                        .signOut()
+                        .then((value) {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, Routes.homePage, (route) => false);
                     });
                   },
                 ),
@@ -695,7 +723,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget profileMenuCard(BuildContext context, String title, String icon, void Function()? onTap) {
+  Widget profileMenuCard(
+      BuildContext context, String title, String icon, void Function()? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -721,9 +750,10 @@ class _HomePageState extends State<HomePage> {
   Future _fetchActivity(BuildContext context) async {
     try {
       // await Future.delayed(Duration(seconds: 5));
-      activityDataList = (await Provider.of<TableViewModel>(context, listen: false)
-              .fetchTable(tableName: TableName.Activity.name, page: 1, limit: 5))
-          .data;
+      activityDataList =
+          (await Provider.of<TableViewModel>(context, listen: false).fetchTable(
+                  tableName: TableName.Activity.name, page: 1, limit: 5))
+              .data;
     } catch (e) {
       HandleExceptions.handle(exception: e, context: context);
     }
@@ -742,9 +772,11 @@ class _HomePageState extends State<HomePage> {
 
   Future<UserModel?> _fetchUserInfo(BuildContext context) async {
     try {
-      bool userExists = await Provider.of<AuthViewModel>(context, listen: false).isUserExists();
+      bool userExists = await Provider.of<AuthViewModel>(context, listen: false)
+          .isUserExists();
       if (userExists && mounted) {
-        return await Provider.of<AuthViewModel>(context, listen: false).getUserInfoFromLocale();
+        return await Provider.of<AuthViewModel>(context, listen: false)
+            .getUserInfoFromLocale();
       }
     } catch (e) {
       HandleExceptions.handle(exception: e, context: context);

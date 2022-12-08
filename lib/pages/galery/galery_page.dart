@@ -116,8 +116,13 @@ class GaleryPage extends StatelessWidget {
                 ),
               ),
               CustomNetworkImageWidget(
-                  imageUrl:
-                      Util.imageConvertUrl(imageName: datas![index]["image"]))
+                imageUrl: Util.imageConvertUrl(
+                  imageName: datas![index]["image"],
+                ),
+              ),
+              SizedBox(
+                height: 120.h,
+              ),
             ],
           ),
         );
