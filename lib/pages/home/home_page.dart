@@ -226,7 +226,7 @@ class _HomePageState extends State<HomePage> {
               child: titleForRow(
                 "Son Kayıtlar!",
                 "Tümünü Göster",
-                () => Navigator.pushNamed(context, Routes.sponsorPage),
+                () => Navigator.pushNamed(context, Routes.activityPage),
               ),
             ),
             FutureBuilder(

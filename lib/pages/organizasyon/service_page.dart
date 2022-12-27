@@ -186,10 +186,13 @@ class ServicePage extends StatelessWidget {
                 ),
               ),
               HtmlTextWidget(
-                  content: datas[index]["content"],
-                  maxContentLength: 120,
-                  color: Style.textGreyColor,
-                  fontSize: Style.defaultTextSize * 0.8),
+                content: datas[index]["content"],
+                color: Style.textGreyColor,
+                fontSize: Style.defaultTextSize * 0.8,
+              ),
+              SizedBox(
+                height: 120.h,
+              ),
             ],
           ),
         );
