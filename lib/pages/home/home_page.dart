@@ -699,22 +699,8 @@ class _HomePageState extends State<HomePage> {
                 profileMenuCard(
                   context,
                   "Giriş Yap",
-                  "assets/icons/user.svg",
+                  "assets/icons/login.svg",
                   () => Navigator.pushNamed(context, Routes.loginPage),
-                ),
-              if (isUserExists)
-                profileMenuCard(
-                  context,
-                  "Çıkış Yap",
-                  "assets/icons/exit.svg",
-                  () {
-                    Provider.of<AuthViewModel>(context, listen: false)
-                        .signOut()
-                        .then((value) {
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, Routes.homePage, (route) => false);
-                    });
-                  },
                 ),
             ],
           ),

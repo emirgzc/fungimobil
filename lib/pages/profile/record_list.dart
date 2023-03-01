@@ -21,7 +21,7 @@ class RecordList extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     // onTap: () => detailPop(context),
-                    child: commentCard(),
+                    child: commentCard(context),
                   );
                 },
               ),
@@ -32,7 +32,7 @@ class RecordList extends StatelessWidget {
     );
   }
 
-  Widget commentCard() {
+  Widget commentCard(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: Style.defautlVerticalPadding / 2),
       padding: EdgeInsets.only(
@@ -50,38 +50,83 @@ class RecordList extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          itemComment("Kayıt Tarihi : ", "21 Ağustos 2022 13:20"),
-          Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: Style.defautlVerticalPadding / 2),
-            child: itemComment("Etkinlik Tarihi : ", "25 Eylül 2021 - 14:00"),
+          Image.asset(
+            "assets/images/osmanli.jpg",
+            fit: BoxFit.cover,
+            height: 155,
+            width: 150,
           ),
-          itemComment(
-            "Kişi Sayısı : ",
-            "2",
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: Style.defautlVerticalPadding / 2),
-            child: itemComment(
-              "Ücret : ",
-              "350,00 ₺",
-            ),
-          ),
-          itemComment(
-            "Toplam Ücret : ",
-            "700,00 ₺",
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: Style.defautlVerticalPadding / 2),
-            child: Row(
-              children: [
-                ontapForItem("Onay Bekliyor", Style.dangerColor),
-                ontapForItem("Ödeme Bekleniyor", Colors.blue),
-              ],
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Yılın Son Mantar Etkinliği(Fungi ID)",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      "Kayıt Tarihi : 29/12/2022",
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Style.textColor.withOpacity(
+                          0.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 4),
+                    child: Text(
+                      "Onaylandı",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Style.succesColor,
+                      ),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 4),
+                    child: Text(
+                      "Ödeme Alınmadı",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Style.dangerColor,
+                      ),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 4, bottom: 8),
+                    child: Text(
+                      "Toplam : 800 TL(2 Bilet)",
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Style.secondaryColor,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      ontapForItem(
+                        "Güncelle",
+                        Colors.blue,
+                      ),
+                      ontapForItem(
+                        "Sil",
+                        Style.secondaryColor,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],

@@ -52,26 +52,69 @@ class ActivityCommentList extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(Style.defaultRadiusSize),
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          itemComment("Yorum : ",
-              "Çok başarılı bir etkinlikti ellerinize sağlık, kolay gelsin teşekkürler."),
-          Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: Style.defautlVerticalPadding / 2),
-            child: itemComment("Yorum Tarihi : ", "21.08.2022"),
+          Image.asset(
+            "assets/images/osmanli.jpg",
+            fit: BoxFit.cover,
+            height: 155,
+            width: 150,
           ),
-          itemComment(
-              "Etkinlik : ", "Mantar Avı ve Gastronomisi Etkinliği (Kamplı)"),
-          Padding(
-            padding: EdgeInsets.only(top: Style.defautlVerticalPadding / 2),
-            child: Row(
-              children: [
-                ontapForItem("Onay Bekliyor", Style.dangerColor, () {}),
-                ontapForItem("Güncelle", Colors.blue, () => editPop(context)),
-                ontapForItem("Sil", Style.secondaryColor, () {}),
-              ],
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Cortinarius violaceus (Menekşe Mantar)",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                      "çok başarılı bir blog yazısı",
+                      style: TextStyle(fontSize: 13),
+                    ),
+                  ),
+                  Text(
+                    "29/12/2022 11:54:20",
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Style.textColor.withOpacity(
+                        0.5,
+                      ),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 16, top: 4),
+                    child: Text(
+                      "Onay Bekliyor",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Style.dangerColor,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      ontapForItem(
+                        "Güncelle",
+                        Colors.blue,
+                        () => editPop(context),
+                      ),
+                      ontapForItem(
+                        "Sil",
+                        Style.secondaryColor,
+                        () {},
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],
