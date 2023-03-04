@@ -29,15 +29,15 @@ class Routes {
   static const String registerPage = '/registerPage';
   static const String forgetPassPage = '/forgetPassPage';
   static const String activityDetailPage = '/activityDetailPage';
-  static const String blogPage = '/blogPage';
+  static const String blogPage = '/blog';
   static const String blogDetailPage = '/blogDetailPage';
-  static const String aboutPage = '/aboutPage';
-  static const String teamPage = '/teamPage';
-  static const String servicePage = '/servicePage';
-  static const String activityPage = '/activityPage';
-  static const String galeryPage = '/galeryPage';
-  static const String sponsorPage = '/sponsorPage';
-  static const String contactPage = '/contactPage';
+  static const String aboutPage = '/hakkimizda';
+  static const String teamPage = '/takim';
+  static const String servicePage = '/organizasyon';
+  static const String activityPage = '/etkinlik';
+  static const String galeryPage = '/galeri';
+  static const String sponsorPage = '/sponsor';
+  static const String contactPage = '/iletisim';
   static const String homePage = '/homePage';
   static const String profilePage = '/profilePage';
   static const String blogCommentPage = '/blogCommentPage';
@@ -49,8 +49,7 @@ class Routes {
     switch (settings.name) {
       case '/':
         page = ChangeNotifierProvider(
-            create: (_) => ConfigViewModel(),
-            child: const LandingPage());
+            create: (_) => ConfigViewModel(), child: const LandingPage());
         break;
       case loginPage:
         page = LoginPage();
