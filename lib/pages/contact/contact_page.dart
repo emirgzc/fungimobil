@@ -3,13 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
-import 'package:fungimobil/data/api_client.dart';
 import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/pages/login_register/components/big_title.dart';
 import 'package:fungimobil/pages/login_register/components/button_login.dart';
+import 'package:fungimobil/viewmodel/table_view_model.dart';
 import 'package:fungimobil/widgets/appbar.dart';
 import 'package:fungimobil/widgets/card_for_social_media.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
+import 'package:provider/provider.dart';
 
 class ContactPage extends StatelessWidget {
   const ContactPage({Key? key}) : super(key: key);
@@ -20,12 +21,11 @@ class ContactPage extends StatelessWidget {
       appBar: getAppBar("İletişim"),
       body: SingleChildScrollView(
         child: FutureBuilder(
-          future: ApiClient().fetchTable(
+          future:
+              Provider.of<TableViewModel>(context, listen: false).fetchTable(
             tableName: TableName.Contact.name,
-            token: "",
             page: 1,
-            limit: 10,
-            filter: {},
+            limit: 1,
           ),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done &&
@@ -41,6 +41,7 @@ class ContactPage extends StatelessWidget {
                       return contactBody(datas, index);
                     },
                   ),
+                  SizedBox(height: 120.h),
                 ],
               );
             } else if (snapshot.hasError && snapshot.error != null) {

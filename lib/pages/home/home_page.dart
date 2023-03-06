@@ -208,68 +208,67 @@ class _HomePageState extends State<HomePage> {
           );
           return Container();
         }
-          var datas = (snapshot.data as tableModel.TableModel?)?.data;
-          debugPrint(datas?.length.toString());
-          return CarouselSlider.builder(
-            options: CarouselOptions(
-              height: 160,
-              enlargeCenterPage: true,
-              autoPlayAnimationDuration: const Duration(
-                milliseconds: 600,
-              ),
-              enlargeStrategy: CenterPageEnlargeStrategy.height,
-              autoPlay: true,
-              reverse: false,
+        var datas = (snapshot.data as tableModel.TableModel?)?.data;
+        debugPrint(datas?.length.toString());
+        return CarouselSlider.builder(
+          options: CarouselOptions(
+            height: 160,
+            enlargeCenterPage: true,
+            autoPlayAnimationDuration: const Duration(
+              milliseconds: 600,
             ),
-            itemCount: datas?.length ?? 3,
-            itemBuilder: (context, index, realIndex) {
-              return Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(
-                      bottom: 16,
-                      right: 6,
-                      left: 6,
-                    ),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(
-                        Style.defaultRadiusSize,
-                      ),
-                    ),
-                    child: Opacity(
-                      opacity: 0.5,
-                      child: CustomNetworkImageWidget(
-                        imageUrl: Util.imageConvertUrl(
-                          imageName: datas?[index]["image"] ?? Constants.defaultImageUrl,
-                        ),
-                        fit: BoxFit.cover,
-                      ),
+            enlargeStrategy: CenterPageEnlargeStrategy.height,
+            autoPlay: true,
+            reverse: false,
+          ),
+          itemCount: datas?.length ?? 3,
+          itemBuilder: (context, index, realIndex) {
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(
+                    bottom: 16,
+                    right: 6,
+                    left: 6,
+                  ),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(
+                      Style.defaultRadiusSize,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          datas?[index]["title"] ?? '',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
+                  child: Opacity(
+                    opacity: 0.5,
+                    child: CustomNetworkImageWidget(
+                      imageUrl: Util.imageConvertUrl(
+                        imageName: datas?[index]["image"] ?? Constants.defaultImageUrl,
+                      ),
+                      fit: BoxFit.cover,
                     ),
                   ),
-                ],
-              );
-            },
-          );
-
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        datas?[index]["title"] ?? '',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        );
       },
     );
   }
@@ -684,19 +683,8 @@ class _HomePageState extends State<HomePage> {
                 profileMenuCard(
                   context,
                   "Giriş Yap",
-                  "assets/icons/user.svg",
+                  "assets/icons/login.svg",
                   () => Navigator.pushNamed(context, Routes.loginPage),
-                ),
-              if (isUserExists)
-                profileMenuCard(
-                  context,
-                  "Çıkış Yap",
-                  "assets/icons/exit.svg",
-                  () {
-                    Provider.of<AuthViewModel>(context, listen: false).signOut().then((value) {
-                      Navigator.pushNamedAndRemoveUntil(context, Routes.homePage, (route) => false);
-                    });
-                  },
                 ),
             ],
           ),
