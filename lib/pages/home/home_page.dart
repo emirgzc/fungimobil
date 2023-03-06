@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fungimobil/constants/contants.dart';
 import 'package:fungimobil/constants/extension.dart';
 import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/routes.dart';
@@ -47,6 +48,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget homePageBody(BuildContext context) {
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       child: Padding(
         padding: Style.defaultPagePadding,
         child: Column(
@@ -115,86 +117,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: 30,
             ),
-            FutureBuilder(
-              future: Provider.of<TableViewModel>(context, listen: false).fetchTable(
-                tableName: TableName.Slider.name,
-                page: 1,
-                limit: 100,
-              ),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {
-                  var datas = (snapshot.data as tableModel.TableModel).data;
-                  debugPrint(datas?.length.toString());
-                  return CarouselSlider.builder(
-                    options: CarouselOptions(
-                      height: 160,
-                      enlargeCenterPage: true,
-                      autoPlayAnimationDuration: const Duration(
-                        milliseconds: 600,
-                      ),
-                      enlargeStrategy: CenterPageEnlargeStrategy.height,
-                      autoPlay: true,
-                      reverse: false,
-                    ),
-                    itemCount: datas?.length ?? 0,
-                    itemBuilder: (context, index, realIndex) {
-                      return Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(
-                              bottom: 16,
-                              right: 6,
-                              left: 6,
-                            ),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(
-                                Style.defaultRadiusSize,
-                              ),
-                            ),
-                            child: Opacity(
-                              opacity: 0.5,
-                              child: CustomNetworkImageWidget(
-                                imageUrl: Util.imageConvertUrl(
-                                  imageName: datas![index]["image"],
-                                ),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  datas[index]["title"],
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                } else if (snapshot.hasError && snapshot.error != null) {
-                  HandleExceptions.handle(
-                    exception: snapshot.error,
-                    context: context,
-                  );
-                  return Container();
-                } else {
-                  return Container();
-                }
-              },
-            ),
+            _buildSlider(context),
             const SizedBox(
               height: Style.defaultPadding / 2,
             ),
@@ -233,6 +156,7 @@ class _HomePageState extends State<HomePage> {
                 // }
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -269,6 +193,87 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildSlider(BuildContext context) {
+    return FutureBuilder(
+      future: Provider.of<TableViewModel>(context, listen: false).fetchTable(
+        tableName: TableName.Slider.name,
+        page: 1,
+        limit: 100,
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.hasError && snapshot.error != null) {
+          HandleExceptions.handle(
+            exception: snapshot.error,
+            context: context,
+          );
+          return Container();
+        }
+          var datas = (snapshot.data as tableModel.TableModel?)?.data;
+          debugPrint(datas?.length.toString());
+          return CarouselSlider.builder(
+            options: CarouselOptions(
+              height: 160,
+              enlargeCenterPage: true,
+              autoPlayAnimationDuration: const Duration(
+                milliseconds: 600,
+              ),
+              enlargeStrategy: CenterPageEnlargeStrategy.height,
+              autoPlay: true,
+              reverse: false,
+            ),
+            itemCount: datas?.length ?? 3,
+            itemBuilder: (context, index, realIndex) {
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(
+                      bottom: 16,
+                      right: 6,
+                      left: 6,
+                    ),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(
+                        Style.defaultRadiusSize,
+                      ),
+                    ),
+                    child: Opacity(
+                      opacity: 0.5,
+                      child: CustomNetworkImageWidget(
+                        imageUrl: Util.imageConvertUrl(
+                          imageName: datas?[index]["image"] ?? Constants.defaultImageUrl,
+                        ),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          datas?[index]["title"] ?? '',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+
+      },
+    );
+  }
+
   /*Padding _buildCategories(BuildContext context, List<MenuModel>? menuList) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20),
@@ -292,7 +297,7 @@ class _HomePageState extends State<HomePage> {
     );
   }*/
 
-  Widget sliderCardItem(String title, BuildContext context, String routeName, IconData icon) {
+  /*Widget sliderCardItem(String title, BuildContext context, String routeName, IconData icon) {
     return GestureDetector(
       onTap: routeName == null
           ? null
@@ -328,7 +333,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
+  }*/
 
   Widget blogCard(Map<String, dynamic>? data, BuildContext context) {
     return GestureDetector(
@@ -531,6 +536,8 @@ class _HomePageState extends State<HomePage> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       data?['title']?.toString() ?? '*' * 20,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         overflow: TextOverflow.fade,
                         fontSize: 44.sp,
@@ -563,6 +570,8 @@ class _HomePageState extends State<HomePage> {
                           alignment: Alignment.centerLeft,
                           child: Text(
                             data?['location']?.toString() ?? '*' * 20,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               overflow: TextOverflow.ellipsis,
                               fontSize: 34.sp,
@@ -644,6 +653,7 @@ class _HomePageState extends State<HomePage> {
 
   Future editPop(BuildContext context) async {
     bool isUserExists = await Provider.of<AuthViewModel>(context, listen: false).isUserExists();
+    if (!mounted) return;
     return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
