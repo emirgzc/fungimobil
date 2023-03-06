@@ -5,7 +5,7 @@ class Style {
   Style._();
 
   static const Color primaryColor = Color(0xfff9f9f9);
-  static const Color secondaryColor = Color(0xfff4a261);
+  static const Color secondaryColor = Color(0xffff8c00);
   static const Color textColor = Color(0xff000000);
   static Color textGreyColor = Colors.black.withOpacity(0.6);
   static const Color dangerColor = Color(0xffc43d4b);

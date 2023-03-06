@@ -28,28 +28,44 @@ class HomeDrawer extends StatelessWidget {
           future: _fetchData(context),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done && menuList != null) {
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    /*if (userModel != null) */drawerHeader(context, userModel),
-                    for (int i = 0; menuList != null && i < menuList!.length; i++)
-                      drawerItem(context, menuList![i].displayName!, menuList![i].tableName!, menuList![i].icon!),
-                    // drawerItem(context, "Ana Sayfa", Routes.homePage, Icons.home),
-                    // drawerItem(context, "Hakkımızda", Routes.aboutPage, Icons.info),
-                    // drawerItem(context, "Takımımız", Routes.teamPage, Icons.people),
-                    // drawerItem(context, "Organizasyonumuz", Routes.servicePage, Icons.room_service_rounded),
-                    // drawerItem(context, "Galeri", Routes.galeryPage, Icons.photo_camera),
-                    // drawerItem(context, "Etkinlikler", Routes.activityPage, Icons.local_activity),
-                    // drawerItem(context, "Blog", Routes.blogPage, Icons.pending_actions_outlined),
-                    // drawerItem(context, "Sponsorlarımız", Routes.sponsorPage, Icons.sports_handball_rounded),
-                    // drawerItem(context, "İletişim", Routes.contactPage, Icons.contact_mail),
-                    drawerItem(context, "Çıkış Yap", Routes.loginPage, 'exit.svg', onTap: () async {
-                      Provider.of<AuthViewModel>(context, listen: false)
-                          .signOut()
-                          .then((value) => Navigator.pushNamedAndRemoveUntil(context, Routes.homePage, (route) => false));
-                    }),
-                  ],
-                ),
+              return Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  drawerHeader(context, userModel),
+                  Expanded(
+                      child: ListView.separated(
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.only(top: Style.defaultPadding, bottom: Style.defaultPadding*3),
+                          itemBuilder: (context, index) {
+                            if (index >= (menuList?.length ?? 0)) {
+                              if (userModel == null) {
+                                return drawerItem(context, "Giriş Yap", Routes.loginPage, 'login.svg', onTap: () async {
+                                  Navigator.pushNamed(context, Routes.loginPage);
+                                });
+                              } else {
+                                return drawerItem(context, "Çıkış Yap", Routes.loginPage, 'exit.svg', onTap: () async {
+                                  Provider.of<AuthViewModel>(context, listen: false).signOut().then(
+                                      (value) => Navigator.pushNamedAndRemoveUntil(context, Routes.homePage, (route) => false));
+                                });
+                              }
+                            }
+                            var item = menuList![index];
+                            return drawerItem(context, item.displayName!, item.tableName!, item.icon!);
+                          },
+                          separatorBuilder: (context, index) {
+                            return const Divider(
+                              color: Color(0x88ff4500),
+                            );
+                          },
+                          itemCount: (menuList?.length ?? 0) + 1)),
+                  /*for (int i = 0; menuList != null && i < menuList!.length; i++)
+                    drawerItem(context, menuList![i].displayName!, menuList![i].tableName!, menuList![i].icon!),
+                  drawerItem(context, "Çıkış Yap", Routes.loginPage, 'exit.svg', onTap: () async {
+                    Provider.of<AuthViewModel>(context, listen: false)
+                        .signOut()
+                        .then((value) => Navigator.pushNamedAndRemoveUntil(context, Routes.homePage, (route) => false));
+                  }),*/
+                ],
               );
             } else if (snapshot.hasError && snapshot.error != null) {
               HandleExceptions.handle(
@@ -59,8 +75,7 @@ class HomeDrawer extends StatelessWidget {
             }
             return Padding(
               padding: const EdgeInsets.all(Style.defaultPadding * 3),
-              child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 0.4.sw), child: Image.asset('assets/images/black.png')),
+              child: ConstrainedBox(constraints: BoxConstraints(maxWidth: 0.4.sw), child: Image.asset('assets/images/black.png')),
             );
           },
         ),
@@ -69,74 +84,115 @@ class HomeDrawer extends StatelessWidget {
   }
 
   Widget drawerHeader(BuildContext context, UserModel? user) {
-    if (user == null) {
-      return SizedBox.square(child: Expanded(
-        child: Padding(
-          padding: const EdgeInsets.all(Style.defaultPadding * 3),
-          child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 0.4.sw), child: Image.asset('assets/images/black.png')),
+    return SizedBox(
+      width: double.infinity,
+      height: 0.3.sh,
+      child: DrawerHeader(
+        margin: EdgeInsets.zero,
+        padding: EdgeInsets.all(Style.defaultPadding),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(end: Alignment.topLeft, begin: Alignment.bottomRight, stops: [
+            0.2,
+            0.7,
+            1.0
+          ], colors: [
+            Color(0xffff8c00),
+            Color(0xffff5e0e),
+            Color(0xffff4500),
+          ]),
+          color: Style.secondaryColor,
         ),
-      ),);
-    }
-    return DrawerHeader(
-      decoration: const BoxDecoration(
-        color: Style.secondaryColor,
-      ),
-      margin: const EdgeInsets.only(bottom: 8),
-      child: SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: const BoxDecoration(
-                color: Style.primaryColor,
-                shape: BoxShape.circle,
-              ),
-              child: Image.asset(
-                'assets/images/logo_white_notbg.png',
-                height: 50,
-                color: Style.textColor,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(
-                "${user.name ?? ""} ${user.surname ?? ""}",
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
+        // margin: const EdgeInsets.only(bottom: 8),
+        child: user == null
+            ? Center(
+                child: Image.asset(
+                  'assets/images/black.png',
+                  height: Style.defaultIconSize * 3,
+                  color: Colors.white,
+                ),
+              ) /*Column(
+                mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(Style.defaultPadding),
+                  child: Image.asset(
+                    'assets/images/black.png',
+                    height: Style.defaultIconSize * 3,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            )*/
+            : Padding(
+              padding: const EdgeInsets.only(right: Style.defaultPadding),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: const BoxDecoration(
+                            // color: Style.primaryColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Image.asset(
+                            'assets/images/logo_white_notbg.png',
+                            height: Style.defaultIconSize * 4,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
-              ),
+                    // const Spacer(),
+                    Text(
+                      "${user.name ?? ""} ${user.surname ?? ""}",
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500, color: Colors.white),
+                    ),
+                    const SizedBox(
+                      height: Style.defaultPadding / 2,
+                    ),
+                    Text(
+                      user.email ?? "",
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),
+                    ),
+                  ],
+                ),
             ),
-            Text(
-              user.phone ?? "",
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            Text(
-              user.email ?? "",
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ],
-        ),
       ),
     );
   }
 
-  Column drawerItem(BuildContext context, String title, String routes, String icon, {VoidCallback? onTap}) {
-    return Column(
-      children: [
-        ListTile(
-          leading: icon.isEmpty ? null : SvgPicture.asset('assets/icons/$icon'),
-          dense: true,
-          title: Text(title),
-          onTap: onTap ??
-              () {
-                Navigator.pushNamed(context, routes);
-              },
-        ),
-        const Divider(),
-      ],
+  Widget drawerItem(BuildContext context, String title, String routes, String icon, {VoidCallback? onTap}) {
+    return ListTile(
+      leading: icon.isEmpty
+          ? const Icon(
+              Icons.article_outlined,
+              color: Color(0xffff5e0e),
+            )
+          : SvgPicture.asset(
+              'assets/icons/$icon',
+              width: Style.defaultIconSize,
+              height: Style.defaultIconSize,
+              color: const Color(0xffff5e0e),
+            ),
+      dense: true,
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.black, fontWeight: FontWeight.bold),
+      ),
+      onTap: onTap ??
+          () {
+            Navigator.pushNamed(context, routes);
+          },
     );
   }
 
