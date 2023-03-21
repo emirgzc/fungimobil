@@ -13,8 +13,7 @@ import 'package:fungimobil/pages/login_register/forget_password_page.dart';
 import 'package:fungimobil/pages/login_register/login_page.dart';
 import 'package:fungimobil/pages/login_register/register_page.dart';
 import 'package:fungimobil/pages/organizasyon/service_page.dart';
-import 'package:fungimobil/pages/profile/activity_comment_list.dart';
-import 'package:fungimobil/pages/profile/blog_comment_list.dart';
+import 'package:fungimobil/pages/profile/comment_list_page.dart';
 import 'package:fungimobil/pages/profile/profile_page.dart';
 import 'package:fungimobil/pages/profile/record_list.dart';
 import 'package:fungimobil/pages/sponsor/sponsor_page.dart';
@@ -48,8 +47,7 @@ class Routes {
     late Widget page;
     switch (settings.name) {
       case '/':
-        page = ChangeNotifierProvider(
-            create: (_) => ConfigViewModel(), child: const LandingPage());
+        page = ChangeNotifierProvider(create: (_) => ConfigViewModel(), child: const LandingPage());
         break;
       case loginPage:
         page = LoginPage();
@@ -71,8 +69,7 @@ class Routes {
             ));
         break;
       case blogPage:
-        page = ChangeNotifierProvider(
-            create: (_) => TableViewModel(), child: const BlogPage());
+        page = ChangeNotifierProvider(create: (_) => TableViewModel(), child: const BlogPage());
         break;
       case blogDetailPage:
         page = ChangeNotifierProvider(
@@ -141,11 +138,19 @@ class Routes {
         break;
       case blogCommentPage:
         page = ChangeNotifierProvider(
-            create: (context) => TableViewModel(),
-            child: const BlogCommentList());
+          create: (context) => TableViewModel(),
+          child: CommentListPage(
+            arguments: CommentListPageArguments(isBlogPage: true),
+          ),
+        );
         break;
       case activityCommentPage:
-        page = const ActivityCommentList();
+        page = ChangeNotifierProvider(
+          create: (context) => TableViewModel(),
+          child: CommentListPage(
+            arguments: CommentListPageArguments(isBlogPage: false),
+          ),
+        );
         break;
       case recordListPage:
         page = const RecordList();

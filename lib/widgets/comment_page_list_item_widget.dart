@@ -188,7 +188,7 @@ class _CommentPageListItemWidgetState extends State<CommentPageListItemWidget> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Blog Yorum Güncelleme",
+                        "${widget.isBlog ? 'Blog': 'Etkinlik'} Yorum Güncelleme",
                         style: TextStyle(
                           fontSize: Style.bigTitleTextSize,
                           fontWeight: FontWeight.bold,

@@ -12,18 +12,26 @@ import '../../model/table_model.dart' as table;
 import '../../viewmodel/table_view_model.dart';
 import '../../widgets/shimmer/shimmer.dart';
 
-class BlogCommentList extends StatefulWidget {
-  const BlogCommentList({Key? key}) : super(key: key);
+class CommentListPageArguments{
+  CommentListPageArguments({required this.isBlogPage});
 
-  @override
-  State<BlogCommentList> createState() => _BlogCommentListState();
+  final bool isBlogPage;
 }
 
-class _BlogCommentListState extends State<BlogCommentList> {
+class CommentListPage extends StatefulWidget {
+  const CommentListPage({Key? key, required this.arguments}) : super(key: key);
+
+  final CommentListPageArguments arguments;
+
+  @override
+  State<CommentListPage> createState() => _CommentListPageState();
+}
+
+class _CommentListPageState extends State<CommentListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: getAppBar("Blog Yorumlarım"),
+      appBar: getAppBar("${widget.arguments.isBlogPage ? 'Blog' : 'Etkinlik'} Yorumlarım"),
       body: Shimmer(
         linearGradient: Style.shimmerGradient,
         child: FutureBuilder<table.TableModel?>(
@@ -42,7 +50,7 @@ class _BlogCommentListState extends State<BlogCommentList> {
                 padding: Style.defaultPagePadding,
                 itemBuilder: (context, index) {
                   Map<String, dynamic>? data = tableModel?.data?[index];
-                  return CommentPageListItemWidget(data: data, isBlog: true);
+                  return CommentPageListItemWidget(data: data, isBlog: widget.arguments.isBlogPage);
                 },
               );
             }),
@@ -69,7 +77,7 @@ class _BlogCommentListState extends State<BlogCommentList> {
       var userInfo = await authProvider.getUserInfoFromLocale();
       if (userInfo == null) throw CustomException.fromApiMessage('Kayıtlı kullanıcı verisi bulunamadı.');
       return await tableProvider.fetchTable(
-        tableName: TableName.BlogComment.name,
+        tableName: widget.arguments.isBlogPage ? TableName.BlogComment.name : TableName.ActivityComment.name,
         page: null,
         limit: null,
         filter: {
