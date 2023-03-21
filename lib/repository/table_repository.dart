@@ -11,8 +11,8 @@ class TableRepository {
 
   Future<TableModel> fetchTable({
     required String tableName,
-    required int page,
-    required int limit,
+    required int? page,
+    required int? limit,
     Map filter = const {},
   }) async {
     try {

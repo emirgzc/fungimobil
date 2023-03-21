@@ -140,7 +140,9 @@ class Routes {
         );
         break;
       case blogCommentPage:
-        page = const BlogCommentList();
+        page = ChangeNotifierProvider(
+            create: (context) => TableViewModel(),
+            child: const BlogCommentList());
         break;
       case activityCommentPage:
         page = const ActivityCommentList();

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -17,6 +18,7 @@ class HandleExceptions {
       debugPrint('FirebaseCrashlytics.recordError fail!!!');
     }
     debugPrint('ERROR::: $exception');
+    log('One error catched!', error: exception, name: 'Handle_Exceptions');
     if (exception is SocketException) exception = ApiException(onDialogDismiss: (context) {});
     if (exception is! CustomException) {
       exception = UnknownException();

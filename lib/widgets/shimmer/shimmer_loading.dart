@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer.dart';
 
 class ShimmerLoading extends StatefulWidget {
@@ -6,10 +7,12 @@ class ShimmerLoading extends StatefulWidget {
     super.key,
     required this.isLoading,
     required this.child,
+    this.fillBackgroundColor,
   });
 
   final bool isLoading;
   final Widget child;
+  final Color? fillBackgroundColor;
 
   @override
   State<ShimmerLoading> createState() => _ShimmerLoadingState();
@@ -75,7 +78,15 @@ class _ShimmerLoadingState extends State<ShimmerLoading> {
           ),
         );
       },
-      child: widget.child,
+      child: widget.fillBackgroundColor == null || !widget.isLoading
+          ? widget.child
+          : ClipRRect(
+              borderRadius: BorderRadius.circular(10.r),
+              child: Container(
+                color: widget.fillBackgroundColor,
+                child: widget.child,
+              ),
+            ),
     );
   }
 }

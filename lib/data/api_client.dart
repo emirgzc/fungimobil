@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -13,8 +14,7 @@ class ApiClient {
   final String _baseUrl = 'https://api.fungiturkey.org/api';
   final String _dbName = '/fungitu2_fungiturkey';
   final String _userDbName = '/fungitu2_Simple';
-  final String _baseUrlWithDb =
-      'https://api.fungiturkey.org/api/fungitu2_fungiturkey';
+  final String _baseUrlWithDb = 'https://api.fungiturkey.org/api/fungitu2_fungiturkey';
 
   Future<String> login(String email, String password) async {
     try {
@@ -29,6 +29,7 @@ class ApiClient {
       String url = '$_baseUrl/login';
 
       debugPrint('api url ::: $url');
+      log('$url params:$requestBody', name: 'API_SEND');
 
       final response = await http.post(
         Uri.parse(url),
@@ -39,6 +40,8 @@ class ApiClient {
         body: jsonEncode(requestBody),
       );
       debugPrint('response : ${response.body}');
+      var splitList = url.split('/');
+      log(response.body, name: 'API_RESPONSE-${splitList[splitList.length - 2]}/${splitList[splitList.length - 1]}');
 
       Map<String, dynamic> json = jsonDecode('{${response.body.split('{')[1]}');
       if (_isRequestHaveMessage(json)) {
@@ -60,10 +63,11 @@ class ApiClient {
   Future register(Map<String, dynamic> data) async {
     try {
       debugPrint('Api Client -- Register');
-      debugPrint('data: $data');
 
       String url = '$_baseUrl/register';
       debugPrint('ApiUrl: $url');
+
+      log('$url params:$data', name: 'API_SEND');
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
@@ -72,7 +76,11 @@ class ApiClient {
         },
         body: jsonEncode(data),
       );
+
       debugPrint('response : ${response.body}');
+      var splitList = url.split('/');
+      log(response.body, name: 'API_RESPONSE-${splitList[splitList.length - 2]}/${splitList[splitList.length - 1]}');
+
       if (response.statusCode == 200) {
         debugPrint('ApiClient register RESPONSE ::: ${response.body}');
       } else {
@@ -88,27 +96,32 @@ class ApiClient {
   Future forgetPasswordSendOtp(String email) async {
     try {
       debugPrint('Api Client -- forgetPasswordSendOtp');
-      debugPrint('email: $email');
+
+      Map requestBody = {
+        'email': email,
+      };
 
       String url = '$_baseUrl/forget';
       debugPrint('ApiUrl: $url');
+      log('$url params:$requestBody', name: 'API_SEND');
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'token': '',
         },
-        body: jsonEncode({
-          'email': email,
-        }),
+        body: jsonEncode(requestBody),
       );
+
+      debugPrint('response : ${response.body}');
+      var splitList = url.split('/');
+      log(response.body, name: 'API_RESPONSE-${splitList[splitList.length - 2]}/${splitList[splitList.length - 1]}');
 
       Map<String, dynamic> json = jsonDecode(response.body);
       if (_isRequestHaveMessage(json)) {
         _throwError(json);
       }
 
-      debugPrint('response : ${response.body}');
       if (response.statusCode == 200) {
         debugPrint('ApiClient forgetPasswordSendOtp RESPONSE ::: ${response.body}');
       } else {
@@ -124,29 +137,35 @@ class ApiClient {
   Future changePassword(String email, String pin, String newPassword) async {
     try {
       debugPrint('Api Client -- changePassword');
-      debugPrint('email: $email | pin:$pin | newPassword:$newPassword');
+
+      Map requestBody = {
+        'email': email,
+        'pin': pin,
+        'password': newPassword,
+      };
 
       String url = '$_baseUrl/forgetPassword';
       debugPrint('ApiUrl: $url');
+      log('$url params:$requestBody}', name: 'API_SEND');
+
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'token': '',
         },
-        body: jsonEncode({
-          'email': email,
-          'pin': pin,
-          'password': newPassword,
-        }),
+        body: jsonEncode(requestBody),
       );
+
+      debugPrint('response : ${response.body}');
+      var splitList = url.split('/');
+      log(response.body, name: 'API_RESPONSE-${splitList[splitList.length - 2]}/${splitList[splitList.length - 1]}');
 
       Map<String, dynamic> json = jsonDecode(response.body);
       if (_isRequestHaveMessage(json)) {
         _throwError(json);
       }
 
-      debugPrint('response : ${response.body}');
       if (response.statusCode == 200) {
         debugPrint('ApiClient changePassword RESPONSE ::: ${response.body}');
       } else {
@@ -162,21 +181,22 @@ class ApiClient {
   Future<table.TableModel> fetchTable({
     required String tableName,
     required String token,
-    required int page,
-    required int limit,
+    required int? page,
+    required int? limit,
     required Map filter,
   }) async {
     try {
       filter = Map.of(filter);
       filter['status'] = 1;
       final Map<String, dynamic> requestBody = {
-        'page': page,
-        'limit': limit,
+        if(page != null) 'page': page,
+        if(limit != null) 'limit': limit,
         'filter': filter,
       };
       String url = '$_baseUrlWithDb/$tableName';
       debugPrint('apiUrl ::: $url');
       debugPrint('params : ${requestBody.entries.map((e) => '${e.key}: (${e.value.runtimeType}) ${e.value}')}');
+      log('$url params:$requestBody', name: 'API_SEND');
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
@@ -187,6 +207,8 @@ class ApiClient {
       );
 
       debugPrint('Response ::: ${response.body}');
+      var splitList = url.split('/');
+      log(response.body, name: 'API_RESPONSE-${splitList[splitList.length - 2]}/${splitList[splitList.length - 1]}');
 
       Map<String, dynamic> json = jsonDecode(response.body);
       if (_isRequestHaveMessage(json)) {
@@ -221,6 +243,8 @@ class ApiClient {
       String url = '$_baseUrlWithDb/$tableName/count';
       debugPrint('apiUrl ::: $url');
       debugPrint('params : $requestBody');
+
+      log('$url params:$requestBody', name: 'API_SEND');
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
@@ -231,8 +255,11 @@ class ApiClient {
       );
 
       debugPrint('Response ::: ${response.body}');
+      var splitList = url.split('/');
+      log(response.body, name: 'API_RESPONSE-${splitList[splitList.length - 2]}/${splitList[splitList.length - 1]}');
 
-      Map<String, dynamic> json = response.body.startsWith('{') ? jsonDecode(response.body) : jsonDecode('{${response.body.split('{')[1]}');
+      Map<String, dynamic> json =
+          response.body.startsWith('{') ? jsonDecode(response.body) : jsonDecode('{${response.body.split('{')[1]}');
       if (_isRequestHaveMessage(json)) {
         _throwError(json);
       }
@@ -255,9 +282,9 @@ class ApiClient {
     bool isUserDb = false,
   }) async {
     try {
-      String url =
-          '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/create';
+      String url = '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/create';
       debugPrint('apiUrl ::: $url');
+      log('$url params:empty', name: 'API_SEND');
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
@@ -266,17 +293,18 @@ class ApiClient {
         },
       );
 
+      var splitList = url.split('/');
+      log(response.body, name: 'API_RESPONSE-${splitList[splitList.length - 2]}/${splitList[splitList.length - 1]}');
+
       Map<String, dynamic> json = jsonDecode(response.body);
       if (_isRequestHaveMessage(json)) {
         _throwError(json);
       }
 
       if (response.statusCode == 200) {
-        debugPrint(
-            'ApiClient tableCreate fulldata ::: ${jsonDecode(response.body)}');
+        debugPrint('ApiClient tableCreate fulldata ::: ${jsonDecode(response.body)}');
         final columnsMap = (json['columns'] as Map);
-        final columns = columnsMap.map((key, value) =>
-            MapEntry(key as String, table.Column.fromJson(value)));
+        final columns = columnsMap.map((key, value) => MapEntry(key as String, table.Column.fromJson(value)));
         debugPrint('ApiClient tableCreate data ::: $columns');
         debugPrint('ApiClient tableCreate SUCCESS');
         return columns;
@@ -298,17 +326,17 @@ class ApiClient {
     bool isUserDb = false,
   }) async {
     try {
-      String url =
-          '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/store';
+      String url = '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/store';
       debugPrint('apiUrl ::: $url');
+      log('$url params:$data', name: 'API_SEND');
       final response = await http.post(
         Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'token': token
-        },
+        headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8', 'token': token},
         body: jsonEncode(data),
       );
+
+      var splitList = url.split('/');
+      log(response.body, name: 'API_RESPONSE-${splitList[splitList.length - 2]}/${splitList[splitList.length - 1]}');
 
       // Map<String, dynamic> json = jsonDecode(response.body);
       // if (_isRequestHaveMessage(json)) {
@@ -341,9 +369,9 @@ class ApiClient {
     bool isUserDb = false,
   }) async {
     try {
-      String url =
-          '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/$id/edit';
+      String url = '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/$id/edit';
       debugPrint('apiUrl ::: $url');
+      log('$url params:empty', name: 'API_SEND');
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
@@ -352,14 +380,16 @@ class ApiClient {
         },
       );
 
+      var splitList = url.split('/');
+      log(response.body, name: 'API_RESPONSE-${splitList[splitList.length - 2]}/${splitList[splitList.length - 1]}');
+
       Map<String, dynamic> json = jsonDecode(response.body);
       if (_isRequestHaveMessage(json)) {
         _throwError(json);
       }
 
       if (response.statusCode == 200) {
-        debugPrint(
-            'ApiClient tableCreate fulldata ::: ${jsonDecode(response.body)}');
+        debugPrint('ApiClient tableCreate fulldata ::: ${jsonDecode(response.body)}');
         debugPrint('ApiClient tableCreate SUCCESS');
         return json;
       } else {
@@ -380,19 +410,18 @@ class ApiClient {
     bool isUserDb = false,
   }) async {
     try {
-      String url =
-          '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/$id/update';
+      String url = '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/$id/update';
       debugPrint('apiUrl ::: $url');
+      log('$url params:empty', name: 'API_SEND');
       final response = await http.post(
         Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'token': token
-        },
+        headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8', 'token': token},
         body: jsonEncode(data),
       );
 
       debugPrint('response body : ${response.body}');
+      var splitList = url.split('/');
+      log(response.body, name: 'API_RESPONSE-${splitList[splitList.length - 2]}/${splitList[splitList.length - 1]}');
 
       Map<String, dynamic> json = jsonDecode(response.body);
       if (_isRequestHaveMessage(json)) {
@@ -425,9 +454,9 @@ class ApiClient {
     bool isUserDb = false,
   }) async {
     try {
-      String url =
-          '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/$id/get';
+      String url = '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/$id/get';
       debugPrint('apiUrl ::: $url');
+      log('$url params:empty', name: 'API_SEND');
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
@@ -437,6 +466,8 @@ class ApiClient {
       );
 
       debugPrint('Response ::: ${response.body}');
+      var splitList = url.split('/');
+      log(response.body, name: 'API_RESPONSE-${splitList[splitList.length - 2]}/${splitList[splitList.length - 1]}');
 
       Map<String, dynamic> json = jsonDecode(response.body);
       if (_isRequestHaveMessage(json)) {
@@ -463,6 +494,7 @@ class ApiClient {
     try {
       String url = '$_baseUrl/profile';
       debugPrint('apiUrl ::: $url');
+      log('$url params:empty', name: 'API_SEND');
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
@@ -472,6 +504,8 @@ class ApiClient {
       );
 
       debugPrint('Response ::: ${response.body}');
+      var splitList = url.split('/');
+      log(response.body, name: 'API_RESPONSE-${splitList[splitList.length - 2]}/${splitList[splitList.length - 1]}');
 
       Map<String, dynamic> json = jsonDecode(response.body);
       if (_isRequestHaveMessage(json)) {

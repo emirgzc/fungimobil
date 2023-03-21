@@ -36,8 +36,8 @@ class TableViewModel extends ChangeNotifier {
 
   Future<table.TableModel> fetchTable({
       required String tableName,
-      required int page,
-      required int limit,
+      required int? page,
+      required int? limit,
         Map filter = const {},
       }) async {
     try {
@@ -120,6 +120,7 @@ class TableViewModel extends ChangeNotifier {
     }
   }
 
+  /// get isteği
   Future<SingleRecordModel> fetchRecord({required String tableName, required int id, bool isUserDb = false}) async {
     // status = TableVMStatus.busy;
     // notifyListeners();
