@@ -135,6 +135,20 @@ class TableViewModel extends ChangeNotifier {
     }
   }
 
+  Future<bool> deleteRecord({required String tableName, required int id, bool isUserDb = false}) async {
+    // status = TableVMStatus.busy;
+    // notifyListeners();
+    try {
+      var data = await _repository.deleteRecord(tableName: tableName, id: id, isUserDb: isUserDb);
+      return data;
+    } catch (e) {
+      rethrow;
+    } finally {
+      // status = TableVMStatus.free;
+      // notifyListeners();
+    }
+  }
+
   Future<Map<String, table.Column>> tableCreate({required String tableName, bool isUserDb = false}) async {
     status = TableVMStatus.busy;
     notifyListeners();

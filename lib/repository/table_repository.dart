@@ -59,6 +59,16 @@ class TableRepository {
     }
   }
 
+  Future<bool> deleteRecord({required String tableName, required int id, bool isUserDb = false}) async {
+    try {
+      String token = await _preferencesHelper.getUserToken() ?? '';
+      var result = await _apiClient.deleteRecord(tableName: tableName, id: id, token: token, isUserDb: isUserDb);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Map<String, Column>> tableCreate({required String tableName, bool isUserDb = false}) async {
     try {
       String token = await _preferencesHelper.getUserToken() ?? '';

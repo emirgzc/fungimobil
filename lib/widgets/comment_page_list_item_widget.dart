@@ -151,12 +151,12 @@ class _CommentPageListItemWidgetState extends State<CommentPageListItemWidget> {
                         ontapForItem(
                           "Güncelle",
                           Colors.blue,
-                          () => editPop(context),
+                          () => _showEditDialog(context),
                         ),
                         ontapForItem(
                           "Sil",
                           Style.secondaryColor,
-                          () {},
+                          () => _showDeleteDialog(),
                         ),
                       ],
                     ),
@@ -190,153 +190,159 @@ class _CommentPageListItemWidgetState extends State<CommentPageListItemWidget> {
     );
   }
 
-  editPop(BuildContext context) {
-    showDialog(context: context, builder: (dialogContext) {
-      return Dialog(
-        alignment: Alignment.bottomCenter,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        insetPadding: EdgeInsets.zero,
-        child: GestureDetector(
-          onTap: () {
-            FocusManager.instance.primaryFocus?.unfocus();
-          },
-          child: Card(
-            margin: EdgeInsets.zero,
-            elevation: 0,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: Style.defautlVerticalPadding,
-                  horizontal: Style.defautlHorizontalPadding,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "${widget.isBlog ? 'Blog' : 'Etkinlik'} Yorum Güncelleme",
-                            style: TextStyle(
-                              fontSize: Style.bigTitleTextSize,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () => Navigator.pop(dialogContext),
-                            child: const Icon(Icons.close),
-                          ),
-                        ],
-                      ),
-                    ),
-                    CustomTextField(
-                      hintText: "Yorum",
-                      validator: Validator.requiredTextValidator,
-                      initialValue: widget.data?['comment'] ?? '',
-                      onChanged: (s) => updateText = (s ?? ''),
-                    ),
-                    ButtonForLogin(title: "Güncelle", onTap: () {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      if (updateText.trim().isEmpty){
-                        UIHelper.showSnackBar(message: 'Lütfen bir yorum metni giriniz.', type: UIType.warning, context: dialogContext, useDialog: true,);
-                        return;
-                      }
-                      if (widget.data?['id'] == null) {
-                        UIHelper.showSnackBar(message: 'Yorum verisi alınamadı. Lütfen daha sonra tekrar deneyin.', type: UIType.negative, context: dialogContext, useDialog: true,);
-                        Navigator.maybePop(dialogContext);
-                        return;
-                      }
-                      _updateComment(newComment: updateText, commentId: int.parse(widget.data!['id']), dialogContext: dialogContext);
-                    },),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    },);
-    /*return showModalBottomSheet(
-      isScrollControlled: true,
+  _showEditDialog(BuildContext context) {
+    showDialog(
       context: context,
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(Style.defaultRadiusSize),
-          topRight: Radius.circular(Style.defaultRadiusSize),
-        ),
-      ),
-      builder: (context) {
-        return SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: Style.defautlVerticalPadding,
-              horizontal: Style.defautlHorizontalPadding,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      builder: (dialogContext) {
+        return Dialog(
+          alignment: Alignment.bottomCenter,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          insetPadding: EdgeInsets.zero,
+          child: GestureDetector(
+            onTap: () {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
+            child: Card(
+              margin: EdgeInsets.zero,
+              elevation: 0,
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: Style.defautlVerticalPadding,
+                    horizontal: Style.defautlHorizontalPadding,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        "${widget.isBlog ? 'Blog' : 'Etkinlik'} Yorum Güncelleme",
-                        style: TextStyle(
-                          fontSize: Style.bigTitleTextSize,
-                          fontWeight: FontWeight.bold,
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "${widget.isBlog ? 'Blog' : 'Etkinlik'} Yorum Güncelleme",
+                              style: TextStyle(
+                                fontSize: Style.bigTitleTextSize,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => Navigator.pop(dialogContext),
+                              child: const Icon(Icons.close),
+                            ),
+                          ],
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: const Icon(Icons.close),
+                      CustomTextField(
+                        hintText: "Yorum",
+                        validator: Validator.requiredTextValidator,
+                        initialValue: widget.data?['comment'] ?? '',
+                        onChanged: (s) => updateText = (s ?? ''),
+                      ),
+                      ButtonForLogin(
+                        title: "Güncelle",
+                        onTap: () {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          if (updateText.trim().isEmpty) {
+                            UIHelper.showSnackBar(
+                              message: 'Lütfen bir yorum metni giriniz.',
+                              type: UIType.warning,
+                              context: dialogContext,
+                              useDialog: true,
+                            );
+                            return;
+                          }
+                          if (widget.data?['id'] == null) {
+                            UIHelper.showSnackBar(
+                              message: 'Yorum verisi alınamadı. Lütfen daha sonra tekrar deneyin.',
+                              type: UIType.negative,
+                              context: dialogContext,
+                              useDialog: true,
+                            );
+                            Navigator.maybePop(dialogContext);
+                            return;
+                          }
+                          _updateComment(
+                              newComment: updateText, commentId: int.parse(widget.data!['id']), dialogContext: dialogContext);
+                        },
                       ),
                     ],
                   ),
                 ),
-                CustomTextField(
-                  hintText: "Yorum",
-                  validator: Validator.requiredTextValidator,
-                  initialValue: widget.data?['comment'] ?? '',
-                  onChanged: (s) => updateText = (s ?? ''),
-                ),
-                ButtonForLogin(title: "Güncelle", onTap: () {
-                  if (updateText.trim().isEmpty){
-                    UIHelper.showSnackBar(message: 'Lütfen bir yorum metni giriniz.', type: UIType.warning, context: context);
-                    return;
-                  }
-                  if (widget.data?['id'] == null) {
-                    UIHelper.showSnackBar(message: 'Yorum verisi alınamadı. Lütfen daha sonra tekrar deneyin.', type: UIType.negative, context: context);
-                    Navigator.maybePop(context);
-                    return;
-                  }
-                  _updateComment(newComment: updateText, commentId: int.parse(widget.data!['id']));
-                },),
-              ],
+              ),
             ),
           ),
         );
       },
-    );*/
+    );
   }
 
-  _updateComment({required String newComment, required int commentId, required BuildContext dialogContext}) async {
-    try {
-      await context.read<TableViewModel>().tableUpdate(tableName: widget.isBlog ? TableName.BlogComment.name : TableName.ActivityComment.name, id: commentId, data: {
-        'comment': newComment,
-        'status': '0',
-      });
-      if (!mounted) return;
-      Navigator.maybePop(dialogContext);
-      UIHelper.showSnackBar(message: 'Yorum başarıyla onaya gönderildi.', type: UIType.positive, context: dialogContext);
-      Navigator.pushReplacementNamed(context, widget.isBlog ? Routes.blogCommentPage : Routes.activityCommentPage);
-    } catch(e) {
-      HandleExceptions.handle(exception: e, context: context);
-    }
+  _showDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          alignment: Alignment.bottomCenter,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          insetPadding: EdgeInsets.zero,
+          child: GestureDetector(
+            onTap: () {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
+            child: Card(
+              margin: EdgeInsets.zero,
+              elevation: 0,
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: Style.defautlVerticalPadding,
+                    horizontal: Style.defautlHorizontalPadding,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: GestureDetector(
+                          onTap: () => Navigator.pop(dialogContext),
+                          child: const Icon(Icons.close),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: Style.defaultPadding,
+                      ),
+                      Text(
+                        "Bu yorumu silmek istediğinize emin misiniz?",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(
+                        height: Style.defaultPadding,
+                      ),
+                      CustomTextField(
+                        hintText: "Yorum",
+                        validator: Validator.requiredTextValidator,
+                        initialValue: widget.data?['comment'] ?? '',
+                        enabled: false,
+                      ),
+                      ButtonForLogin(
+                        title: "Sil",
+                        onTap: () {
+                          Navigator.pop(context);
+                          _deleteComment(commentId: int.parse(widget.data!['id']));
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   _fetchTopData() async {
@@ -350,6 +356,40 @@ class _CommentPageListItemWidgetState extends State<CommentPageListItemWidget> {
       imageUrl = record.data == null ? null : Util.imageConvertUrl(imageName: record.data?['image']);
       setState(() {});
     } catch (e) {
+      HandleExceptions.handle(exception: e, context: context);
+    }
+  }
+
+  _updateComment({required String newComment, required int commentId, required BuildContext dialogContext}) async {
+    try {
+      await context.read<TableViewModel>().tableUpdate(
+        tableName: widget.isBlog ? TableName.BlogComment.name : TableName.ActivityComment.name,
+        id: commentId,
+        data: {
+          'comment': newComment,
+          'status': '0',
+        },
+      );
+      if (!mounted) return;
+      Navigator.maybePop(dialogContext);
+      UIHelper.showSnackBar(message: 'Yorum başarıyla onaya gönderildi.', type: UIType.positive, context: dialogContext);
+      Navigator.pushReplacementNamed(context, widget.isBlog ? Routes.blogCommentPage : Routes.activityCommentPage);
+    } catch (e) {
+      HandleExceptions.handle(exception: e, context: context);
+    }
+  }
+
+  _deleteComment({required int commentId}) async {
+    try {
+      await context.read<TableViewModel>().deleteRecord(
+            tableName: widget.isBlog ? TableName.BlogComment.name : TableName.ActivityComment.name,
+            id: commentId,
+          );
+      if (!mounted) return;
+      UIHelper.showSnackBar(message: 'Yorum silindi.', type: UIType.positive, context: context);
+      Navigator.pushReplacementNamed(context, widget.isBlog ? Routes.blogCommentPage : Routes.activityCommentPage);
+    } catch (e) {
+      UIHelper.showSnackBar(message: 'Yorum silinemedi.', type: UIType.negative, context: context);
       HandleExceptions.handle(exception: e, context: context);
     }
   }

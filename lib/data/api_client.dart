@@ -488,6 +488,44 @@ class ApiClient {
     }
   }
 
+  Future<bool> deleteRecord({
+    required String tableName,
+    required int id,
+    required String token,
+    bool isUserDb = false,
+  }) async {
+    try {
+      String url = '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/$id/delete';
+      log('$url params:empty', name: 'API_SEND');
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'token': token,
+        },
+      );
+
+      debugPrint('Response ::: ${response.body}');
+      var splitList = url.split('/');
+      log(response.body, name: 'API_RESPONSE-${splitList[splitList.length - 2]}/${splitList[splitList.length - 1]}');
+
+      Map<String, dynamic> json = jsonDecode(response.body);
+      if (_isRequestHaveMessage(json)) {
+        _throwError(json);
+      }
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        debugPrint('ApiClient fetchRecord ERROR ::: ${response.body}');
+        throw ApiException();
+      }
+    } catch (e) {
+      if (e is SocketException) throw ApiException();
+      rethrow;
+    }
+  }
+
   Future<UserModel> fetchProfile({
     required String token,
   }) async {

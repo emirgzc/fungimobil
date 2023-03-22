@@ -14,6 +14,7 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.onChanged,
     this.inputFormatters,
+    this.enabled = true,
   }) : super(key: key);
 
   String hintText;
@@ -24,6 +25,7 @@ class CustomTextField extends StatelessWidget {
   FormFieldValidator<String>? validator;
   void Function(String?)? onChanged;
   List<TextInputFormatter>?  inputFormatters;
+  bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +41,7 @@ class CustomTextField extends StatelessWidget {
         onChanged: onChanged,
         initialValue: initialValue,
         inputFormatters: inputFormatters,
+        enabled: enabled,
         decoration: InputDecoration(
           prefixIcon: prefixIcon,
           suffixIcon: suffixIcon,
