@@ -4,10 +4,11 @@ import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
-import 'package:fungimobil/data/api_client.dart';
 import 'package:fungimobil/model/table_model.dart' as tableModel;
 import 'package:fungimobil/widgets/appbar.dart';
+import 'package:provider/provider.dart';
 
+import '../../viewmodel/table_view_model.dart';
 import '../../widgets/custom_network_image_widget.dart';
 
 class SponsorPage extends StatelessWidget {
@@ -17,21 +18,22 @@ class SponsorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: getAppBar("Sponsorlarımız"),
-      body: sponsorBody(),
+      body: sponsorBody(context),
     );
   }
 
-  Widget sponsorBody() {
+  Widget sponsorBody(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
         padding: Style.defaultPagePadding,
         child: FutureBuilder(
-          future: ApiClient().fetchTable(
+          future: context.read<TableViewModel>().fetchTable(
             tableName: TableName.Sponsor.name,
-            token: "",
             page: 1,
             limit: 10,
-            filter: {},
+            filter: {
+              'status': 1
+            },
           ),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data != null) {

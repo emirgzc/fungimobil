@@ -18,7 +18,7 @@ class ConfigRepository {
   Future<bool> saveMenu() async {
     try {
       String token = await _preferencesHelper.getUserToken() ?? '';
-      TableModel tableModel = await _apiClient.fetchTable(tableName: TableName.Menu.name, token: token, page: 1, limit: 100, filter: {});
+      TableModel tableModel = await _apiClient.fetchTable(tableName: TableName.Menu.name, token: token, page: 1, limit: 100, filter: {'status': 1});
       if (tableModel.data == null) {
         throw CustomException.fromApiMessage('Menü verileri getirilemedi. Lütfen internet bağlantınızı kontrol edip tekrar deneyiniz.');
       }

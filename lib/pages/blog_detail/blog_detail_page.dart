@@ -5,7 +5,6 @@ import 'package:fungimobil/constants/handle_exceptions.dart';
 import 'package:fungimobil/constants/style.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
-import 'package:fungimobil/data/api_client.dart';
 import 'package:fungimobil/model/single_record_model.dart';
 import 'package:fungimobil/widgets/comment/comment_list_widget.dart';
 import 'package:fungimobil/widgets/custom_text_field.dart';
@@ -358,16 +357,10 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                     vertical: Style.defautlVerticalPadding / 2,
                     horizontal: Style.defautlHorizontalPadding / 2),
                 child: FutureBuilder(
-                  future: ApiClient().fetchTable(
-                    tableName: TableName.BlogComment.name,
-                    token: "",
-                    page: 1,
-                    limit: 10,
-                    filter: {
-                      "blog_id": widget.id,
-                      "status": 1,
-                    },
-                  ),
+                  future: context.read<TableViewModel>().fetchTempTable(tableName: TableName.BlogComment.name, page: 1, limit: 10000, filter: {
+                    "blog_id": widget.id,
+                    "status": 1,
+                  },),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done &&
                         snapshot.hasData &&

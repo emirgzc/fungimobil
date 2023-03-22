@@ -187,7 +187,7 @@ class ApiClient {
   }) async {
     try {
       filter = Map.of(filter);
-      filter['status'] = 1;
+      filter['status'] ??= 1;
       final Map<String, dynamic> requestBody = {
         if(page != null) 'page': page,
         if(limit != null) 'limit': limit,
@@ -236,7 +236,7 @@ class ApiClient {
   }) async {
     try {
       filter = Map.of(filter);
-      filter['status'] = 1;
+      filter['status'] ??= 1;
       final Map<String, dynamic> requestBody = {
         'filter': filter,
       };

@@ -82,6 +82,7 @@ class _CommentListPageState extends State<CommentListPage> {
         limit: null,
         filter: {
           'own_id': userInfo.id ?? '',
+          'status': 0,
         },
       );
     } catch (e) {
