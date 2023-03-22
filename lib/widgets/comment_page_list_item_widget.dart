@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:fungimobil/constants/handle_exceptions.dart';
+import 'package:fungimobil/constants/routes.dart';
 import 'package:fungimobil/constants/table_util.dart';
 import 'package:fungimobil/constants/util.dart';
+import 'package:fungimobil/constants/validator.dart';
+import 'package:fungimobil/helper/ui_helper.dart';
 import 'package:fungimobil/widgets/custom_network_image_widget.dart';
 import 'package:fungimobil/widgets/shimmer/shimmer_loading.dart';
 import 'package:provider/provider.dart';
@@ -27,8 +30,11 @@ class _CommentPageListItemWidgetState extends State<CommentPageListItemWidget> {
   String? imageUrl;
   String? title;
 
+  String updateText = '';
+
   @override
   void initState() {
+    super.initState();
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       if (widget.data != null) {
         _fetchTopData();
@@ -38,6 +44,7 @@ class _CommentPageListItemWidgetState extends State<CommentPageListItemWidget> {
 
   @override
   void didUpdateWidget(covariant CommentPageListItemWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       if (widget.data != null) {
         _fetchTopData();
@@ -138,20 +145,21 @@ class _CommentPageListItemWidgetState extends State<CommentPageListItemWidget> {
                       ),
                     ),
                   ),
-                  if (widget.data != null) Row(
-                    children: [
-                      ontapForItem(
-                        "Güncelle",
-                        Colors.blue,
-                        () => editPop(context),
-                      ),
-                      ontapForItem(
-                        "Sil",
-                        Style.secondaryColor,
-                        () {},
-                      ),
-                    ],
-                  ),
+                  if (widget.data != null)
+                    Row(
+                      children: [
+                        ontapForItem(
+                          "Güncelle",
+                          Colors.blue,
+                          () => editPop(context),
+                        ),
+                        ontapForItem(
+                          "Sil",
+                          Style.secondaryColor,
+                          () {},
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
@@ -161,8 +169,97 @@ class _CommentPageListItemWidgetState extends State<CommentPageListItemWidget> {
     );
   }
 
-  Future editPop(BuildContext context) {
-    return showModalBottomSheet(
+  Widget ontapForItem(String title, Color color, void Function()? onTap) {
+    return GestureDetector(
+      onTap: widget.data == null ? null : onTap,
+      child: Container(
+        margin: EdgeInsets.only(right: Style.defautlHorizontalPadding / 2),
+        padding: EdgeInsets.symmetric(
+          vertical: Style.defautlVerticalPadding / 4,
+          horizontal: Style.defautlHorizontalPadding / 2,
+        ),
+        decoration: BoxDecoration(
+          color: widget.data != null ? color : Theme.of(context).hintColor,
+          borderRadius: BorderRadius.circular(Style.defaultRadiusSize / 2),
+        ),
+        child: Text(
+          title,
+          style: const TextStyle(color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  editPop(BuildContext context) {
+    showDialog(context: context, builder: (dialogContext) {
+      return Dialog(
+        alignment: Alignment.bottomCenter,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        insetPadding: EdgeInsets.zero,
+        child: GestureDetector(
+          onTap: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          child: Card(
+            margin: EdgeInsets.zero,
+            elevation: 0,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: Style.defautlVerticalPadding,
+                  horizontal: Style.defautlHorizontalPadding,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: Style.defautlVerticalPadding),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "${widget.isBlog ? 'Blog' : 'Etkinlik'} Yorum Güncelleme",
+                            style: TextStyle(
+                              fontSize: Style.bigTitleTextSize,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => Navigator.pop(dialogContext),
+                            child: const Icon(Icons.close),
+                          ),
+                        ],
+                      ),
+                    ),
+                    CustomTextField(
+                      hintText: "Yorum",
+                      validator: Validator.requiredTextValidator,
+                      initialValue: widget.data?['comment'] ?? '',
+                      onChanged: (s) => updateText = (s ?? ''),
+                    ),
+                    ButtonForLogin(title: "Güncelle", onTap: () {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      if (updateText.trim().isEmpty){
+                        UIHelper.showSnackBar(message: 'Lütfen bir yorum metni giriniz.', type: UIType.warning, context: dialogContext, useDialog: true,);
+                        return;
+                      }
+                      if (widget.data?['id'] == null) {
+                        UIHelper.showSnackBar(message: 'Yorum verisi alınamadı. Lütfen daha sonra tekrar deneyin.', type: UIType.negative, context: dialogContext, useDialog: true,);
+                        Navigator.maybePop(dialogContext);
+                        return;
+                      }
+                      _updateComment(newComment: updateText, commentId: int.parse(widget.data!['id']), dialogContext: dialogContext);
+                    },),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    },);
+    /*return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
       backgroundColor: Colors.white,
@@ -188,7 +285,7 @@ class _CommentPageListItemWidgetState extends State<CommentPageListItemWidget> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "${widget.isBlog ? 'Blog': 'Etkinlik'} Yorum Güncelleme",
+                        "${widget.isBlog ? 'Blog' : 'Etkinlik'} Yorum Güncelleme",
                         style: TextStyle(
                           fontSize: Style.bigTitleTextSize,
                           fontWeight: FontWeight.bold,
@@ -201,37 +298,45 @@ class _CommentPageListItemWidgetState extends State<CommentPageListItemWidget> {
                     ],
                   ),
                 ),
-                CustomTextField(hintText: "İsim Soyisim"),
-                CustomTextField(hintText: "Mail Adresi"),
-                CustomTextField(hintText: "Yorum"),
-                const ButtonForLogin(title: "Güncelle"),
+                CustomTextField(
+                  hintText: "Yorum",
+                  validator: Validator.requiredTextValidator,
+                  initialValue: widget.data?['comment'] ?? '',
+                  onChanged: (s) => updateText = (s ?? ''),
+                ),
+                ButtonForLogin(title: "Güncelle", onTap: () {
+                  if (updateText.trim().isEmpty){
+                    UIHelper.showSnackBar(message: 'Lütfen bir yorum metni giriniz.', type: UIType.warning, context: context);
+                    return;
+                  }
+                  if (widget.data?['id'] == null) {
+                    UIHelper.showSnackBar(message: 'Yorum verisi alınamadı. Lütfen daha sonra tekrar deneyin.', type: UIType.negative, context: context);
+                    Navigator.maybePop(context);
+                    return;
+                  }
+                  _updateComment(newComment: updateText, commentId: int.parse(widget.data!['id']));
+                },),
               ],
             ),
           ),
         );
       },
-    );
+    );*/
   }
 
-  Widget ontapForItem(String title, Color color, void Function()? onTap) {
-    return GestureDetector(
-      onTap: widget.data == null ? null : onTap,
-      child: Container(
-        margin: EdgeInsets.only(right: Style.defautlHorizontalPadding / 2),
-        padding: EdgeInsets.symmetric(
-          vertical: Style.defautlVerticalPadding / 4,
-          horizontal: Style.defautlHorizontalPadding / 2,
-        ),
-        decoration: BoxDecoration(
-          color: widget.data != null ? color : Theme.of(context).hintColor,
-          borderRadius: BorderRadius.circular(Style.defaultRadiusSize / 2),
-        ),
-        child: Text(
-          title,
-          style: const TextStyle(color: Colors.white),
-        ),
-      ),
-    );
+  _updateComment({required String newComment, required int commentId, required BuildContext dialogContext}) async {
+    try {
+      await context.read<TableViewModel>().tableUpdate(tableName: widget.isBlog ? TableName.BlogComment.name : TableName.ActivityComment.name, id: commentId, data: {
+        'comment': newComment,
+        'status': '0',
+      });
+      if (!mounted) return;
+      Navigator.maybePop(dialogContext);
+      UIHelper.showSnackBar(message: 'Yorum başarıyla onaya gönderildi.', type: UIType.positive, context: dialogContext);
+      Navigator.pushReplacementNamed(context, widget.isBlog ? Routes.blogCommentPage : Routes.activityCommentPage);
+    } catch(e) {
+      HandleExceptions.handle(exception: e, context: context);
+    }
   }
 
   _fetchTopData() async {

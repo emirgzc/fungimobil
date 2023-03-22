@@ -412,7 +412,7 @@ class ApiClient {
     try {
       String url = '$_baseUrl${isUserDb ? _userDbName : _dbName}/$tableName/$id/update';
       debugPrint('apiUrl ::: $url');
-      log('$url params:empty', name: 'API_SEND');
+      log('$url params:$data', name: 'API_SEND');
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8', 'token': token},
